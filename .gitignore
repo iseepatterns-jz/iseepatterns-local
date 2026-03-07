@@ -1,0 +1,66 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Node / Next.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.bun-*
+
+.next/
+out/
+dist/
+coverage/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Python
+.venv/
+env/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Python tooling
+.mypy_cache/
+.pytest_cache/
+.ipynb_checkpoints/
+*.sqlite3-journal
+
+# Lawmodel1 local data / indexes / artifacts
+brains.db
+chroma_db/
+bm25_index.pkl
+bm25_index_ts.json
+
+data/
+exports/
+logs/
+tmp/
+temp/
+*.log
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Misc
+*.bak
+*.tmp
+*.old

@@ -1,0 +1,162 @@
+2024-08-01-trs-court
+
+NOTES
+
+[00:02:08.04] Defendants position on sale changes after finding that Plaintiff had diverted work away from RBC
+[00:03:57.42] Despite handing over passwords, defendants personal credit cards remained paying the utilities and was unable to change payment info. Defendants paid for months until recently.
+
+Plaintiff deleted email accounts due to their criminal content. Screenshot of log shows plaintiff deleting accounts while logged in as Lucas Guariglia. Defendant has the deleted emails, due to previous backup. 
+[00:12:07.07] Receiver bill already at $28,000. Less then bankruptcy?
+[00:12:55.17] Plaintiff has diverted multiple high dollar jobs, yet $409 remain in the bank.
+
+
+TRANSCRIPT
+
+[00:00:00.08] JORDAN(DEFENDANT): Zangrilli.
+
+[00:00:00.96] MEYERSON(JUDGE): Good morning.
+
+[00:00:01.84] JORDAN(DEFENDANT): I believe Mr. Zangrilli is in the zoom.
+
+[00:00:04.88] MEYERSON(JUDGE): Okay, good morning, sir.
+
+[00:00:06.24] MENDELSOHN(PLAINTIFF): Good morning. Fred Mendelsohn for plaintiff. Mr. Guariglia also, I believe, on the zoom.
+
+[00:00:13.36] MEYERSON(JUDGE): All right.
+
+[00:00:15.04] HAYES(RALLY): Good morning, Your Honor. Ryan Hayes here as the receiver. And before we get into the case status, I just wanted to bring something to your attention. Howard Samuels of Rally Capital, you know, sadly passed away about three weeks ago. And [00:00:30.00] the reason I bring that up is because Howard and myself are listed on the appointment order as the appointed receiver. And I don't know if there's something you wanted to file or wanted us to file, with respect to that, or if the appointment order, since it lists me as well, is sufficient for that matter.
+
+[00:00:50.40] MEYERSON(JUDGE): Okay. Uh, well, first of all, my condolences to his family and to those who worked with him. I don't think [00:01:00.00] we need to include... I don't think we need a motion. But, I might ask plaintiff to do today's order. And if you could include in the order that Mr. Hayes has reported to the court... has advised the court of the death of Mr. Samuels. And so the appointment, whatever date it was, is amended to [00:01:30.00] remove him as one of the named receivers. Okay? And that Rally Capital and Mr. Hayes will continue as receivers. Okay?
+
+[00:01:42.46] MENDELSOHN(PLAINTIFF): Will do, Judge.
+
+[00:01:43.62] MEYERSON(JUDGE): All right. Uh, so we have a few things up today. We have a status on the receiver's fourth report. We have the motion to withdraw of Mr. Zangrilli's attorneys. And then we have the plaintiff's motion to order the defendant to [00:02:00.00] turn over passwords, right?
+
+[00:02:03.08] JORDAN(DEFENDANT): I can I can speak to a couple of things that we can do, with the withdrawal last.
+
+[00:02:07.52] MEYERSON(JUDGE): Okay.
+
+[00:02:08.04] JORDAN(DEFENDANT): Mr. Zangrilli has provided the passwords to Mr. Hayes. I think there was some, miscommunication even as late as just trying to figure it out through emails in the last couple of days, but Mr. Hayes has that information, with regard to Mr. Hayes receiver's report. We [00:02:30.00] have no objection, with the exception of the fact that, we would object to Mr. Hayes turning over any of the passwords to the buyer, who happens to be Mr. Guariglia, until the closing occurs. And I think Mr. Zangrilli is concerned because Mr. Guariglia has undertaken to take work away from Rowboat in the interim period between [00:03:00.00] the last hearing and this hearing, so what Mr. Zangrilli's position on the the sale may have changed.
+
+[00:03:10.74] MEYERSON(JUDGE): So, first of all, let me confirm. Mr. Hayes, did you in fact receive all the passwords that you were looking for?
+
+[00:03:25.30] HAYES(RALLY): Yes. Mr. Zangrilli has complied and provided the third [00:03:30.00] party service provider passwords that that were requested.
+
+[00:03:34.58] MEYERSON(JUDGE): All right. So, let me ask you your position, and I'll also ask the the plaintiff, his position, their position on, on not turning over the passwords before the closing of the sale.
+
+[00:03:53.22] MENDELSOHN(PLAINTIFF): Yeah. Judge, if I can speak to that.
+
+[00:03:56.14] MEYERSON(JUDGE): Sure.
+
+[00:03:57.42] MENDELSOHN(PLAINTIFF): Number one, we understand the receiver's position that [00:04:00.00] these are Rowboat assets. In fact, they are assets that are contemplated to be purchased by my client, once there's a closing on an asset purchase agreement based on the letter of intent that you've already approved to be accepted by the receiver. As of yesterday, when I spoke to Mr. Hayes, we had not received, [00:04:30.00] he had not received materials, password information, access information to, for example, the domains of the company, which are assets that my client is purchasing this morning. I've learned that he has. These issues, these materials need to be verified and converted by the receiver to the receiver's own control, not the control [00:05:00.00] of Mr. Zangrilli, who's sat on these materials for weeks and weeks to turn them over, despite an order from Your Honor, attached to our motion from our last status saying turn the stuff over. I think that the receiver needs to confirm and verify and take possession and control of all of these materials, including setting up accounts to [00:05:30.00] pay for them so that they don't get so they don't lapse, so that, Rowboat domain information and other materials that are detailed in our motion do not expire or disappear or whatever. And that process is not yet completed. So I believe tha`t our motion should be entered and continued to another date. There happens to be a date on August 12th, when Mr. Jordan has noticed his [00:06:00.00] motion to withdraw, and Mr. Hayes can confirm that all of these materials that Mr. Zangrilli sat on for weeks, requiring two orders and a motion, are in fact correct, intact, and available and there's not any issues. And Mr. Jordan, as I understand it, has been in contact with Mr. Hayes and working with Mr. Hayes and his client to facilitate this turnover and [00:06:30.00] to facilitate providing the correct information. And I don't believe there's any prejudice to anyone if we enter and continue the motion until August 12th to verify anything, everything and have Mr. Hayes confirm that, in fact, he's now taking control of it has changed the administrative passwords and codes and access information and has been able to line up payment, for example, on them so they don't lapse. So the [00:07:00.00] receiver can in fact sell them to the only party that's placed a bid for the assets, which is my client. That's what I think should happen here.
+
+[00:07:11.18] MEYERSON(JUDGE): Mr. Hayes...
+
+[00:07:11.38] JORDAN(DEFENDANT): I guess we should have Mr. Hayes speak to that, because they seem to be terribly difficult to change passwords. But Mr. Hayes has only had so much time to do it so he can speak to that.
+
+[00:07:20.58] MEYERSON(JUDGE): Let's hear from him.
+
+[00:07:22.46] HAYES(RALLY): Yes. Your honor, I did receive all the information to log on to the three accounts in question. My intent was to ensure [00:07:30.00] continuity of service, as Mr. Mendelsohn had described, to make sure there's no lapse in anything, and to hold those items in the receiver's possession with his exclusive access until the transaction is consummated, because Mr. Guariglia is interested in the IP as expressed in his LOI.
+
+[00:07:49.62] MEYERSON(JUDGE): So when you say in his exclusive possession, you're talking about...
+
+[00:07:55.75] HAYES(RALLY): The receivers?
+
+[00:07:56.35] MEYERSON(JUDGE): The receivers, yeah.
+
+[00:07:56.51] HAYES(RALLY): Correct.
+
+[00:07:57.63] MEYERSON(JUDGE): Um.
+
+[00:07:58.35] JORDAN(DEFENDANT): The royal, his.
+
+[00:08:00.11] MEYERSON(JUDGE): Yeah, [00:08:00.00] right. So it sounds like everybody's on the same page, if I'm not mistaken, that Mr. Hayes, you'll just confirm you have everything you need, and if I understand correctly, the concern is that... is that whatever passwords be changed and so that so that you can control it and nobody else can until the closing [00:08:30.00] of the, um, until the closing of the deal. Is that right?
+
+[00:08:34.23] HAYES(RALLY): That's correct.
+
+[00:08:35.31] MEYERSON(JUDGE): Okay. So that's fine. We can, um, we can include that in today's order. I guess I didn't focus on the fact that the motion to withdraw is not scheduled until the 12th. So that's fine. We can keep that date on the 12th. Let me just make sure that we've still got [00:09:00.00] that that we've got that on our calendar, on our end. Alyssa, do we have the motion to withdraw scheduled on the 12th or Sylvia, one of you?
+
+[00:09:12.73] ALYSSA(CLERK): Yes, it is, Your Honor. It's scheduled for 9:30am.
+
+[00:09:15.45] MEYERSON(JUDGE): Good. All right. So...
+
+[00:09:16.21] JORDAN(DEFENDANT): We can do whatever time is at your court's pleasure.
+
+[00:09:19.37] MEYERSON(JUDGE): Yeah. That's fine. 9:30am is good. And we will hear the motion to withdraw, and we'll enter and continue the motion [00:09:30.00] to order, defendant to turn over any information, the password information, basically, you know, after you confirm that you've got everything, then that should be good. Now, in terms of the receiver's fourth report.
+
+[00:09:47.89] HAYES(RALLY): Yes.
+
+[00:09:49.29] HAYES(RALLY): Anyone else have anything they want to say about that?
+
+[00:09:52.45] MENDELSOHN(PLAINTIFF): We have no objection, Your Honor. Plaintiff.
+
+[00:09:56.35] MEYERSON(JUDGE): Okay. And, defendant, you've spoken to that already. You don't have any [00:10:00.00] other objections, right? To the...
+
+[00:10:02.11] JORDAN(DEFENDANT): The single objection that we made. Yes.
+
+[00:10:04.27] MEYERSON(JUDGE): Right, right. Okay. All right. I did have one question.
+
+[00:10:08.47] HAYES(RALLY): Yes, Your Honor.
+
+[00:10:09.99] MEYERSON(JUDGE): Well, a couple of questions. I'm looking at... looks like the second page where you're talking about the bank balance, as of July 29th was per $409. So what happened to the money that came in from the auction?
+
+[00:10:28.83] HAYES(RALLY): We haven't received the proceeds [00:10:30.00] yet. As that works, the auctioneer works on collecting everything and really disseminating the goods through a pickup by the buyer. And that usually is a 2 to 3 week period.
+
+[00:10:41.67] MEYERSON(JUDGE): Okay. All right. So it's on the way.
+
+[00:10:44.71] HAYES(RALLY): Correct.
+
+[00:10:45.39] MEYERSON(JUDGE): And you're not worried about it?
+
+[00:10:47.35] HAYES(RALLY): No no, no, no, I've spoken with the auctioneer. We have an unofficial price of around $145,000, as I've confirmed. There's a couple unsold items that they're working on, perhaps packaging into some of these existing buyers. Small, [00:11:00.00] small dollars. But, no, they've collected actually, I spoke with them yesterday about 93% of that balance, but they don't do an accounting until 100% is, uh, received and distributed to the end buyer.
+
+[00:11:14.33] MEYERSON(JUDGE): All right. I saw something in your invoices about some discussion about allegedly stolen equipment?
+
+[00:11:24.41] HAYES(RALLY): That's correct.
+
+[00:11:25.93] HAYES(RALLY): Mr. Guariglia was looking for some personal [00:11:30.00] items that he had been storing at the warehouse, we had spent some time trying to figure out where they may have walked off to, if they were there. We were looking at some camera equipment to see if we could find it out... find out where it went. You know, unfortunately, there was no evidence of anything... visual evidence of anything, you know, being removed, but that's what we were looking for was personal effects of his, like speaker [00:12:00.00] and amplifier related to his music production.
+
+[00:12:07.07] MEYERSON(JUDGE): All right but, okay, so no luck there. All right, so with no objection, I will approve the fees that you've requested. Both of those invoices for a total of $28,000 and some. So the today's order can indicate that I've approved the fourth report and [00:12:30.00] that including, I'm approving payment of the fees, and it should specifically say invoice number X for Y, et cetera. And that those may be, those fees may be paid as soon as you have the money. Okay?
+
+[00:12:55.17] HAYES(RALLY): Got it.
+
+[00:12:55.17] MEYERSON(JUDGE): Since you have $409 in the in the bank at this point. Um. All right. So [00:13:00.00] then our next date will be on August 12th on the motion to withdraw, and we'll call that a status hearing as well. And also continuing the motion for turnover to that date. And then we'll talk about where we go from there.
+
+[00:13:17.25] JORDAN(DEFENDANT): And there's one other thing, Your Honor.
+
+[00:13:19.81] MEYERSON(JUDGE): Okay.
+
+[00:13:20.09] JORDAN(DEFENDANT): Um, Mr. Guariglia, I'm sorry. Excuse me, Mr. Zangrilli and I worked on the answer to the complaint, but it wasn't timely, and we'd ask that the answer [00:13:30.00] be deemed timely, and I think Mr. Zangrilli will file a motion to file a counterclaim when he obtains alternative counsel and finishes his counterclaim. Just advise the court, that does not have to be in the order. But we would like in the order that the answer is deemed timely.
+
+[00:13:48.77] MEYERSON(JUDGE): So.
+
+[00:13:49.67] MEYERSON(JUDGE): So it was due on when and when did you file it?
+
+[00:13:56.83] JORDAN(DEFENDANT): It was due, I think like six [00:14:00.00] weeks ago when it was filed. I believe, last week or the week before. So it wasn't it close to the date.
+
+[00:14:11.87] MEYERSON(JUDGE): Any objection?
+
+[00:14:14.47] MENDELSOHN(PLAINTIFF): No.
+
+[00:14:15.59] MEYERSON(JUDGE): All right. So, it will be deemed timely filed. You can include that in the order. Anything else?
+
+[00:14:24.67] JORDAN(DEFENDANT): No, Your Honor.
+
+[00:14:25.99] MEYERSON(JUDGE): Okay. Good. So I'll ask counsel for plaintiff to prepare that order, run it [00:14:30.00] past defendant's counsel and and the receiver and get it over to us later today, please.
+
+[00:14:34.79] MENDELSOHN(PLAINTIFF): And the time on the 12th, Your honor, is 10:15am or 9:30am?
+
+[00:14:38.03] MEYERSON(JUDGE): That's 9:30am.
+
+[00:14:39.79] MENDELSOHN(PLAINTIFF): Okay.
+
+[00:14:40.51] MEYERSON(JUDGE): Okay?
+
+[00:14:41.31] HAYES(RALLY): Thank you, Your Honor.
+
+[00:14:43.59] JORDAN(DEFENDANT): Have a great day.
+
+[00:14:44.71] MEYERSON(JUDGE): Thank you, you too.
+
+[00:14:46.39] MEYERSON(JUDGE): People versus ... 22CH..72.
+
