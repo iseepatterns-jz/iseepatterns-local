@@ -151,6 +151,17 @@ def parse_task_markdown(md_text: str) -> Dict[str, Any]:
 
 
 def refresh_brain_from_markdown(case_id: str = "rbc_v_lg"):
+    def infer_task_category(title: str) -> str:
+        t = title.lower()
+        infra_keywords = ["hub", "pipeline", "reset", "clean", "rag", "filters", "ready bag", "synchronization", "github", "export", "package"]
+        for kw in infra_keywords:
+            if kw in t:
+                return "infra"
+        if "investigative" in t or "analysis" in t:
+            return "investigative"
+        return "other"
+
+
     """Parse task.md + metadata into brains.db."""
     if not BRAIN_TASK_MD.exists():
         raise SystemExit(f"task.md not found at {BRAIN_TASK_MD}")
@@ -202,12 +213,13 @@ def refresh_brain_from_markdown(case_id: str = "rbc_v_lg"):
         conn.execute("DELETE FROM tasks WHERE brain_id=?", (brain_id,))
 
         for t in parsed["tasks"]:
+            category = infer_task_category(t["title"])
             cur = conn.execute(
                 """
-                INSERT INTO tasks (brain_id, title, status, order_idx, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO tasks (brain_id, title, status, order_idx, created_at, updated_at, category)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
-                (brain_id, t["title"], t["status"], t["order_idx"], updated_at, updated_at),
+                (brain_id, t["title"], t["status"], t["order_idx"], updated_at, updated_at, category),
             )
             task_id = cur.lastrowid
             for s in t["subtasks"]:
@@ -232,6 +244,28 @@ def refresh_brain_from_markdown(case_id: str = "rbc_v_lg"):
     print("[*] Brain index refreshed from task.md")
 
 
+def get_recent_readybag_runs(limit: int = 5) -> list[dict[str, Any]]:
+    with db() as conn:
+        rows = conn.execute(
+            """
+            SELECT started_at, finished_at, status, notes
+            FROM readybag_runs
+            ORDER BY id DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+    return [
+        {
+            "started_at": r["started_at"],
+            "finished_at": r["finished_at"],
+            "status": r["status"],
+            "notes": r["notes"],
+        }
+        for r in rows
+    ]
+
+
 def snapshot_brain(case_id: str = "rbc_v_lg") -> Dict[str, Any]:
     """Return a compact JSON-like snapshot of the brain for API/UI."""
     with db() as conn:
@@ -251,8 +285,14 @@ def snapshot_brain(case_id: str = "rbc_v_lg") -> Dict[str, Any]:
 
         rows = conn.execute(
             """
-            SELECT t.id, t.title, t.status, t.order_idx,
-                   s.description, s.done, s.order_idx AS s_order
+            SELECT t.id,
+                   t.title,
+                   t.status,
+                   t.order_idx,
+                   t.category,
+                   s.description,
+                   s.done,
+                   s.order_idx AS s_order
             FROM tasks t
             LEFT JOIN subtasks s ON s.task_id = t.id
             WHERE t.brain_id=?
@@ -273,6 +313,7 @@ def snapshot_brain(case_id: str = "rbc_v_lg") -> Dict[str, Any]:
                 "title": r["title"],
                 "status": r["status"],
                 "order_idx": r["order_idx"],
+                "category": r["category"],
                 "subtasks": [],
             }
             last_tid = r["id"]
@@ -293,6 +334,7 @@ def snapshot_brain(case_id: str = "rbc_v_lg") -> Dict[str, Any]:
         "version": brain["version"],
         "updated_at": brain["updated_at"],
         "tasks": tasks_struct,
+        "readybag_runs": get_recent_readybag_runs(),
     }
 
 
@@ -310,12 +352,51 @@ def run_script(path: Path, args: List[str] = None):
 
 def cmd_ready_bag(_args):
     """Run ingest + cards + ready bag, then refresh brain index."""
-    run_script(BASE_DIR / "scripts" / "ingest_financial_truth.py")
-    run_script(BASE_DIR / "scripts" / "generate_evidence_cards.py")
-    run_script(BASE_DIR / "scripts" / "imessage_ingest.py")
-    run_script(BASE_DIR / "scripts" / "link_evidence_metadata.py")
-    run_script(BASE_DIR / "scripts" / "save_ready_bag.py")
-    refresh_brain_from_markdown(case_id="rbc_v_lg")
+    started = datetime.utcnow().isoformat() + "Z"
+
+    try:
+        # 1) Financial truth ingest
+        run_script(BASE_DIR / "scripts" / "ingest_financial_truth.py")
+
+        # 2) Evidence card generation (package module)
+        subprocess.run(
+            [sys.executable, "-m", "ingest.generate_evidence_cards"],
+            check=True,
+            cwd=BASE_DIR,
+        )
+
+        # 3) iMessage ingest
+        subprocess.run(
+            [sys.executable, "-m", "ingest.imessage_ingest"],
+            check=True,
+            cwd=BASE_DIR,
+        )
+
+        # 4) Link evidence metadata
+        run_script(BASE_DIR / "scripts" / "link_evidence_metadata.py")
+
+        # 5) Final save / ready-bag orchestrator
+        run_script(BASE_DIR / "scripts" / "save_ready_bag.py")
+
+        # 6) Refresh brain index
+        refresh_brain_from_markdown(case_id="rbc_v_lg")
+
+        status = "success"
+        notes = None
+    except Exception as e:
+        status = "error"
+        notes = str(e)
+        raise
+    finally:
+        finished = datetime.utcnow().isoformat() + "Z"
+        with db() as conn:
+            conn.execute(
+                """
+                INSERT INTO readybag_runs (started_at, finished_at, status, notes)
+                VALUES (?, ?, ?, ?)
+                """,
+                (started, finished, status, notes),
+            )
 
 
 def cmd_show(_args):

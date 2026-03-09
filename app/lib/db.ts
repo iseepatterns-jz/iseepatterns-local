@@ -12,7 +12,7 @@ const VAULT_ROOT = process.env.VAULT_ROOT || "";
 const DATA_ROOT = IS_LAMBDA
     ? path.join(VAULT_ROOT, "db")
     : path.resolve(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data",
+        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
         "data"
     );
 
@@ -26,7 +26,7 @@ const EVIDENCE_DIR = IS_LAMBDA
 const PROJECT_ROOT = IS_LAMBDA
     ? VAULT_ROOT
     : path.resolve(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data"
+        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1"
     );
 
 const CLIENT_ID = "rowboat-creative";
@@ -41,21 +41,46 @@ function getDbPath(dbName: string): string {
 
 // ── Singleton connections ──
 let _commDb: Database.Database | null = null;
+let _commDbRW: Database.Database | null = null;
 let _workbenchDb: Database.Database | null = null;
 let _imessageDb: Database.Database | null = null;
 
 /**
- * Communications database (mbox_index_v2.db) — READ ONLY
+ * Communications database (mbox_index.db) — READ ONLY
  * Focused: 8 Rowboat Creative accounts, drafts excluded, clean bodies.
  */
 export function getCommDb(): Database.Database {
     if (!_commDb) {
-        const dbPath = getDbPath("mbox_index_v2.db");
+        const dbPath = IS_LAMBDA
+            ? path.join(DATA_ROOT, "mbox_index.db")
+            : path.join(
+                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+                "data",
+                "MBOX_LOCKER",
+                "mbox_index.db"
+            );
         _commDb = new Database(dbPath, { readonly: true });
         _commDb.pragma("journal_mode = WAL");
         _commDb.pragma("cache_size = -64000"); // 64MB cache
     }
     return _commDb;
+}
+
+export function getCommDbWritable(): Database.Database {
+    if (!_commDbRW) {
+        const dbPath = IS_LAMBDA
+            ? path.join(DATA_ROOT, "mbox_index.db")
+            : path.join(
+                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+                "data",
+                "MBOX_LOCKER",
+                "mbox_index.db"
+            );
+        _commDbRW = new Database(dbPath); // default is read-write
+        _commDbRW.pragma("journal_mode = WAL");
+        _commDbRW.pragma("cache_size = -64000");
+    }
+    return _commDbRW;
 }
 
 // All tables (including chain_of_custody) live in mbox_index.db

@@ -48,7 +48,7 @@ export async function GET() {
         });
     } catch (error) {
         console.error("Stats API error:", error);
-        // Return fallback stats when email DB is unavailable (e.g., Lambda without mbox_index_v2.db)
+        // Return fallback stats when email DB is unavailable (e.g., Lambda without mbox_index.db)
         return NextResponse.json({
             totalEmails: 0,
             uniqueSenders: 0,

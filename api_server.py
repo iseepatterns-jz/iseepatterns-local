@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from fastapi.middleware.cors import CORSMiddleware
+import subprocess
 
 from pathlib import Path
 import os
@@ -59,6 +60,7 @@ class BrainStatus(BaseModel):
     summary: Optional[str]
     version: Optional[int]
     tasks: List[Dict[str, Any]]
+    readybag_runs: List[Dict[str, Any]] = []
 
 # ---------- Lazy globals ----------
 
@@ -98,7 +100,26 @@ def get_brain(case_id: str):
         summary=snap.get("summary"),
         version=snap.get("version"),
         tasks=snap.get("tasks", []),
+        readybag_runs=snap.get("readybag_runs", []),
+        updated_at=snap.get("updated_at"),
     )
+
+@app.post("/brain/readybag")
+def run_readybag():
+    """
+    Trigger the ready bag pipeline via brain_cli.py.
+    This is a thin wrapper around `python brain_cli.py readybag`.
+    """
+    # IMPORTANT: this assumes api_server.py is in the same dir as brain_cli.py
+    try:
+        subprocess.run(
+            [sys.executable, str(BASE_DIR / "brain_cli.py"), "readybag"],
+            check=True,
+        )
+        return {"status": "ok"}
+    except subprocess.CalledProcessError as e:
+        return {"status": "error", "detail": str(e)}
+
 
 @app.post("/rag/answer", response_model=RagAnswer)
 def rag_answer(req: RagQuery):

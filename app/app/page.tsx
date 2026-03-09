@@ -38,11 +38,20 @@ type BrainTask = {
   subtasks: BrainSubtask[];
 };
 
+type ReadybagRun = {
+  started_at: string;
+  finished_at: string;
+  status: string;
+  notes?: string | null;
+};
+
 type BrainStatus = {
   case_id: string;
   summary?: string;
   version?: number;
   tasks: BrainTask[];
+  readybag_runs: ReadybagRun[];
+  updated_at?: string;
 };
 
 interface Stats {
@@ -201,6 +210,40 @@ export default function DashboardPage() {
       setBrainLoading(false);
     }
   }, []);
+
+  const formatRunTime = (iso: string) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    let hours = d.getHours();
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    if (hours === 0) hours = 12;
+    const hourStr = String(hours).padStart(2, "0");
+
+    return `${year}-${month}-${day}, ${hourStr}:${minutes} ${ampm}`;
+  };
+
+  const [readybagRunning, setReadybagRunning] = useState(false);
+
+  const handleReadybag = useCallback(async () => {
+    setReadybagRunning(true);
+    try {
+      const res = await fetch("http://localhost:8000/brain/readybag", {
+        method: "POST",
+      });
+      if (!res.ok) throw new Error("Failed to run readybag");
+      await handleLoadBrain(); // refresh after run
+    } catch (err) {
+      console.error("Readybag run failed:", err);
+    } finally {
+      setReadybagRunning(false);
+    }
+  }, [handleLoadBrain]);
 
   if (loading) {
     return (
@@ -729,24 +772,43 @@ export default function DashboardPage() {
           <h3 style={{ margin: 0, fontSize: "1rem" }}>Brain Status (lawmodel1)</h3>
         </div>
 
-        <button
-          onClick={handleLoadBrain}
-          disabled={brainLoading}
-          style={{
-            padding: "0.4rem 0.9rem",
-            borderRadius: 8,
-            border: "1px solid rgba(151, 71, 255, 0.4)",
-            background: "rgba(151, 71, 255, 0.08)",
-            color: "var(--accent-purple)",
-            cursor: "pointer",
-            fontSize: "0.8rem",
-            fontWeight: 600,
-            opacity: brainLoading ? 0.4 : 1,
-            marginBottom: "0.75rem",
-          }}
-        >
-          {brainLoading ? "Loading..." : "Load Brain"}
-        </button>
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+          <button
+            onClick={handleLoadBrain}
+            disabled={brainLoading}
+            style={{
+              padding: "0.4rem 0.9rem",
+              borderRadius: 8,
+              border: "1px solid rgba(151, 71, 255, 0.4)",
+              background: "rgba(151, 71, 255, 0.08)",
+              color: "var(--accent-purple)",
+              cursor: "pointer",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              opacity: brainLoading ? 0.4 : 1,
+            }}
+          >
+            {brainLoading ? "Loading..." : "Load Brain"}
+          </button>
+
+          <button
+            onClick={handleReadybag}
+            disabled={readybagRunning}
+            style={{
+              padding: "0.4rem 0.9rem",
+              borderRadius: 8,
+              border: "1px solid rgba(0,245,212,0.4)",
+              background: "rgba(0,245,212,0.08)",
+              color: "var(--accent-cyan)",
+              cursor: "pointer",
+              fontSize: "0.8rem",
+              fontWeight: 600,
+              opacity: readybagRunning ? 0.4 : 1,
+            }}
+          >
+            {readybagRunning ? "Running..." : "Run Ready Bag"}
+          </button>
+        </div>
 
         {brain && (
           <div style={{ fontSize: "0.8rem" }}>
@@ -755,21 +817,88 @@ export default function DashboardPage() {
             </p>
             {brain.summary && <p>{brain.summary}</p>}
             <p>Version {brain.version}</p>
-            <ul style={{ marginTop: "0.5rem" }}>
-              {brain.tasks
-                .sort((a, b) => a.order_idx - b.order_idx)
-                .map((t, idx) => {
-                  const total = t.subtasks.length;
-                  const done = t.subtasks.filter(st => st.done).length;
-                  return (
-                    <li key={idx} style={{ marginBottom: 4 }}>
-                      [{t.status}] {t.title} ({done}/{total})
+
+            {brain.updated_at && (
+              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                Updated {formatRunTime(brain.updated_at)}
+              </p>
+            )}
+
+            {["infra", "investigative", "other"].map(group => {
+              const groupTasks = brain.tasks.filter(
+                (t: any) => (t as any).category === group
+              );
+              if (groupTasks.length === 0) return null;
+
+              const label =
+                group === "infra"
+                  ? "Infrastructure & Pipelines"
+                  : group === "investigative"
+                    ? "Investigative Work"
+                    : "Other Tasks";
+
+              return (
+                <div key={group} style={{ marginTop: "0.75rem" }}>
+                  <div
+                    style={{
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    {label} ({groupTasks.length})
+                  </div>
+                  <ul style={{ marginLeft: "1rem" }}>
+                    {groupTasks
+                      .sort((a: any, b: any) => a.order_idx - b.order_idx)
+                      .map((t: any, idx: number) => {
+                        const total = t.subtasks.length;
+                        const done = t.subtasks.filter((st: any) => st.done).length;
+                        return (
+                          <li
+                            key={idx}
+                            style={{
+                              marginBottom: 4,
+                              color:
+                                t.status === "IN_PROGRESS"
+                                  ? "var(--accent-yellow)"
+                                  : undefined,
+                              fontWeight:
+                                t.status === "IN_PROGRESS" ? 600 : 400,
+                            }}
+                          >
+                            [{t.status}] {t.title} ({done}/{total})
+                          </li>
+                        );
+                      })}
+                  </ul>
+                </div>
+              );
+            })}
+
+            {brain.readybag_runs && brain.readybag_runs.length > 0 && (
+              <div style={{ marginTop: "1rem" }}>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    marginBottom: "0.25rem",
+                  }}
+                >
+                  Recent Ready Bag Runs
+                </div>
+                <ul style={{ marginLeft: "1rem", fontSize: "0.75rem" }}>
+                  {brain.readybag_runs.map((run: any, idx: number) => (
+                    <li key={idx} style={{ marginBottom: 2 }}>
+                      [{run.status}]  {formatRunTime(run.started_at)} → {formatRunTime(run.finished_at)}
                     </li>
-                  );
-                })}
-            </ul>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
+
       </div>
     </div>
   );

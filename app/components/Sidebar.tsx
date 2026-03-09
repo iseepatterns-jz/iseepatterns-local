@@ -1,5 +1,6 @@
 "use client";
 
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -22,7 +23,9 @@ import {
     GitFork,
     Presentation,
     Brain,
+    ClipboardList, // ← NEW icon for CoC
 } from "lucide-react";
+
 
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
@@ -37,16 +40,20 @@ const NAV_ITEMS = [
     { label: "Briefing Room", href: "/briefing", icon: Presentation, enabled: true },
     { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
     { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
+    { label: "Chain of Custody", href: "/coc", icon: ClipboardList, enabled: true }, // ← NEW
     { label: "Memory Gems", href: "/gems", icon: Gem, enabled: false },
 ];
+
 
 export default function Sidebar() {
     const pathname = usePathname();
     const { data: session } = useSession();
     const [collapsed, setCollapsed] = useState(false);
 
+
     // Don't render sidebar on sign-in page
     if (pathname === "/auth/signin") return null;
+
 
     const userName = session?.user?.name || "Investigator";
     const userEmail = session?.user?.email || "Not signed in";
@@ -56,6 +63,7 @@ export default function Sidebar() {
         .join("")
         .slice(0, 2)
         .toUpperCase();
+
 
     return (
         <aside className={`sidebar ${collapsed ? "sidebar-collapsed" : ""}`}>
@@ -107,6 +115,7 @@ export default function Sidebar() {
                 )}
             </div>
 
+
             {/* ─ Active Case Badge ─ */}
             {!collapsed && (
                 <div style={{ padding: "0 1.25rem", marginBottom: "1.25rem" }}>
@@ -140,6 +149,7 @@ export default function Sidebar() {
                 </div>
             )}
 
+
             {/* ─ Navigation ─ */}
             <nav style={{ flex: 1 }}>
                 {!collapsed && (
@@ -163,6 +173,7 @@ export default function Sidebar() {
                             ? pathname === "/"
                             : pathname.startsWith(item.href);
                     const Icon = item.icon;
+
 
                     return item.enabled ? (
                         <Link
@@ -191,6 +202,7 @@ export default function Sidebar() {
                 })}
             </nav>
 
+
             {/* ─ Bottom Section ─ */}
             <div style={{ borderTop: "1px solid var(--border-glass)" }}>
                 {/* Collapse toggle */}
@@ -204,6 +216,7 @@ export default function Sidebar() {
                         {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
                     </button>
                 </div>
+
 
                 {/* User info */}
                 <div style={{ padding: collapsed ? "0.5rem" : "0.5rem 1.25rem 1rem", display: "flex", alignItems: "center", justifyContent: collapsed ? "center" : "flex-start", gap: "0.75rem" }}>
