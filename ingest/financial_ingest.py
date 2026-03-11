@@ -2,88 +2,131 @@ import os
 import sqlite3
 import pandas as pd
 import json
+import uuid
 from pathlib import Path
 
 DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
 FINANCIAL_DIR = DATA_DIR / "financial"
-QUICKBOOKS_DIR = FINANCIAL_DIR / "quickbooks"
+SCHEMAS_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/schemas")
 
-FINANCIAL_HUB_DB = FINANCIAL_DIR / "financial_hub.db"
-QUICKBOOKS_HUB_DB = FINANCIAL_DIR / "quickbooks_hub.db"
+# Unified Workbench DB
+WORKBENCH_DB = DATA_ROOT = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 def clean_column_name(name):
     return name.strip().lower().replace(" ", "_").replace("#", "num").replace("-", "_").replace(".", "_").replace("/", "_").replace("__", "_")
 
-def ingest_csv_to_sqlite(csv_path, db_path, table_name):
-    print(f"📥 Loading {csv_path.name} into {db_path.name} table {table_name}...")
-    
-    try:
-        # Check for metadata rows (QuickBooks report exports often have these)
-        skip_rows = 0
-        try:
-            with open(csv_path, 'r', encoding='utf-8') as f:
-                first_line = f.readline()
-                if "Company name" in first_line or "Company ID" in first_line:
-                    # It's a report with metadata. Skip until we find the real header.
-                    # Usually 10-15 lines. We'll look for the first empty line followed by a header.
-                    f.seek(0)
-                    for i, line in enumerate(f):
-                        if i > 20: break # Safety
-                        # Look for common header start or skip until empty line + 1
-                        if "Date,Transaction Type" in line or '"",Debit,Credit' in line:
-                            skip_rows = i
-                            break
-        except:
-             pass
+def init_workbench_schemas():
+    print(f"🛠️  Initializing Workbench schemas...")
+    conn = sqlite3.connect(WORKBENCH_DB)
+    for schema_file in ["financials.sql", "tax_returns.sql"]:
+        p = SCHEMAS_DIR / schema_file
+        if p.exists():
+            print(f"   Executing {schema_file}...")
+            conn.executescript(p.read_text())
+    conn.commit()
+    conn.close()
 
-        # Load CSV. Handle common encoding issues
-        try:
-            df = pd.read_csv(csv_path, on_bad_lines='skip', skiprows=skip_rows)
-        except UnicodeDecodeError:
-            df = pd.read_csv(csv_path, encoding='latin1', on_bad_lines='skip', skiprows=skip_rows)
-            
-        # Clean column names
+def parse_amount(val):
+    if pd.isna(val):
+        return 0.0
+    try:
+        s = str(val).replace('$', '').replace(',', '').strip()
+        if not s or s == '-':
+            return 0.0
+        return float(s)
+    except:
+        return 0.0
+
+def ingest_master_to_workbench(csv_path):
+    print(f"📥 Loading RBC Master into Workbench...")
+    try:
+        df = pd.read_csv(csv_path, on_bad_lines='skip', low_memory=False)
         df.columns = [clean_column_name(c) for c in df.columns]
         
-        # Add raw_json column
-        df['raw_json'] = df.apply(lambda x: x.to_json(), axis=1)
+        conn = sqlite3.connect(WORKBENCH_DB)
         
-        # Connect and save
-        conn = sqlite3.connect(db_path)
-        df.to_sql(table_name, conn, if_exists='replace', index=False)
+        txns = []
+        for _, row in df.iterrows():
+            date = str(row.get('date', ''))
+            if not date or date == 'nan': continue
+            
+            amount = parse_amount(row.get('amount'))
+            
+            txns.append((
+                str(uuid.uuid4()),
+                str(row.get('account', 'RBC_DEFAULT')),
+                date,
+                amount,
+                str(row.get('description', '')),
+                str(row.get('client', row.get('company', ''))),
+                'RBC',
+                row.to_json()
+            ))
+        
+        conn.executemany("""
+            INSERT INTO transactions (transaction_id, account_id, date, amount, description, counterparty, source, raw_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, txns)
+        
+        conn.commit()
         conn.close()
-        
-        print(f"   ✅ Loaded {len(df)} rows.")
-        return len(df)
+        print(f"   ✅ Loaded {len(txns)} RBC transactions.")
     except Exception as e:
-        print(f"   ❌ Error loading {csv_path.name}: {e}")
-        return 0
+        print(f"   ❌ Error: {e}")
+
+def ingest_printavo_to_workbench(csv_path):
+    print(f"📥 Loading Printavo Orders into Workbench...")
+    try:
+        df = pd.read_csv(csv_path, on_bad_lines='skip', low_memory=False)
+        df.columns = [clean_column_name(c) for c in df.columns]
+        
+        conn = sqlite3.connect(WORKBENCH_DB)
+        
+        txns = []
+        for _, row in df.iterrows():
+            inv = str(row.get('invoice_num', ''))
+            date = str(row.get('invoice_date', row.get('created_date', '')))
+            if not date or date == 'nan': continue
+            
+            amount = parse_amount(row.get('total'))
+            
+            txns.append((
+                f"PRINTAVO_{inv}_{str(uuid.uuid4())[:8]}",
+                'PRINTAVO_SALES',
+                date,
+                amount,
+                str(row.get('nickname', '')),
+                str(row.get('customer_full_name', '')),
+                'PRINTAVO',
+                row.to_json()
+            ))
+        
+        conn.executemany("""
+            INSERT INTO transactions (transaction_id, account_id, date, amount, description, counterparty, source, raw_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """, txns)
+        
+        conn.commit()
+        conn.close()
+        print(f"   ✅ Loaded {len(txns)} Printavo orders.")
+    except Exception as e:
+        print(f"   ❌ Error: {e}")
 
 def run_ingestion():
-    # 1. Financial Hub
-    print("🏦 Building Financial Hub...")
-    hub_files = {
-        "rbc-crm-printavo-exportsOrdersJob_export20240220.csv": "printavo_orders",
-        "rbc-crm-printavo-paymentsExpensesExport-20240220.csv": "printavo_payments",
-        "rbc-crm-printavo-purchase-order-data.csv": "printavo_purchase_orders",
-        "rbc-statement-transactions-master-sheet-full.csv": "master_transactions"
-    }
+    if not WORKBENCH_DB.parent.exists():
+        WORKBENCH_DB.parent.mkdir(parents=True, exist_ok=True)
     
-    for filename, table in hub_files.items():
-        csv_path = FINANCIAL_DIR / filename
-        if csv_path.exists():
-            ingest_csv_to_sqlite(csv_path, FINANCIAL_HUB_DB, table)
-        else:
-            print(f"   ⚠️ Skipping {filename}, file not found.")
+    init_workbench_schemas()
 
-    # 2. QuickBooks Hub
-    print("\n🧾 Building QuickBooks Hub...")
-    if QUICKBOOKS_DIR.exists():
-        for csv_path in QUICKBOOKS_DIR.glob("*.csv"):
-            table_name = csv_path.stem.lower()
-            ingest_csv_to_sqlite(csv_path, QUICKBOOKS_HUB_DB, table_name)
-    else:
-        print("   ⚠️ QuickBooks directory not found.")
+    # 1. RBC Master Transactions
+    master_csv = FINANCIAL_DIR / "rbc-statement-transactions-master-sheet-full.csv"
+    if master_csv.exists():
+        ingest_master_to_workbench(master_csv)
+    
+    # 2. Printavo Orders
+    printavo_csv = FINANCIAL_DIR / "rbc-crm-printavo-exportsOrdersJob_export20240220.csv"
+    if printavo_csv.exists():
+        ingest_printavo_to_workbench(printavo_csv)
 
 if __name__ == "__main__":
     run_ingestion()

@@ -549,10 +549,15 @@ class EvidenceHubIngestor:
             if is_first_account:
                 try:
                     cur = self.hub_conn.execute(
-                        """INSERT OR IGNORE INTO evidence
+                        """INSERT INTO evidence
                            (canonical_id, source_type, title, summary, body_snippet,
                             start_timestamp, tags, primary_ids)
-                           VALUES (?, 'email', ?, ?, ?, ?, ?, ?)""",
+                           VALUES (?, 'email', ?, ?, ?, ?, ?, ?)
+                           ON CONFLICT(canonical_id) DO UPDATE SET
+                               body_snippet = COALESCE(excluded.body_snippet, body_snippet),
+                               summary = COALESCE(excluded.summary, summary),
+                               updated_at = datetime('now')
+                        """,
                         (
                             canonical_id, title, summary, body[:4000], date_str,
                             json.dumps(tags, ensure_ascii=False),
@@ -561,8 +566,14 @@ class EvidenceHubIngestor:
                     )
                     is_new = cur.rowcount > 0
                     if is_new:
+                        # rowcount > 0 means either INSERTed or UPDATEd
+                        # We need to distinguish for stats, but simplified:
                         self.stats['email_inserted'] += 1
                         eid = cur.lastrowid
+                        if not eid:
+                            # If UPDATE, lastrowid might be 0 or current
+                            r = self.hub_conn.execute("SELECT id FROM evidence WHERE canonical_id = ?", (canonical_id,)).fetchone()
+                            eid = r[0] if r else None
                         seen_canonical.add(canonical_id)
                     else:
                         self.stats['email_deduped'] += 1

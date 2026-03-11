@@ -136,7 +136,9 @@ export default function EvidenceHubPage() {
     const [highlightNote, setHighlightNote] = useState("");
     const [highlightColor, setHighlightColor] = useState(HIGHLIGHT_COLORS[0]);
     const [savingAnnotation, setSavingAnnotation] = useState(false);
-    const [detailTab, setDetailTab] = useState<"body" | "annotations" | "coc">("body");
+    const [detailTab, setDetailTab] = useState<"body" | "annotations" | "coc" | "ai">("body");
+    const [aiResponse, setAiResponse] = useState<string | null>(null);
+    const [aiLoading, setAiLoading] = useState(false);
     const bodyRef = useRef<HTMLDivElement>(null);
 
     /* ─── fetch list ─── */
@@ -245,6 +247,33 @@ export default function EvidenceHubPage() {
             fetchAnnotations(selectedId);
         } catch (err) { console.error("save error:", err); }
         finally { setSavingAnnotation(false); }
+    };
+
+    /* ─── AI analysis ─── */
+    const askAi = async () => {
+        if (!detail?.evidence) return;
+        setDetailTab("ai");
+        setAiLoading(true);
+        setAiResponse(null);
+        try {
+            const query = `Analyze the following evidence item (ID: ${detail.evidence.canonical_id}) and explain its significance in the context of the case. Focus on participants, dates, and any potentially incriminating or suspicious patterns. 
+            
+            Evidence Content:
+            ${detail.evidence.body_snippet}`;
+
+            const res = await fetch("/api/ai/rag", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ query, skipLLM: false }),
+            });
+            const data = await res.json();
+            setAiResponse(data.answer || "No AI response received.");
+        } catch (err) {
+            console.error("ai error:", err);
+            setAiResponse("Error performing AI analysis. Please ensure Ollama is running.");
+        } finally {
+            setAiLoading(false);
+        }
     };
 
     /* ─── delete annotation ─── */
@@ -817,7 +846,17 @@ export default function EvidenceHubPage() {
                         ) : detail?.evidence ? (
                             <>
                                 <div className="eh-detail-header">
-                                    <span className="eh-detail-title">{detail.evidence.title || detail.evidence.canonical_id}</span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <span className="eh-detail-title">{detail.evidence.title || detail.evidence.canonical_id}</span>
+                                        <button 
+                                            className="eh-btn active" 
+                                            onClick={askAi}
+                                            title="Ask AI about this evidence"
+                                            style={{ padding: "4px 8px", background: "rgba(167, 139, 250, 0.15)", borderColor: "rgba(167, 139, 250, 0.4)" }}
+                                        >
+                                            <MessageCircle size={14} color="#a78bfa" /> <span style={{ color: "#a78bfa" }}>Ask AI</span>
+                                        </button>
+                                    </div>
                                     <button className="eh-btn" onClick={() => { setSelectedId(null); setDetail(null); setHighlightPopup(null); }} style={{ padding: "4px 8px" }}>
                                         <X size={14} />
                                     </button>
@@ -856,6 +895,9 @@ export default function EvidenceHubPage() {
                                     <button className={`eh-detail-tab ${detailTab === "coc" ? "active" : ""}`} onClick={() => setDetailTab("coc")}>
                                         <Shield size={12} /> Chain
                                         {cocData && <span className="badge-count">{cocData.origin_count}</span>}
+                                    </button>
+                                    <button className={`eh-detail-tab ${detailTab === "ai" ? "active" : ""}`} onClick={() => setDetailTab("ai")}>
+                                        <MessageCircle size={12} /> AI Insights
                                     </button>
                                 </div>
 
@@ -1059,6 +1101,35 @@ export default function EvidenceHubPage() {
                                                         </li>
                                                     ))}
                                                 </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* ── AI Insights tab ── */}
+                                {detailTab === "ai" && (
+                                    <div className="eh-detail-section">
+                                        <h4>AI Insights & Analysis</h4>
+                                        {aiLoading ? (
+                                            <div className="eh-loading" style={{ padding: 40 }}>
+                                                <RefreshCw size={24} />
+                                                <p style={{ marginTop: 12 }}>RAG analysis in progress…</p>
+                                            </div>
+                                        ) : aiResponse ? (
+                                            <div className="eh-detail-body" style={{ background: "rgba(167, 139, 250, 0.05)", borderColor: "rgba(167, 139, 250, 0.2)", minHeight: 400 }}>
+                                                <div style={{ padding: "8px 0" }}>
+                                                    {aiResponse.split("\n\n").map((para, i) => (
+                                                        <p key={i} style={{ marginBottom: 12 }}>{para}</p>
+                                                    ))}
+                                                </div>
+                                                <div style={{ marginTop: 24, fontSize: 11, color: "#64748b", borderTop: "1px solid rgba(167, 139, 250, 0.1)", paddingTop: 12 }}>
+                                                    Analysis generated by the integrated RAG core using hybrid BM25 + Vector search.
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="eh-empty" style={{ padding: 30 }}>
+                                                <MessageCircle size={30} />
+                                                <p style={{ fontSize: 13 }}>Click the "Ask AI" button above to perform a contextual analysis of this record.</p>
                                             </div>
                                         )}
                                     </div>

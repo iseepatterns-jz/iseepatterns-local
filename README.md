@@ -4,6 +4,8 @@ A local AI-powered legal and financial forensic assistant with **hybrid search**
 
 ## Features
 
+- **Unified Financial Hub**: Consolidation of ~24k RBC and Printavo records with cross-linking to evidence.
+- **Evidence Hub (Backend)**: Master SQLite database linking emails, iMessages, and legal documents.
 - **Hybrid Search**: BM25 keyword matching + vector similarity (RRF) over normalized “evidence cards.”
 - **Cross-Encoder Reranking**: FlashRank reranker to eliminate false-positive chunks.
 - **Category & Source Filtering**: Filter by document type (complaints, motions, receiver reports, etc.) and by evidence source (emails, iMessages, legal PDFs, financials, Printavo, QuickBooks, bank/CC).

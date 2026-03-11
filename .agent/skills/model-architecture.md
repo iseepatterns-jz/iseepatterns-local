@@ -46,7 +46,6 @@ Design decisions for ingestion and retrieval:
         - Keep chunks in the same ~512‑token range.
     - Financial records:
         - Group rows by **logical transaction cluster** (e.g., per invoice, per day, or per vendor) and summarize them into compact text.
-        - **Phase 6 Update**: Standardized RBC Master Statements (~22k txns) and Printavo Orders (~2k txns) into a unified `transactions` table in `workbench.db`. Significant events (>$5k or keyword-matched) are promoted to the Evidence Hub for semantic search.
 2. **Metadata for every chunk**
 Each chunk stored in SQLite / your vector store must include at least:
     - Short summary (1–3 sentences).

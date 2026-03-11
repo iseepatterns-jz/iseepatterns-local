@@ -28,8 +28,8 @@ const LEGAL_DOCS_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data";
 const BM25_INDEX_PATH = path.join(LEGAL_DOCS_DIR, "bm25_index_ts.json");
 const CHROMA_COLLECTION = "legal_docs";
 
-// Email evidence database
-const EMAILS_DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/emails_LG_SM_SH_JZ.db";
+// Email & Messaging evidence hub (unified)
+const EVIDENCE_HUB_DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_hub.db";
 
 // Labels to exclude from RAG indexing
 const EXCLUDED_LABELS = ["^DRAFT", "^SPAM", "^DELETED", "^TRASH"];
@@ -358,96 +358,75 @@ async function embedQuery(text: string): Promise<number[]> {
 // ─────────────────────────────────────────────────────────────────
 
 /**
- * Load email evidence from the emails DB.
- * Filters out drafts, spam, deleted, and trash emails.
- * Uses bodySingle (court-clean body with no reply chains/signatures).
+ * Load evidence from the Evidence Hub (Emails + iMessages).
+ * Filters out short snippets and empty content.
  */
-function loadEmailsFromDb(limit: number = DEFAULT_EMAIL_LIMIT): DocChunk[] {
+function loadEvidenceFromHub(limit: number = DEFAULT_EMAIL_LIMIT): DocChunk[] {
     const chunks: DocChunk[] = [];
 
-    console.log(`  📧 Loading emails from ${EMAILS_DB_PATH}`);
-    if (!fs.existsSync(EMAILS_DB_PATH)) {
-        console.log(`     ❌ Email DB not found: ${EMAILS_DB_PATH}`);
+    console.log(`  📂 Loading evidence from ${EVIDENCE_HUB_DB_PATH}`);
+    if (!fs.existsSync(EVIDENCE_HUB_DB_PATH)) {
+        console.log(`     ❌ Evidence Hub not found: ${EVIDENCE_HUB_DB_PATH}`);
         return chunks;
     }
 
     try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const Database = require("better-sqlite3");
-        const db = new Database(EMAILS_DB_PATH, { readonly: true });
+        const db = new Database(EVIDENCE_HUB_DB_PATH, { readonly: true });
 
-        // Query non-empty bodySingle emails, excluding drafts/spam/deleted/trash
+        // Query non-empty body_snippet records
         const stmt = db.prepare(`
-            SELECT id, message_id, date, from_addr, to_addr, subject,
-                   bodySingle, labels, involves, direction
-            FROM emails
-            WHERE bodySingle IS NOT NULL
-              AND bodySingle != ''
-              AND (is_draft = 0 OR is_draft IS NULL)
-              AND (
-                labels IS NULL
-                OR (
-                  labels NOT LIKE '%DRAFT%'
-                  AND labels NOT LIKE '%SPAM%'
-                  AND labels NOT LIKE '%DELETED%'
-                  AND labels NOT LIKE '%TRASH%'
-                )
-              )
-            ORDER BY date DESC
+            SELECT id, canonical_id, source_type as source, start_timestamp as timestamp,
+                   body_snippet, tags, primary_ids
+            FROM evidence
+            WHERE body_snippet IS NOT NULL
+              AND body_snippet != ''
+            ORDER BY start_timestamp DESC
             LIMIT ?
         `);
 
         const rows = stmt.all(limit);
-        console.log(`     Found ${rows.length} rows in SQLite (requested limit: ${limit})`);
+        console.log(`     Found ${rows.length} rows in Evidence Hub (requested limit: ${limit})`);
 
         let skippedShort = 0;
-        let skippedEmpty = 0;
 
         for (const row of rows) {
-            const text = row.bodySingle as string;
-            if (!text) {
-                skippedEmpty++;
-                continue;
-            }
+            const text = row.body_snippet as string;
             if (text.trim().length < 20) {
                 skippedShort++;
-                continue; // Skip very short emails
+                continue; 
             }
 
-            // Categorize by labels
-            const labels = (row.labels as string) || "";
+            // Categorize by source
             let category = "email_other";
-            if (labels.includes("SENT")) category = "email_sent";
-            else if (labels.includes("INBOX")) category = "email_inbox";
-            else if (labels.includes("ARCHIVED")) category = "email_archived";
+            if (row.source === "email") category = "email_inbox";
+            else if (row.source === "imessage") category = "general";
 
-            // For longer emails, chunk them; for short ones, keep as-is
+            // For longer content, chunk them; for short ones, keep as-is
             const textChunks = text.length > CHUNK_SIZE ? chunkText(text) : [text];
 
             for (let i = 0; i < textChunks.length; i++) {
                 chunks.push({
                     content: textChunks[i],
                     metadata: {
-                        domain: "email",
+                        domain: "evidence",
                         category,
-                        source_file: (row.subject as string) || "No Subject",
-                        source_type: "email",
+                        source_file: row.canonical_id || "Unknown Source",
+                        source_type: row.source,
                         page: i + 1,
-                        // Extra email metadata stored as strings for BM25
-                        date: (row.date as string) || "",
-                        from_addr: (row.from_addr as string) || "",
-                        to_addr: (row.to_addr as string) || "",
-                        labels: labels,
-                        involves: (row.involves as string) || "",
+                        timestamp: row.timestamp || "",
+                        evidence_id: String(row.id),
+                        tags: row.tags || "[]",
                     },
                 });
             }
         }
 
         db.close();
-        console.log(`  ✓ emails: ${rows.length} rows, ${chunks.length} chunks (skipped: ${skippedEmpty} empty, ${skippedShort} short)`);
+        console.log(`  ✓ evidence: ${rows.length} rows, ${chunks.length} chunks (skipped: ${skippedShort} short)`);
     } catch (e) {
-        console.error(`  ❌ Email loading error: ${e}`);
+        console.error(`  ❌ Evidence loading error: ${e}`);
     }
 
     return chunks;
@@ -472,8 +451,8 @@ export async function indexDocuments(
     // This will recursively find all PDFs/TXTs in all "Locker" folders
     const pdfChunks = await loadDocsFromDir(LEGAL_DOCS_DIR, "forensic");
 
-    // Load email evidence
-    const emailChunks = loadEmailsFromDb(emailLimit);
+    // Load evidence hub data (emails + messages)
+    const emailChunks = loadEvidenceFromHub(emailLimit);
 
     const allChunks = [...pdfChunks, ...emailChunks];
 
