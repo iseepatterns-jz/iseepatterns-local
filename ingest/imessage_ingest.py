@@ -1,134 +1,313 @@
-import os
-import sqlite3
+# ingest/imessage_ingest.py
 import uuid
-import json
-from typing import List, Dict
-from datetime import datetime, timedelta, timezone
+import sqlite3
+from pathlib import Path
+from datetime import datetime, timezone, timedelta
+from typing import Dict, Any, Set
+
 from .evidence_card import EvidenceCard
 
-DATA_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data"
-# Unified Chat DB location (centralized during consolidation)
-# Use the pre-exported CSV for reliability
-IMESSAGE_CSV_PATH = "/Volumes/batdrivetb5/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/messages_7736109104_8478280944.csv"
-CARDS_OUT = os.path.join(DATA_DIR, "evidence_cards")
-os.makedirs(CARDS_OUT, exist_ok=True)
+WHITELIST_HANDLES = {
+    "joe@rowboatcreative.com",  # Joseph Zangrilli
+    "+17736109104",  # Joseph Zangrilli  
+    "lucas@rowboatcreative.com",  # Lucas Guariglia
+    "+18478280944@tmomail.net",  # Lucas Guariglia
+    "+17736109104",  # Lucas Guariglia
+    "+17043407505",  # Suzanne Guariglia
+    "+17738529219",  # Leonard Mayersky
+    "+17083075156",  # Pamela Visvardis
+    "+17204540129",  # Thomas Nitschke
+    "+18473801876",  # Michael Sanderson
+    "+13127254059",  # Ryan Hayes
+    "+18478040165",  # Henry Badani
+    "+18473870518",  # Steven Farag
+    "george.g@rudderservices.com",  # George Grigorakos
+    "+13124203036",  # George Grigorakos
+    "+13124203036",  # Elliot Hershik
+    "+16307018110",  # Sheri Highland
+    "abel@rowboatcreative.com",  # Abel Rodriguez
+    "+17736366744",  # Abel Rodriguez
+    "patrick@rowboatcreative.com",  # Patrick Houdek
+    "+17736366744",  # Patrick Houdek
+    "+14847588413",  # Jeff Paolino
+    "jay@rowboatcreative.com",  # Jay Goebel
+    "+17733549538",  # Jay Goebel
+    "stephanie@rowboatcreative.com",  # Stephanie Cuccinella
+    "+12245670848",  # Stephanie Cuccinella
+    "+17737190088",  # Kevin Rotter
+    "fiddes56@gmail.com",  # Luke Fiddes
+    "+13093393391",  # Luke Fiddes
+    "taylor@pendulum-creative.com",  # Taylor Smith
+    "+18043176988",  # Taylor Smith
+    "+17738515303",  # John Azara
+    "+17735161720",  # Wally Klejka
+    "+13122753110",  # David Baum
+    "+13128487283",  # Nicole Yalaz
+    "+19135485577",  # Jon Duong
+    "+14066721522",  # Carmel Halim
+    "+17577495856",  # Sam Cobb
+    "+15105026585",  # Sal Mohamed
+    "+17735584454",  # Eric Montanez
+    "+18572212405",  # Jimmy Bui
+    "+17739722946",  # Manny Caston
+    "+16309955836",  # Cameron Lowe
+    "+17733019422",  # Jose Aburto
+    "+16304325005",  # Amber Dys
+    "+16302729916",  # Stevie Hopkins
+    # add others as needed
+}
 
-def fetch_messages() -> List[Dict]:
-    if not os.path.exists(IMESSAGE_CSV_PATH):
-        print(f"❌ iMessage CSV not found at {IMESSAGE_CSV_PATH}")
-        return []
-    
-    import pandas as pd
-    print(f"   Reading {IMESSAGE_CSV_PATH}...")
-    try:
-        df = pd.read_csv(IMESSAGE_CSV_PATH)
-        # Normalize columns to match the DB-based logic if possible
-        # Expected: rowid, date (apple ts), text, handle_id, chat_identifier
-        # The CSV has: RowID, Date (ISO?), Text, Handle_ID, etc.
-        # Let's see the columns first.
-        messages = []
-        for _, row in df.iterrows():
-            messages.append({
-                "rowid": row.get("RowID") or row.get("rowid"),
-                "date": row.get("Date") or row.get("date"),
-                "text": row.get("Text") or row.get("text") or row.get("body"),
-                "handle_id": row.get("Handle_ID") or row.get("handle_id") or row.get("sender"),
-                "chat_identifier": row.get("Chat_Identifier") or row.get("chat_identifier") or "LG_JZ_Thread"
-            })
-        return messages
-    except Exception as e:
-        print(f"❌ Error reading iMessage CSV: {e}")
-        return []
+DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+CARDS_OUT = DATA_DIR / "evidence_cards"
 
-def group_into_threads(messages: List[Dict], max_msgs_per_card: int = 20, time_gap_seconds: int = 3600):
-    threads = []
-    current = []
-    last_ts = None
-    
-    for msg in messages:
-        ts = msg["date"]
-        # Start new thread if gap > 1 hour or limit reached
-        if current and (len(current) >= max_msgs_per_card or (last_ts and (ts - last_ts) > time_gap_seconds)):
-            threads.append(current)
-            current = [msg]
-        else:
-            current.append(msg)
-        last_ts = ts
-        
-    if current:
-        threads.append(current)
-    return threads
+# Default (you can still use this if you want a single-DB call)
+CHAT_DB_PATH = Path(
+    "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
+)
 
-def _apple_time_to_iso(ts):
-    if isinstance(ts, str) and "-" in ts and "T" in ts:
-        return ts # Already ISO
-    # macOS iMessage timestamp: seconds since 2001-01-01
-    if ts is None:
-        return None
-    try:
-        # Apple timestamps are seconds since 2001-01-01 00:00:00 UTC
-        # Convert to datetime object
-        dt_object = datetime(2001, 1, 1, tzinfo=timezone.utc) + timedelta(seconds=ts)
-        # Format to ISO 8601 string
-        return dt_object.isoformat(timespec='seconds')
-    except (TypeError, ValueError):
-        return None
 
-def thread_to_card(thread: List[Dict]) -> EvidenceCard:
-    chat_identifier = thread[0]["chat_identifier"] or "Unknown"
-    timestamps = [_apple_time_to_iso(m["date"]) for m in thread if m["date"] is not None]
-    timestamps = [t for t in timestamps if t]
-    start_ts = min(timestamps) if timestamps else None
-    end_ts = max(timestamps) if timestamps else None
+def _unix_to_iso8601(ts: int) -> str:
+    # Temporarily disable conversion; keep raw value in extra.
+    return None
 
-    participants = sorted({m["handle_id"] for m in thread if m["handle_id"]})
-    body_lines = []
-    for m in thread:
-        ts = _apple_time_to_iso(m["date"]) or ""
-        text = m["text"] or "[Attachment/Empty]"
-        sender = "LG/JZ" if m["handle_id"] == "+18478280944" else "JZ"
-        body_lines.append(f"[{ts}] {sender}: {text}")
-        
-    body = "\n".join(body_lines)
 
-    # Forensic summary
-    summary = f"iMessage thread between {', '.join(participants)}. Includes {len(thread)} messages."
-    bullets = [m["text"][:100] for m in thread if m["text"] and len(m["text"]) > 10][:5]
+def _detect_db_style(conn) -> Dict[str, Any]:
+    cur = conn.cursor()
+    cur.execute("PRAGMA table_info(message)")
+    cols = {row[1] for row in cur.fetchall()}  # row[1] is column name
+    return {
+        "has_decoded_body": "decodedBody" in cols,
+        "has_thread_originator": "thread_originator_guid" in cols,
+    }
 
-    card_id = str(uuid.uuid4())
-    return EvidenceCard(
-        id=card_id,
-        source_type="imessage",
-        file_path=IMESSAGE_CSV_PATH,
-        origin_system="CHAT_DB",
-        primary_ids={"chat_identifier": chat_identifier, "message_count": str(len(thread))},
-        participants=participants,
-        start_timestamp=start_ts,
-        end_timestamp=end_ts,
-        title=f"iMessage: {chat_identifier} ({start_ts[:10] if start_ts else 'Unknown Date'})",
-        summary=summary,
-        bullets=bullets,
-        body_snippet=body,
-        tags=["imessage", "forensic", "chat"],
-        extra={"message_rowids": [m["rowid"] for m in thread]}
+
+
+def _choose_body(row, style):
+    if style["has_decoded_body"]:
+        return (row["decoded_body"] or row["message_text"] or "")
+    else:
+        return (row["message_text"] or "")
+
+
+def _get_conn(db_path: Path) -> sqlite3.Connection:
+    conn = sqlite3.connect(str(db_path))
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _get_chat_participants(conn: sqlite3.Connection, chat_rowid: int) -> Set[str]:
+    q = """
+    SELECT h.id
+    FROM chat_handle_join chj
+    JOIN handle h ON chj.handle_id = h.ROWID
+    WHERE chj.chat_id = ?
+    """
+    cur = conn.cursor()
+    cur.execute(q, (chat_rowid,))
+    return {row["id"] for row in cur.fetchall() if row["id"]}
+
+
+def _iter_imessage_rows(conn: sqlite3.Connection, style: Dict[str, Any]):
+    cur = conn.cursor()
+    has_decoded = style.get("has_decoded_body", False)
+    has_thread_originator = style.get("has_thread_originator", False)
+
+    decoded_col = "m.decodedBody AS decoded_body" if has_decoded else "NULL AS decoded_body"
+    thread_originator_col = (
+        "m.thread_originator_guid AS thread_originator_guid"
+        if has_thread_originator
+        else "NULL AS thread_originator_guid"
     )
 
-def ingest_imessages():
-    print("📱 Starting iMessage ingestion...")
-    msgs = fetch_messages()
-    print(f"   Found {len(msgs)} messages for target handle.")
-    if not msgs:
-        return
-        
-    threads = group_into_threads(msgs)
-    print(f"   Grouped into {len(threads)} evidence cards.")
-    
-    for t in threads:
-        card = thread_to_card(t)
-        out_path = os.path.join(CARDS_OUT, f"{card.id}.json")
-        with open(out_path, "w", encoding="utf-8") as fh:
-            fh.write(card.to_json())
-    print(f"   ✓ Generated {len(threads)} iMessage evidence cards in {CARDS_OUT}")
+    q = f"""
+    SELECT
+        m.ROWID              AS message_rowid,
+        m.guid               AS message_guid,
+        m.text               AS message_text,
+        {decoded_col},
+        m.date               AS message_date,
+        m.date_read          AS date_read,
+        m.date_delivered     AS date_delivered,
+        m.is_from_me         AS is_from_me,
+        m.is_audio_message   AS is_audio_message,
+        m.is_service_message AS is_service_message,
+        m.is_system_message  AS is_system_message,
+        m.is_spam            AS is_spam,
+        m.is_corrupt         AS is_corrupt,
+        m.associated_message_guid   AS associated_message_guid,
+        {thread_originator_col},
+        m.sort_id            AS sort_id,
 
-if __name__ == "__main__":
-    ingest_imessages()
+        h.id                 AS handle_id,
+        h.service            AS handle_service,
+
+        c.ROWID              AS chat_rowid,
+        c.guid               AS chat_guid,
+        c.chat_identifier    AS chat_identifier,
+        c.style              AS chat_style
+
+    FROM message m
+    LEFT JOIN handle h
+      ON m.handle_id = h.ROWID
+    LEFT JOIN chat_message_join cmj
+      ON cmj.message_id = m.ROWID
+    LEFT JOIN chat c
+      ON c.ROWID = cmj.chat_id
+    ORDER BY c.guid, m.date
+    """
+
+    for row in cur.execute(q):
+        yield row
+
+
+def _get_attachments_for_message(conn: sqlite3.Connection, message_rowid: int):
+    q = """
+    SELECT
+        a.guid        AS attachment_guid,
+        a.filename    AS filename,
+        a.mime_type   AS mime_type,
+        a.total_bytes AS total_bytes
+    FROM message_attachment_join maj
+    JOIN attachment a
+      ON maj.attachment_id = a.ROWID
+    WHERE maj.message_id = ?
+    """
+    cur = conn.cursor()
+    cur.execute(q, (message_rowid,))
+    return [dict(r) for r in cur.fetchall()]
+
+
+def generate_imessage_cards_for_db(chat_db_path: Path, origin_system: str):
+    """
+    Generate one EvidenceCard per iMessage/SMS from the given chat DB.
+    """
+    print(f"💬 Generating EvidenceCards from iMessage chat DB: {chat_db_path}")
+
+    if not chat_db_path.exists():
+        print(f"   No chat DB at {chat_db_path}, skipping.")
+        return
+
+    CARDS_OUT.mkdir(parents=True, exist_ok=True)
+    conn = _get_conn(chat_db_path)
+
+    try:
+        db_style = _detect_db_style(conn)
+
+        for row in _iter_imessage_rows(conn, db_style):
+            msg_rowid = row["message_rowid"]
+            msg_guid = row["message_guid"]
+            chat_rowid = row["chat_rowid"]
+            chat_guid = row["chat_guid"]
+            chat_identifier = row["chat_identifier"]
+            chat_style = row["chat_style"]
+
+            is_from_me = bool(row["is_from_me"] or 0)
+            handle_id = row["handle_id"]
+            handle_service = row["handle_service"]
+
+            participants_set = set()
+            if chat_rowid is not None:
+                participants_set |= _get_chat_participants(conn, chat_rowid)
+            if handle_id:
+                participants_set.add(handle_id)
+            participants = sorted(p for p in participants_set if p)
+
+            # Filter: keep only if any participant is in the whitelist
+            if WHITELIST_HANDLES and not (participants_set & WHITELIST_HANDLES):
+                continue
+
+            date_raw = row["message_date"]
+            start_ts = None  # or str(date_raw) if you want a string copy
+
+            attachments = _get_attachments_for_message(conn, msg_rowid)
+            has_attachments = len(attachments) > 0
+            attachment_guids = [a["attachment_guid"] for a in attachments]
+            attachment_filenames = [a["filename"] for a in attachments if a["filename"]]
+            attachment_mimes = [a["mime_type"] for a in attachments if a["mime_type"]]
+
+            text = _choose_body(row, db_style)
+            text = str(text)
+
+            who = handle_id or "unknown"
+            direction = "outgoing" if is_from_me else "incoming"
+            title = f"iMessage {direction} in chat {chat_guid or chat_identifier or chat_rowid}"
+            summary = f"{direction.capitalize()} message by {who} in chat {chat_guid or chat_identifier}."
+
+            bullets = [
+                f"Direction: {direction}",
+                f"Participants: {', '.join(participants[:5])}",
+                f"Chat style: {chat_style}",
+                f"Has attachments: {has_attachments}",
+            ]
+
+            primary_ids: Dict[str, str] = {}
+            if msg_rowid is not None:
+                primary_ids["message_rowid"] = str(msg_rowid)
+            if msg_guid:
+                primary_ids["message_guid"] = str(msg_guid)
+            if chat_guid:
+                primary_ids["chat_guid"] = str(chat_guid)
+            if chat_identifier:
+                primary_ids["chat_identifier"] = str(chat_identifier)
+            if attachment_guids:
+                primary_ids["attachment_guids"] = ",".join(attachment_guids)
+
+            extra: Dict[str, Any] = {
+                "source_db_path": str(chat_db_path),
+                "origin_system": origin_system,
+                "chat_rowid": chat_rowid,
+                "chat_style": chat_style,
+                "chat_identifier": chat_identifier,
+                "handle_id": handle_id,
+                "handle_service": handle_service,
+                "message_date_raw": date_raw,
+                "date_read_raw": row["date_read"],
+                "date_delivered_raw": row["date_delivered"],
+                "is_from_me": int(is_from_me),
+                "is_audio_message": row["is_audio_message"],
+                "is_service_message": row["is_service_message"],
+                "is_system_message": row["is_system_message"],
+                "is_spam": row["is_spam"],
+                "is_corrupt": row["is_corrupt"],
+                "associated_message_guid": row["associated_message_guid"],
+                "thread_originator_guid": row["thread_originator_guid"],
+                "sort_id": row["sort_id"],
+                "attachment_guids": attachment_guids,
+                "attachment_filenames": attachment_filenames,
+                "attachment_mime_types": attachment_mimes,
+                "has_decoded_body": db_style["has_decoded_body"],
+            }
+
+            card = EvidenceCard(
+                id=str(uuid.uuid4()),
+                source_type="imessage",
+                file_path=str(chat_db_path),
+                origin_system=origin_system,
+                primary_ids=primary_ids,
+                participants=participants,
+                start_timestamp=start_ts,
+                end_timestamp=start_ts,
+                title=title,
+                summary=summary,
+                bullets=bullets,
+                body_snippet=text[:4000],
+                tags=["imessage", "chat"],
+                extra=extra,
+            )
+
+            out_name = f"imsg_{origin_system}_{msg_rowid}.json"
+            out_path = CARDS_OUT / out_name
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(card.to_json())
+
+    finally:
+        conn.close()
+
+    print(f"✅ iMessage EvidenceCard generation complete for {chat_db_path}")
+
+
+def generate_imessage_cards():
+    """
+    Backwards-compatible wrapper: generate cards for the default m1studio DB.
+    """
+    generate_imessage_cards_for_db(CHAT_DB_PATH, origin_system="CHAT_DB_M1STUDIO")
