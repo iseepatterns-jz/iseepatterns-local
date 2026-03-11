@@ -2,6 +2,12 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../../Users/iseepatterns-ms-m4/.gemini"
+		},
+		{
+			"path": "../../../../Users/iseepatterns-ms-m4/.config"
 		}
 	],
 	"settings": {}

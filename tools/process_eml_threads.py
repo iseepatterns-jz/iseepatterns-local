@@ -48,6 +48,32 @@ KNOWN_SIG_NAMES = [
     "Amy Laughinghouse",
 ]
 
+SIG_HINT_PHRASES = [
+    "associate & senior property manager",
+    "rowboat creative",
+    "fulton grace realty",
+    "sales | rentals | property management",
+    "office:",
+    "cell:",
+    "p:",
+    "f:",
+    "www.fultongrace.com",
+    "www.rowboatcreative.com",
+]
+
+def looks_like_signature_block(lines: list[str], idx: int) -> bool:
+    """
+    Heuristic: a signature block often has a name-ish line followed by
+    a few short lines with role/company/contact/URL.
+    """
+    name_line = lines[idx].strip()
+    lower_block = " ".join(l.strip().lower() for l in lines[idx:idx+6])
+    if len(name_line.split()) < 2:
+        return False
+    # If any of our signature hint phrases appear in the next few lines,
+    # treat this as the start of a signature block.
+    return any(p in lower_block for p in SIG_HINT_PHRASES)
+
 def clean_text(text: str) -> str:
     if not text:
         return ""
@@ -58,6 +84,12 @@ def clean_text(text: str) -> str:
         stripped = line.strip()
         if not stripped:
             continue
+
+        # 1) Quoted history: be more aggressive
+        #    Handle "On ... wrote:" patterns even if HTML2Text adds markup.
+        if stripped.lower().startswith("on ") and " wrote:" in stripped.lower():
+            cut_at = min(cut_at, i)
+            break
 
         for pat in QUOTE_START_PATTERNS:
             if pat.search(stripped):
@@ -74,6 +106,7 @@ def clean_text(text: str) -> str:
                 cut_at = min(cut_at, i)
                 break
 
+        # 2) Known signature names with polite closers (your existing rule)
         if i >= 1 and stripped in KNOWN_SIG_NAMES:
             prev = lines[i - 1].strip().lower()
             if not prev or any(prev.startswith(p) for p in ["thank", "best", "regards", "sincerely"]):
@@ -82,6 +115,15 @@ def clean_text(text: str) -> str:
                 else:
                     cut_at = min(cut_at, i)
                 break
+
+        # 3) Generic signature block heuristic
+        if looks_like_signature_block(lines, i):
+            # If the previous line is a polite closer, trim from there; otherwise from this line
+            if i > 0 and lines[i - 1].strip().lower().startswith(("thanks", "thank you", "best", "regards")):
+                cut_at = min(cut_at, i - 1)
+            else:
+                cut_at = min(cut_at, i)
+            break
 
         if cut_at <= i:
             break
@@ -104,6 +146,14 @@ def parse_eml(path: Path):
     to = msg.get_all("to", [])
     cc = msg.get_all("cc", [])
     bcc = msg.get_all("bcc", [])
+
+    message_id = (msg.get("Message-ID") or "").strip()
+    in_reply_to = (msg.get("In-Reply-To") or "").strip()
+    references_raw = msg.get_all("References", [])
+    # Flatten and split on whitespace – each token is typically a Message-ID
+    references: list[str] = []
+    for r in references_raw or []:
+        references.extend(r.split())
 
     def join_list(v):
         if v is None:
@@ -167,6 +217,9 @@ def parse_eml(path: Path):
         "to": to_list,
         "cc": cc_list,
         "bcc": bcc_list,
+        "message_id": message_id,
+        "in_reply_to": in_reply_to,
+        "references": references,
         "body_clean": cleaned,
         "attachments": attachments,
     }

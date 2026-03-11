@@ -163,6 +163,27 @@ export function getDb(name: string): Database.Database {
 export { CLIENT_ID, CASE_ID, EVIDENCE_DIR, PROJECT_ROOT };
 
 /**
+ * Evidence Hub database — READ ONLY
+ * Contains 643k+ evidence records (emails + iMessages) with provenance, participants, and FTS5.
+ */
+let _evidenceHubDb: Database.Database | null = null;
+export function getEvidenceHubDb(): Database.Database {
+    if (!_evidenceHubDb) {
+        const dbPath = IS_LAMBDA
+            ? path.join(DATA_ROOT, "evidence_hub.db")
+            : path.join(
+                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+                "data",
+                "evidence_hub.db"
+            );
+        _evidenceHubDb = new Database(dbPath, { readonly: true });
+        _evidenceHubDb.pragma("journal_mode = WAL");
+        _evidenceHubDb.pragma("cache_size = -64000");
+    }
+    return _evidenceHubDb;
+}
+
+/**
  * Case Corner database — READ-WRITE
  * Reuses workbench.db but applies case_corner.sql schema.
  */

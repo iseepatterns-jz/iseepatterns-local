@@ -32,6 +32,7 @@ const NAV_ITEMS = [
     { label: "Communications", href: "/communications", icon: Mail, enabled: true },
     { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
     { label: "Workbench", href: "/workbench", icon: Briefcase, enabled: true },
+    { label: "Evidence Hub", href: "/evidence-hub", icon: Shield, enabled: true },
     { label: "Players", href: "/players", icon: Users, enabled: true },
     { label: "Transcripts", href: "/transcripts", icon: FileText, enabled: true },
     { label: "Legal", href: "/legal", icon: Scale, enabled: true },
