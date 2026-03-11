@@ -8,9 +8,9 @@ A local AI-powered legal and financial forensic assistant with **hybrid search**
 - **Evidence Hub (Backend)**: Master SQLite database linking emails, iMessages, and legal documents.
 - **Hybrid Search**: BM25 keyword matching + vector similarity (RRF) over normalized “evidence cards.”
 - **Cross-Encoder Reranking**: FlashRank reranker to eliminate false-positive chunks.
-- **Category & Source Filtering**: Filter by document type (complaints, motions, receiver reports, etc.) and by evidence source (emails, iMessages, legal PDFs, financials, Printavo, QuickBooks, bank/CC).
-- **Source Attribution**: Every answer cites explicit IDs (Message-IDs, Bates, invoice/PO numbers, ledger IDs, master sheet row IDs) and filenames/pages for traceability.
-- **Unified Evidence Cards**: All raw data (PDFs, emails, chat.db, CSVs, QuickBooks attachments) is normalized into structured `EvidenceCard` JSON with summaries, bullets, timestamps, participants, and IDs.
+- **Category & Source Filtering**: Filter by document type (complaints, motions, receiver reports, etc.) and by evidence source (emails, iMessages, legal PDFs, tax-records, financials, Printavo, QuickBooks, bank/CC).
+- **Source Attribution**: Every answer cites explicit IDs (Message-IDs, Bates, tax-years, invoice/PO numbers, ledger IDs, master sheet row IDs) and filenames/pages for traceability.
+- **Unified Evidence Cards**: All raw data (PDFs, emails, tax returns, chat.db, CSVs, QuickBooks attachments) is normalized into structured `EvidenceCard` JSON with summaries, bullets, timestamps, participants, and IDs.
 - **Dual Personas on One Model**:
   - **Analyst**: Deep forensic reasoning across evidence cards.
   - **Synthesizer**: Short, citation-heavy answers for UI.

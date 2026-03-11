@@ -61,6 +61,12 @@ interface PlayerMatch {
     profile_type: string;
 }
 
+interface Annotation {
+    id: number;
+    line_index: number;
+    note: string;
+}
+
 /* ── Helpers ── */
 function formatDuration(ms: number): string {
     const totalSeconds = Math.floor(ms / 1000);
@@ -110,6 +116,12 @@ function TranscriptsPageInner() {
     const transcriptBodyRef = useRef<HTMLDivElement | null>(null);
     const activeSegRef = useRef<HTMLDivElement | null>(null);
     const lastScrolledIdx = useRef(-1);
+
+    /* Annotations */
+    const [annotations, setAnnotations] = useState<Map<number, string>>(new Map());
+    const [editingCommentIdx, setEditingCommentIdx] = useState<number | null>(null);
+    const [commentInput, setCommentInput] = useState("");
+    const [analyzing, setAnalyzing] = useState(false);
 
     /* Player badges for speakers */
     const [speakerPlayers, setSpeakerPlayers] = useState<Map<string, PlayerMatch>>(new Map());
@@ -185,6 +197,14 @@ function TranscriptsPageInner() {
             } else {
                 setSpeakerPlayers(new Map());
             }
+
+            // Fetch annotations
+            const annRes = await fetch(`/api/transcripts/${encodeURIComponent(slug)}/annotations`);
+            const annData = await annRes.json();
+            const annMap = new Map<number, string>();
+            (annData.annotations || []).forEach((a: Annotation) => annMap.set(a.line_index, a.note));
+            setAnnotations(annMap);
+
         } catch (e) {
             console.error("Failed to fetch transcript:", e);
         }
@@ -199,6 +219,8 @@ function TranscriptsPageInner() {
         setIsPlaying(false);
         lastScrolledIdx.current = -1;
         setSpeakerPlayers(new Map());
+        setAnnotations(new Map());
+        setEditingCommentIdx(null);
     };
 
     const filteredSegments =
@@ -258,6 +280,46 @@ function TranscriptsPageInner() {
             }
         }
     }, []);
+
+    const saveComment = async (idx: number) => {
+        if (!selectedSlug) return;
+        try {
+            const res = await fetch(`/api/transcripts/${encodeURIComponent(selectedSlug)}/annotations`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ line_index: idx, note: commentInput }),
+            });
+            if (res.ok) {
+                const newAnns = new Map(annotations);
+                newAnns.set(idx, commentInput);
+                setAnnotations(newAnns);
+                setEditingCommentIdx(null);
+                setCommentInput("");
+                showToast("Comment saved");
+            }
+        } catch {
+            showToast("Failed to save comment", true);
+        }
+    };
+
+    const runAnalysis = async () => {
+        if (!selectedSlug) return;
+        setAnalyzing(true);
+        try {
+            const res = await fetch(`/api/transcripts/${encodeURIComponent(selectedSlug)}/analyze`, {
+                method: "POST",
+            });
+            const data = await res.json();
+            if (res.ok) {
+                showToast("Forensic analysis completed");
+            } else {
+                showToast(data.error || "Analysis failed", true);
+            }
+        } catch {
+            showToast("Analysis error", true);
+        }
+        setAnalyzing(false);
+    };
 
     return (
         <div style={{ maxWidth: 1400, margin: "0 auto" }}>
@@ -576,6 +638,24 @@ function TranscriptsPageInner() {
                                     <div style={{ display: 'flex', gap: '0.375rem', alignItems: 'center' }}>
                                         <button
                                             className="workbench-action-btn"
+                                            onClick={runAnalysis}
+                                            disabled={analyzing}
+                                            style={{
+                                                fontSize: '0.65rem',
+                                                padding: '4px 10px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                color: 'var(--accent-purple)',
+                                                borderColor: 'rgba(139, 92, 246, 0.3)',
+                                            }}
+                                            title="Run automated forensic analysis"
+                                        >
+                                            {analyzing ? <Loader2 size={12} className="animate-spin" /> : <Mic size={12} />}
+                                            Analyze
+                                        </button>
+                                        <button
+                                            className="workbench-action-btn"
                                             onClick={async () => {
                                                 setSectionPickerOpen(true);
                                                 try {
@@ -734,11 +814,9 @@ function TranscriptsPageInner() {
                                             <div
                                                 key={idx}
                                                 ref={isActive ? activeSegRef : undefined}
-                                                onClick={() => seekToSegment(seg.startMs)}
                                                 style={{
                                                     display: "flex",
-                                                    gap: "0.75rem",
-                                                    padding: "0.375rem 0.5rem",
+                                                    flexDirection: "column",
                                                     borderLeft: isActive
                                                         ? "3px solid var(--accent-cyan)"
                                                         : "3px solid transparent",
@@ -747,53 +825,125 @@ function TranscriptsPageInner() {
                                                         : "transparent",
                                                     borderBottom:
                                                         "1px solid rgba(255,255,255,0.03)",
-                                                    borderRadius: isActive ? 4 : 0,
-                                                    cursor: selected.hasAudio ? "pointer" : "default",
+                                                    padding: "0.375rem 0.5rem",
                                                     transition: "background 0.2s ease, border-left 0.2s ease",
                                                 }}
                                             >
-                                                {/* Timestamp */}
-                                                <span
+                                                <div
                                                     style={{
-                                                        fontFamily: "var(--font-mono)",
-                                                        fontSize: "0.65rem",
-                                                        color: isActive ? "var(--accent-cyan)" : "var(--text-muted)",
-                                                        flexShrink: 0,
-                                                        width: 70,
-                                                        paddingTop: "2px",
-                                                        fontWeight: isActive ? 600 : 400,
+                                                        display: "flex",
+                                                        gap: "0.75rem",
+                                                        cursor: selected.hasAudio ? "pointer" : "default",
                                                     }}
+                                                    onClick={() => seekToSegment(seg.startMs)}
                                                 >
-                                                    {seg.timestamp}
-                                                </span>
-                                                {/* Speaker */}
-                                                <span
-                                                    style={{
-                                                        fontSize: "0.7rem",
-                                                        fontWeight: 700,
-                                                        color: speakerColor(seg.speaker),
-                                                        flexShrink: 0,
-                                                        width: 120,
-                                                        overflow: "hidden",
-                                                        textOverflow: "ellipsis",
-                                                        whiteSpace: "nowrap",
-                                                        paddingTop: "1px",
-                                                    }}
-                                                    title={seg.speaker}
-                                                >
-                                                    {seg.speaker}
-                                                </span>
-                                                {/* Text */}
-                                                <span
-                                                    style={{
-                                                        fontSize: "0.8rem",
-                                                        color: isActive ? "var(--text-primary)" : "rgba(255,255,255,0.7)",
-                                                        lineHeight: 1.5,
-                                                        fontWeight: isActive ? 500 : 400,
-                                                    }}
-                                                >
-                                                    {seg.text}
-                                                </span>
+                                                    {/* Timestamp */}
+                                                    <span
+                                                        style={{
+                                                            fontFamily: "var(--font-mono)",
+                                                            fontSize: "0.65rem",
+                                                            color: isActive ? "var(--accent-cyan)" : "var(--text-muted)",
+                                                            flexShrink: 0,
+                                                            width: 70,
+                                                            paddingTop: "2px",
+                                                            fontWeight: isActive ? 600 : 400,
+                                                        }}
+                                                    >
+                                                        {seg.timestamp}
+                                                    </span>
+                                                    {/* Speaker */}
+                                                    <span
+                                                        style={{
+                                                            fontSize: "0.7rem",
+                                                            fontWeight: 700,
+                                                            color: speakerColor(seg.speaker),
+                                                            flexShrink: 0,
+                                                            width: 120,
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap",
+                                                            paddingTop: "1px",
+                                                        }}
+                                                        title={seg.speaker}
+                                                    >
+                                                        {seg.speaker}
+                                                    </span>
+                                                    {/* Text */}
+                                                    <span
+                                                        style={{
+                                                            flex: 1,
+                                                            fontSize: "0.8rem",
+                                                            color: isActive ? "var(--text-primary)" : "rgba(255,255,255,0.7)",
+                                                            lineHeight: 1.5,
+                                                            fontWeight: isActive ? 500 : 400,
+                                                        }}
+                                                    >
+                                                        {seg.text}
+                                                    </span>
+                                                    
+                                                    {/* Comment Action */}
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setEditingCommentIdx(idx);
+                                                            setCommentInput(annotations.get(idx) || "");
+                                                        }}
+                                                        style={{
+                                                            background: 'none',
+                                                            border: 'none',
+                                                            color: annotations.has(idx) ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                                            cursor: 'pointer',
+                                                            opacity: 0.6,
+                                                            padding: '0 4px'
+                                                        }}
+                                                        title="Comment on this line"
+                                                    >
+                                                        <Mic size={14} />
+                                                    </button>
+                                                </div>
+
+                                                {/* Annotation View/Edit */}
+                                                {(annotations.has(idx) || editingCommentIdx === idx) && (
+                                                    <div style={{ paddingLeft: 215, marginTop: '0.25rem' }}>
+                                                        {editingCommentIdx === idx ? (
+                                                            <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                                                                <input
+                                                                    autoFocus
+                                                                    className="input-glass"
+                                                                    value={commentInput}
+                                                                    onChange={(e) => setCommentInput(e.target.value)}
+                                                                    onKeyDown={(e) => {
+                                                                        if (e.key === 'Enter') saveComment(idx);
+                                                                        if (e.key === 'Escape') setEditingCommentIdx(null);
+                                                                    }}
+                                                                    style={{ fontSize: '0.75rem', height: '28px' }}
+                                                                    placeholder="Add context or notes..."
+                                                                />
+                                                                <button 
+                                                                    className="workbench-action-btn"
+                                                                    onClick={() => saveComment(idx)}
+                                                                    style={{ fontSize: '0.65rem', padding: '0 8px' }}
+                                                                >
+                                                                    Save
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div 
+                                                                style={{ 
+                                                                    fontSize: '0.75rem', 
+                                                                    color: 'var(--accent-cyan)',
+                                                                    fontStyle: 'italic',
+                                                                    background: 'rgba(0, 245, 212, 0.04)',
+                                                                    padding: '4px 8px',
+                                                                    borderRadius: 4,
+                                                                    borderLeft: '2px solid var(--accent-cyan)'
+                                                                }}
+                                                            >
+                                                                {annotations.get(idx)}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         );
                                     })}

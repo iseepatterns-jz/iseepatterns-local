@@ -115,11 +115,14 @@ export function getWorkbenchDb(): Database.Database {
             _workbenchDb.pragma("foreign_keys = ON");
 
             // Initialize schema if needed
-            const schemaPath = path.join(PROJECT_ROOT, "schemas", "workbench.sql");
-            if (fs.existsSync(schemaPath)) {
-                const schema = fs.readFileSync(schemaPath, "utf-8");
-                _workbenchDb.exec(schema);
-            }
+            const schemaFiles = ["workbench.sql", "transcript_annotations.sql"];
+            schemaFiles.forEach(file => {
+                const schemaPath = path.join(PROJECT_ROOT, "schemas", file);
+                if (fs.existsSync(schemaPath)) {
+                    const schema = fs.readFileSync(schemaPath, "utf-8");
+                    _workbenchDb!.exec(schema);
+                }
+            });
         }
     }
     return _workbenchDb;
