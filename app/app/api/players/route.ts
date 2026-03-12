@@ -22,9 +22,16 @@ export async function GET(req: NextRequest) {
         const params: string[] = [];
 
         if (q) {
-            sql += ` AND (display_name LIKE ? OR title LIKE ? OR company LIKE ? OR skills LIKE ? OR notes LIKE ?)`;
+            sql += ` AND (
+                display_name LIKE ? OR 
+                title LIKE ? OR 
+                company LIKE ? OR 
+                skills LIKE ? OR 
+                notes LIKE ? OR
+                EXISTS (SELECT 1 FROM player_files pf WHERE pf.player_id = players.id AND pf.content_text LIKE ?)
+            )`;
             const like = `%${q}%`;
-            params.push(like, like, like, like, like);
+            params.push(like, like, like, like, like, like);
         }
 
         if (typeFilter) {
@@ -88,6 +95,14 @@ export async function GET(req: NextRequest) {
             }
         }
 
+        const HUB_DB_PATH = path.join(process.cwd(), "..", "data", "evidence_hub.db");
+        let hubDb: any = null;
+        try {
+            hubDb = new Database(HUB_DB_PATH, { readonly: true });
+        } catch (e) {
+            console.error("Could not open Evidence Hub DB for players integration:", e);
+        }
+
         const processedRows = allPlayers.map(row => {
             // Inject phone numbers if empty
             if (PHONE_OVERRIDES[row.slug] && (!row.phone_numbers || row.phone_numbers === '[]')) {
@@ -128,8 +143,27 @@ export async function GET(req: NextRequest) {
                 console.error(`Error looking for avatar for ${row.slug}:`, e);
             }
 
-            return { ...row, avatar };
+            // --- Evidence Hub Linkage ---
+            let evidence_count = 0;
+            if (hubDb) {
+                try {
+                    // Try to match by display name in Hub entities
+                    const hubRow = hubDb.prepare(`
+                        SELECT COUNT(pe.participant_id) as count
+                        FROM entities e
+                        JOIN participant_entities pe ON e.id = pe.entity_id
+                        WHERE e.name = ?
+                    `).get(row.display_name) as { count: number };
+                    if (hubRow) evidence_count = hubRow.count;
+                } catch (e) {
+                    console.error(`Error fetching hub metrics for ${row.display_name}:`, e);
+                }
+            }
+
+            return { ...row, avatar, evidence_count };
         });
+
+        if (hubDb) hubDb.close();
 
         return NextResponse.json({ players: processedRows, total: processedRows.length });
     } catch (err: unknown) {

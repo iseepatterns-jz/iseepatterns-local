@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../../../../Users/iseepatterns-ms-m4/.config"
+		},
+		{
+			"path": "../context"
 		}
 	],
 	"settings": {}

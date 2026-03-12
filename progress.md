@@ -28,11 +28,39 @@
 | Cross-Linking | WB -> EV | >2k links | 2,019 links | ✓ |
 | RAG Indexing | Chroma Upsert | 2,019 chunks | Success | ✓ |
 
+## Session: 2026-03-12 (Continued)
+
+### Phase 21: Forensic Chat Integration
+- **Status:** complete
+- **Started:** 2026-03-12 15:45
+- Actions taken:
+  - Consolidated 270k+ messages into `consolidated_investigation_m1_imac.db`.
+  - Created `unified_investigation_timeline` view with enhanced forensic metadata (read/delivered statuses, reaction decoding, attachment filenames).
+  - Executed "Cross-Evidence Linkage" (Phase 20) using LinkedIn and Evidence Hub keywords.
+  - Generated 4,481 targeted Evidence Cards (JSON) based on Financial, Legal, Music, and Player pivots.
+  - Integrated flagged chat evidence into `evidence_hub.db` for unified investigative discovery.
+- Files created/modified:
+  - `chatdb_storage/consolidated_investigation_m1_imac.db` (created/updated)
+  - `chatdb_storage/exports/pivots/generate_chat_evidence_cards.py` (created)
+  - `chatdb_storage/exports/pivots/integrate_chat_to_hub.py` (created)
+
+## Test Results
+| Test | Input | Expected | Actual | Status |
+|------|-------|----------|--------|--------|
+| Ingestion RBC | Master CSV | 22k rows | 21,981 rows | ✓ |
+| Ingestion Printavo | Order CSV | 2k rows | 1,995 rows | ✓ |
+| Cross-Linking | WB -> EV | >2k links | 2,019 links | ✓ |
+| RAG Indexing | Chroma Upsert | 2,019 chunks | Success | ✓ |
+| Tax Ingestion | PDF returns | ~25 records | 28 records | ✓ |
+| Tax Linking | Email/Tax Match | >1k links | 2,753 links | ✓ |
+| Chat Pivot | Investigative filters | >4k matches | 4,481 matches | ✓ |
+| Hub Integration | JSON -> SQL | >4k records | 4,481 records | ✓ |
+
 ## 5-Question Reboot Check
 | Question | Answer |
 |----------|--------|
-| Where am I? | Phase 6 Complete |
-| Where am I going? | Phase 7: Tax Return Integration |
-| What's the goal? | Build a unified forensic environment for legal discovery. |
-| What have I learned? | Financial record normalization requires strict handling of mixed-type currency strings. |
-| What have I done? | Unified Financial Hub & updated documentation. |
+| Where am I? | Phase 21 Complete |
+| Where am I going? | Phase 22: Document Generation & Automated Flagging Strategy |
+| What's the goal? | Transition from evidence collection to automated distillation and reporting. |
+| What have I learned? | Centralized attachment mapping and forensic status (read/delivered) are critical for establishing evidentiary intent. |
+| What have I done? | Unified 270k+ chats, centralized attachments, and integrated 4.4k+ flagged cards into the Evidence Hub. |

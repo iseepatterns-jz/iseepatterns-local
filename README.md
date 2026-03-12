@@ -29,15 +29,12 @@ lawmodel1/
 │   ├── email_ingest.py                    # MBOX/EML Parser
 │   ├── imessage_ingest.py                 # Chat.db Parser
 │   └── load_to_sqlite.py                  # Normalization to DB
-├── data/
-│   ├── evidence_cards/                    # Normalized EvidenceCard JSON records
-│   ├── financial/
-│   │   ├── financial_hub.db               # SQLite hub for Printavo + master sheet
-│   │   ├── ... (CSVs)
-│   │   └── quickbooks/
-│   │       ├── ... (CSVs)
-│   │       └── attachments/              # Scanned QB receipts/invoices
-│   └── chatdb/                            # iMessage chat.db source
+├── chatdb_storage/                        # iMessage forensic storage
+│   ├── consolidated_investigation_m1_imac.db # Master 270k+ message database
+│   └── exports/
+│       └── pivots/                        # Targeted forensic extraction
+│           ├── generate_chat_evidence_cards.py
+│           └── integrate_chat_to_hub.py
 └── ...
 ```
 

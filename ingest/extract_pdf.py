@@ -1,23 +1,18 @@
-#!/usr/bin/env python3
+import pypdf
 import sys
-import objc
-from Foundation import NSURL
-from Quartz import PDFDocument
 
 def extract_text(pdf_path):
-    url = NSURL.fileURLWithPath_(pdf_path)
-    doc = PDFDocument.alloc().initWithURL_(url)
-    if not doc:
+    try:
+        reader = pypdf.PdfReader(pdf_path)
+        full_text = []
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                full_text.append(text)
+        return "\n\n".join(full_text)
+    except Exception as e:
+        print(f"Error extracting PDF {pdf_path}: {e}")
         return None
-    
-    full_text = []
-    for i in range(doc.pageCount()):
-        page = doc.pageAtIndex_(i)
-        text = page.string()
-        if text:
-            full_text.append(str(text))
-    
-    return "\n\n".join(full_text)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

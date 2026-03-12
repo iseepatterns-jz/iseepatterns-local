@@ -47,6 +47,27 @@ CREATE TABLE IF NOT EXISTS participants (
     display_name            TEXT                   -- optional human-readable name
 );
 
+-- Entities (Consolidated Identities)
+CREATE TABLE IF NOT EXISTS entities (
+    id              INTEGER PRIMARY KEY,
+    name            TEXT NOT NULL,
+    bio             TEXT,
+    tags            TEXT,                  -- JSON array
+    color           TEXT,                  -- UI hint
+    created_at      TEXT DEFAULT (datetime('now')),
+    updated_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Mapping participants back to their consolidated entities
+CREATE TABLE IF NOT EXISTS participant_entities (
+    id              INTEGER PRIMARY KEY,
+    participant_id  INTEGER NOT NULL REFERENCES participants(id),
+    entity_id       INTEGER NOT NULL REFERENCES entities(id),
+    confidence      REAL DEFAULT 1.0,      -- 0 to 1 scaling
+    source          TEXT,                  -- 'heuristic', 'manual', 'llm'
+    UNIQUE(participant_id, entity_id)
+);
+
 -- Junction: evidence <-> participants (many-to-many)
 CREATE TABLE IF NOT EXISTS evidence_participants (
     id              INTEGER PRIMARY KEY,

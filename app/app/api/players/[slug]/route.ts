@@ -55,19 +55,43 @@ export async function GET(
         // Apply Overrides & Discover Image
         const { processedPlayer, avatar } = handleOverrides(player, slug);
 
+        // --- Evidence Hub Linkage ---
+        const HUB_DB_PATH = path.join(process.cwd(), "..", "data", "evidence_hub.db");
+        let evidence_count = 0;
+        try {
+            const hubDb = new Database(HUB_DB_PATH, { readonly: true });
+            const hubRow = hubDb.prepare(`
+                SELECT COUNT(pe.participant_id) as count
+                FROM entities e
+                JOIN participant_entities pe ON e.id = pe.entity_id
+                WHERE e.name = ?
+            `).get(processedPlayer.display_name) as { count: number };
+            if (hubRow) evidence_count = hubRow.count;
+            hubDb.close();
+        } catch (e) {
+            console.error("Evidence Hub detail integration error:", e);
+        }
+
         // Get associated files (only if not dummy Adrienne)
         let files: unknown[] = [];
         if (processedPlayer.id !== 999999) {
-            files = db
-                .prepare(
-                    `SELECT id, file_type, file_path, content_text 
-                     FROM player_files WHERE player_id = ?`
-                )
-                .all(processedPlayer.id);
+            try {
+                files = db
+                    .prepare(
+                        `SELECT id, file_type, file_path, content_text 
+                         FROM player_files WHERE player_id = ?`
+                    )
+                    .all(processedPlayer.id);
+            } catch (e) {
+                console.error("Error fetching player files:", e);
+            }
         }
 
         db.close();
-        return NextResponse.json({ player: { ...processedPlayer, avatar }, files });
+        return NextResponse.json({ 
+            player: { ...processedPlayer, avatar, evidence_count }, 
+            files 
+        });
     } catch (err: unknown) {
         if (db) try { db.close(); } catch { }
         console.error("Player detail API error:", err);

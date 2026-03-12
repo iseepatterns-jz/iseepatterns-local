@@ -43,26 +43,35 @@ export async function GET(request: NextRequest) {
                 WHERE json_valid(evidence.tags)
                 GROUP BY json_each.value
                 ORDER BY count DESC LIMIT 20
-            `).all();
+            `).all() || [];
 
             return NextResponse.json({
-                total: totalRow.total,
-                sources: sourceBreakdown,
-                participants: participantTop,
-                origins: originBreakdown,
-                tags: tagBreakdown,
+                total: totalRow?.total || 0,
+                sources: sourceBreakdown || [],
+                participants: participantTop || [],
+                origins: originBreakdown || [],
+                tags: tagBreakdown || [],
             });
         }
 
         // ── Detail mode ──
         if (mode === "detail" && evidenceId) {
+            const idNum = parseInt(evidenceId, 10);
+            if (isNaN(idNum)) {
+                return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
+            }
+
             const evidence = db.prepare(`
                 SELECT e.*, GROUP_CONCAT(DISTINCT eo.origin_system || ':' || eo.source_file) as origins
                 FROM evidence e
                 LEFT JOIN evidence_origins eo ON eo.evidence_id = e.id
                 WHERE e.id = ?
                 GROUP BY e.id
-            `).get(parseInt(evidenceId, 10));
+            `).get(idNum) as any;
+
+            if (!evidence) {
+                return NextResponse.json({ error: "Evidence not found" }, { status: 404 });
+            }
 
             const participants = db.prepare(`
                 SELECT p.identifier, p.normalized_identifier, ep.role
@@ -70,13 +79,13 @@ export async function GET(request: NextRequest) {
                 JOIN participants p ON p.id = ep.participant_id
                 WHERE ep.evidence_id = ?
                 ORDER BY ep.role
-            `).all(parseInt(evidenceId, 10));
+            `).all(idNum);
 
             const provenance = db.prepare(`
-                SELECT origin_system, source_file, source_rowid
+                SELECT origin_system, source_file, source_rowid, imported_at as created_at
                 FROM evidence_origins
                 WHERE evidence_id = ?
-            `).all(parseInt(evidenceId, 10));
+            `).all(idNum);
 
             return NextResponse.json({ evidence, participants, provenance });
         }

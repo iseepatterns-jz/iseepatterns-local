@@ -14,6 +14,7 @@ import {
     Tag,
     ChevronRight,
     AlertTriangle,
+    FileText,
 } from "lucide-react";
 
 /* ── Types ── */
@@ -33,6 +34,14 @@ interface Player {
     notes: string;
     summary?: string;
     avatar?: string;
+    evidence_count?: number;
+}
+
+interface PlayerFile {
+    id: number;
+    file_type: string;
+    file_path: string;
+    content_text: string;
 }
 
 /* ── Helpers ── */
@@ -65,11 +74,133 @@ function getRoleColor(player: Player): string {
 function parseJson(s: string | null): string[] {
     if (!s) return [];
     try {
-        return JSON.parse(s);
+        const parsed = JSON.parse(s);
+        return Array.isArray(parsed) ? parsed : [];
     } catch {
         return [];
     }
 }
+
+/* ── Forensic UI Components ── */
+const ExperienceBlocks = ({ lines }: { lines: string[] }) => {
+    // LinkedIn PDF Experience usually goes: Company, Title, Dates, Location, (Description)
+    const blocks: string[][] = [];
+    let currentBlock: string[] = [];
+
+    lines.forEach(line => {
+        // New blocks usually start with a company name, often followed by a title and dates
+        // Dates in LinkedIn PDFs usually contain " - " or a specific year range
+        if (currentBlock.length >= 2 && (line.includes(' - ') || line.includes('\u00a0-\u00a0') || line.match(/\d{4}/))) {
+            blocks.push(currentBlock);
+            currentBlock = [line];
+        } else {
+            currentBlock.push(line);
+        }
+    });
+    if (currentBlock.length > 0) blocks.push(currentBlock);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {blocks.map((block, bIdx) => (
+                <div key={bIdx} style={{ position: 'relative' }}>
+                    <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.825rem', letterSpacing: '-0.01em' }}>{block[0]}</div>
+                    <div style={{ color: 'var(--accent-cyan)', fontSize: '0.725rem', fontWeight: 600, marginTop: '0.1rem' }}>{block[1]}</div>
+                    <div style={{ fontSize: '0.65rem', opacity: 0.5, marginTop: '0.1rem' }}>{block[2]}</div>
+                    {block.slice(3).map((l, i) => (
+                        <div key={i} style={{ fontSize: '0.7rem', marginTop: '0.25rem', opacity: 0.8, lineHeight: 1.4 }}>{l}</div>
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const ForensicProfileView = ({ text }: { text: string }) => {
+    if (!text) return null;
+
+    const sectionHeaders = [
+        "Contact", "Top Skills", "Languages", "Certifications", 
+        "Summary", "Experience", "Education", "Honors-Awards", 
+        "Publications", "Projects", "Organizations"
+    ];
+
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l !== "");
+    const sections: { header: string, content: string[] }[] = [];
+    let currentSection: { header: string, content: string[] } = { header: "General", content: [] };
+
+    lines.forEach(line => {
+        const isHeader = sectionHeaders.some(h => line.toLowerCase() === h.toLowerCase());
+        if (isHeader) {
+            if (currentSection.content.length > 0) sections.push(currentSection);
+            currentSection = { header: line, content: [] };
+        } else if (!line.match(/Page \d+ of \d+/)) {
+            currentSection.content.push(line);
+        }
+    });
+    sections.push(currentSection);
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {sections.map((section, idx) => (
+                <div key={idx} className="forensic-section">
+                    <div style={{ 
+                        fontSize: '0.6rem', 
+                        fontWeight: 900, 
+                        color: 'var(--accent-cyan)', 
+                        textTransform: 'uppercase', 
+                        letterSpacing: '0.15em',
+                        marginBottom: '0.75rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem'
+                    }}>
+                        {section.header}
+                        <div style={{ flex: 1, height: 1, background: 'var(--accent-cyan)', opacity: 0.15 }}></div>
+                    </div>
+                    
+                    <div style={{ 
+                        fontFamily: 'var(--font-mono)', 
+                        fontSize: '0.75rem', 
+                        lineHeight: 1.6,
+                        color: 'var(--text-secondary)',
+                        paddingLeft: '0.75rem',
+                    }}>
+                        {section.header === 'Experience' ? (
+                            <ExperienceBlocks lines={section.content} />
+                        ) : section.header === 'Top Skills' ? (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                                {section.content.map((skill, sIdx) => (
+                                    <span key={sIdx} style={{ 
+                                        background: 'rgba(0, 242, 255, 0.05)', 
+                                        color: 'var(--accent-cyan)',
+                                        padding: '0.15rem 0.5rem', 
+                                        borderRadius: 4, 
+                                        fontSize: '0.65rem',
+                                        border: '1px solid rgba(0, 242, 255, 0.1)',
+                                        fontWeight: 600
+                                    }}>
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            section.content.map((line, lIdx) => (
+                                <div key={lIdx} style={{ 
+                                    marginBottom: '0.2rem',
+                                    color: line.includes('linkedin.com') ? 'var(--accent-cyan)' : 'inherit',
+                                    textDecoration: line.includes('linkedin.com') ? 'underline' : 'none',
+                                    cursor: line.includes('linkedin.com') ? 'pointer' : 'default'
+                                }}>
+                                    {line}
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 export default function PlayersPage() {
     const [players, setPlayers] = useState<Player[]>([]);
@@ -77,6 +208,7 @@ export default function PlayersPage() {
     const [typeFilter, setTypeFilter] = useState<"" | "person" | "entity">("");
     const [selected, setSelected] = useState<Player | null>(null);
     const [detail, setDetail] = useState<Player | null>(null);
+    const [files, setFiles] = useState<PlayerFile[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchPlayers = useCallback(async () => {
@@ -100,10 +232,12 @@ export default function PlayersPage() {
 
     const selectPlayer = async (p: Player) => {
         setSelected(p);
+        setFiles([]);
         try {
             const res = await fetch(`/api/players/${encodeURIComponent(p.slug)}`);
             const data = await res.json();
             if (data.player) setDetail(data.player);
+            if (data.files) setFiles(data.files);
         } catch (e) {
             console.error("Failed to fetch player detail:", e);
         }
@@ -218,6 +352,14 @@ export default function PlayersPage() {
                                         </div>
                                     )}
                                 </div>
+
+                                {p.evidence_count !== undefined && p.evidence_count > 0 && (
+                                    <div style={{ marginTop: '4px' }}>
+                                        <span className="badge badge-cyan" style={{ fontSize: '0.6rem', padding: '1px 4px' }}>
+                                            {p.evidence_count} Evidence Cards
+                                        </span>
+                                    </div>
+                                )}
 
                                 {/* Type badge */}
                                 <div style={{ alignSelf: "flex-start" }}>
@@ -408,6 +550,7 @@ export default function PlayersPage() {
                             )}
 
                             {/* Aliases */}
+
                             {parseJson(detail.aliases).length > 0 && (
                                 <div style={{ marginTop: "0.75rem" }}>
                                     <div className="player-detail-label">Aliases</div>
@@ -418,6 +561,65 @@ export default function PlayersPage() {
                                     ))}
                                 </div>
                             )}
+
+                            {/* PDF Profiles */}
+                            {files.filter(f => f.file_type === 'pdf-profile').map(f => (
+                                <div key={f.id} style={{ 
+                                    marginTop: "1.25rem", 
+                                    padding: "1rem", 
+                                    background: "rgba(0, 242, 255, 0.02)", 
+                                    borderRadius: 12, 
+                                    border: "1px solid var(--border-glass-active)",
+                                    boxShadow: "inset 0 0 20px rgba(0, 242, 255, 0.03)"
+                                }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                                            <div style={{ 
+                                                width: 32, 
+                                                height: 32, 
+                                                borderRadius: 6, 
+                                                background: "rgba(0, 242, 255, 0.1)", 
+                                                display: "flex", 
+                                                alignItems: "center", 
+                                                justifyContent: "center",
+                                                color: "var(--accent-cyan)"
+                                            }}>
+                                                <FileText size={18} />
+                                            </div>
+                                            <div>
+                                                <div style={{ fontSize: "0.8125rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                                                    Forensic Profile PDF
+                                                </div>
+                                                <div style={{ fontSize: "0.6rem", color: "var(--accent-cyan)", fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                                                    Verified OCR Data
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a 
+                                            href={`/api/files/download?path=${encodeURIComponent(f.file_path)}`}
+                                            className="btn-primary"
+                                            style={{ fontSize: "0.65rem", padding: "0.4rem 0.8rem", textDecoration: "none", height: 'fit-content' }}
+                                        >
+                                            Download
+                                        </a>
+                                    </div>
+                                    
+                                    {f.content_text && (
+                                        <div style={{ 
+                                            background: "rgba(0,0,0,0.2)",
+                                            padding: "1rem",
+                                            borderRadius: 8,
+                                            border: "1px solid rgba(255,255,255,0.03)",
+                                            maxHeight: 400,
+                                            overflowY: "auto",
+                                            scrollbarWidth: 'thin',
+                                            boxShadow: 'inset 0 0 40px rgba(0,0,0,0.3)'
+                                        }}>
+                                            <ForensicProfileView text={f.content_text} />
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
 
                             {/* LinkedIn Link */}
                             {detail.linkedin_url && (
@@ -433,6 +635,8 @@ export default function PlayersPage() {
                                         marginTop: "1.25rem",
                                         textDecoration: "none",
                                         fontSize: "0.775rem",
+                                        width: '100%',
+                                        justifyContent: 'center'
                                     }}
                                 >
                                     <ExternalLink size={14} /> View LinkedIn Profile
