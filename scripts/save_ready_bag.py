@@ -21,24 +21,35 @@ INBOX_DIR = DATA_DIR / "inbox"
 EXPORTS_DIR = BASE_DIR / "exports"
 ATTORNEY_PACKAGE = EXPORTS_DIR / "attorney_package"
 LETTERS_DIR = EXPORTS_DIR / "letters"
+DOSSIERS_DIR = EXPORTS_DIR / "dossiers"
+PRESENTATION_LOCKER = Path("/Volumes/batdrivetb5/ATTORNEY_PRESENTATION_LOCKER/2026-02-24_ATTORNEY_PRESENTATION")
+
 # Current Session Task File
-TASK_FILE = Path("/Users/iseepatterns-ms-m4/.gemini/antigravity/brain/726a1bd1-e2b6-4bc4-a136-d151356c5f9b/task.md")
-RAG_LIB = BASE_DIR / "app/lib/rag.ts"
 EVIDENCE_CARDS_DIR = DATA_DIR / "evidence_cards"
-MEMOS_DIR = DATA_DIR / "memos" # Transcripts / Analysis memos
 
 def log(msg):
     print(f"[*] {msg}")
 
 def ensure_dirs():
-    dirs = [INBOX_DIR, ATTORNEY_PACKAGE, LETTERS_DIR, LETTERS_DIR / "agency", LETTERS_DIR / "attorneys"]
+    dirs = [
+        INBOX_DIR, 
+        ATTORNEY_PACKAGE, 
+        ATTORNEY_PACKAGE / "00_forensic_summaries",
+        ATTORNEY_PACKAGE / "01_narrative",
+        ATTORNEY_PACKAGE / "02_timeline",
+        ATTORNEY_PACKAGE / "03_evidence_cards",
+        ATTORNEY_PACKAGE / "04_dossiers",
+        ATTORNEY_PACKAGE / "05_letters",
+        LETTERS_DIR, 
+        LETTERS_DIR / "agency", 
+        LETTERS_DIR / "attorneys"
+    ]
     for d in dirs:
         d.mkdir(parents=True, exist_ok=True)
 
 def update_stats():
-    """Update task.md with current stats."""
-    log("Updating system stats in task.md...")
-    # placeholder logic for row counts
+    """Update system stats."""
+    log("Updating system stats...")
     pass
 
 def process_inbox():
@@ -64,65 +75,108 @@ def process_inbox():
         else:
             log(f"Unknown file type: {f.name}, skipping.")
 
+def filter_evidence_cards(card_path):
+    """Return True if the card is high quality."""
+    try:
+        with open(card_path, 'r') as f:
+            data = json.load(f)
+            
+        snippet = data.get("body_snippet", "")
+        # Filter out empty/placeholder snippets
+        if not snippet or "[Attachment/Empty]" in snippet or snippet.strip() == "":
+            return False
+            
+        # Prioritize significant tags
+        priority_tags = {'fraud', 'embezzlement', 'kickback', 'spoofing', 'tax', 'reconciliation'}
+        tags = set(data.get("tags", []))
+        if priority_tags.intersection(tags):
+            return True
+            
+        return True # Default to keep if not empty
+    except:
+        return False
+
 def generate_export_package():
-    """Regenerate the attorney package."""
-    log("Regenerating Attorney Export Package...")
+    """Regenerate the attorney package with high-quality data."""
+    log("Regenerating High-Quality Attorney Export Package...")
     
+    # 0. Forensic Summaries
+    if PRESENTATION_LOCKER.exists():
+        log("Packing forensic summaries from presentation locker...")
+        target = ATTORNEY_PACKAGE / "00_forensic_summaries"
+        for f in PRESENTATION_LOCKER.glob("*.md"):
+            shutil.copy(str(f), str(target / f.name))
+            log(f"  + Added summary: {f.name}")
+
     # 1. Timelines
     timelines_src = DATA_DIR / "timelines"
     if timelines_src.exists():
         target = ATTORNEY_PACKAGE / "02_timeline"
-        target.mkdir(exist_ok=True)
         for t in timelines_src.glob("*.csv"):
             shutil.copy(str(t), str(target / t.name))
             log(f"  + Added timeline: {t.name}")
     
-    # 2. Evidence Hub Snapshots (Recent EvidenceCards)
+    # 2. Filtered Evidence Cards
     if EVIDENCE_CARDS_DIR.exists():
+        log("Filtering and packing high-quality EvidenceCards...")
         target = ATTORNEY_PACKAGE / "03_evidence_cards"
-        target.mkdir(exist_ok=True)
-        # Only copy a subset or most recent if too many? For now all.
         count = 0
+        total = 0
         for c in EVIDENCE_CARDS_DIR.glob("*.json"):
-            shutil.copy(str(c), str(target / c.name))
-            count += 1
-        log(f"  + Packed {count} EvidenceCards.")
+            total += 1
+            if filter_evidence_cards(c):
+                shutil.copy(str(c), str(target / c.name))
+                count += 1
+        log(f"  + Packed {count} of {total} EvidenceCards (filtered low-quality).")
 
-    # 3. Paralegal Memos (DOCX)
-    docx_memos = list(BASE_DIR.glob("*.docx")) + list(DATA_DIR.glob("*.docx"))
-    if docx_memos:
-        target = ATTORNEY_PACKAGE / "04_forensic_memos"
-        target.mkdir(exist_ok=True)
-        for m in docx_memos:
-            shutil.copy(str(m), str(target / m.name))
-            log(f"  + Added memo: {m.name}")
+    # 3. Dossiers
+    if DOSSIERS_DIR.exists():
+        log("Packing dossiers...")
+        target = ATTORNEY_PACKAGE / "04_dossiers"
+        for f in DOSSIERS_DIR.glob("*.md"):
+            shutil.copy(str(f), str(target / f.name))
+            log(f"  + Added dossier: {f.name}")
 
-    # Case Overview
-    overview_path = ATTORNEY_PACKAGE / "01_case_overview.md"
-    if not overview_path.exists():
+    # 4. Letters
+    if LETTERS_DIR.exists():
+        log("Packing letters...")
+        target = ATTORNEY_PACKAGE / "05_letters"
+        for f in LETTERS_DIR.glob("*.md"):
+            shutil.copy(str(f), str(target / f.name))
+            log(f"  + Added letter: {f.name}")
+
+    # 5. Case Overview Population
+    briefing_path = PRESENTATION_LOCKER / "lawyer_briefing_document.md"
+    overview_path = ATTORNEY_PACKAGE / "01_narrative" / "case_overview.md"
+    if briefing_path.exists():
+        log("Generating narrative overview from briefing document...")
+        with open(briefing_path, "r") as src:
+            content = src.read()
+            # Extract executive summary (usually starts at ## 1. Executive Summary)
+            parts = content.split("## 2. Potential Charges")
+            narrative = parts[0].strip() if parts else content[:2000]
+            
         with open(overview_path, "w") as f:
-            f.write("# Case Overview: RBC v. LG\n\n*Generated on " + datetime.now().strftime("%Y-%m-%d") + "*\n\nNarrative goes here.")
+            f.write(f"#{narrative}\n\n[Full Briefing included in 00_forensic_summaries]")
 
     generate_manifest()
     log("✓ Export package ready.")
 
 def generate_manifest():
-    """Generate SHA-256 manifest for export integrity."""
+    """Generate SHA-256 manifest."""
     import hashlib
-    log("Generating export manifest (SHA-256)...")
+    log("Generating export manifest...")
     manifest = {}
-    
     for root, _, files in os.walk(ATTORNEY_PACKAGE):
         for f in files:
             if f == "manifest.json": continue
             path = Path(root) / f
             rel_path = str(path.relative_to(ATTORNEY_PACKAGE))
-            
-            sha256_hash = hashlib.sha256()
+            sha256 = hashlib.sha256()
             with open(path, "rb") as bf:
-                for byte_block in iter(lambda: bf.read(4096), b""):
-                    sha256_hash.update(byte_block)
-            manifest[rel_path] = sha256_hash.hexdigest()
+                for chunk in iter(lambda: bf.read(4096), b""):
+                    sha256.update(chunk)
+            manifest[rel_path] = sha256.hexdigest()
             
     with open(ATTORNEY_PACKAGE / "manifest.json", "w") as mf:
         json.dump({
@@ -132,9 +186,8 @@ def generate_manifest():
         }, mf, indent=2)
 
 def main():
-    log("--- Starting SAVE / READY BAG Process ---")
+    log("--- Starting READY BAG Overhaul ---")
     ensure_dirs()
-    update_stats()
     process_inbox()
     generate_export_package()
     log("--- Process Complete ---")

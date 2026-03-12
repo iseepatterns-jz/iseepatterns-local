@@ -31,6 +31,7 @@ interface DetailResult {
         start_timestamp: string;
         tags: string;
         primary_ids: string;
+        extra: string;
         origins: string;
     };
     participants: { identifier: string; normalized_identifier: string; role: string }[];
@@ -97,8 +98,22 @@ const fmtDate = (d: string) => {
     catch { return d; }
 };
 
-const sourceIcon = (t: string) => t === "email" ? <Mail size={14} /> : <MessageSquare size={14} />;
-const sourceColor = (t: string) => t === "email" ? "var(--accent-blue)" : "var(--accent-green)";
+const sourceIcon = (t: string) => {
+    switch (t) {
+        case "email": return <Mail size={14} />;
+        case "imessage": return <MessageSquare size={14} />;
+        case "tax": return <FileText size={14} />;
+        default: return <MessageSquare size={14} />;
+    }
+};
+const sourceColor = (t: string) => {
+    switch (t) {
+        case "email": return "var(--accent-blue)";
+        case "imessage": return "var(--accent-green)";
+        case "tax": return "#a78bfa";
+        default: return "var(--accent-green)";
+    }
+};
 
 const parseTags = (tags: string): string[] => {
     if (!tags) return [];
@@ -713,6 +728,7 @@ export default function EvidenceHubPage() {
                             <option value="">All</option>
                             <option value="email">Email</option>
                             <option value="imessage">iMessage</option>
+                            <option value="tax">Tax</option>
                         </select>
                     </label>
                     <label>Tag:
@@ -967,6 +983,41 @@ export default function EvidenceHubPage() {
                                                 )}
                                             </div>
                                         </div>
+
+                                        {/* ── Tax Reconciled Activity ── */}
+                                        {detail.evidence.source_type === "tax" && detail.evidence.extra && (
+                                            <div className="eh-detail-section" style={{ marginTop: 24 }}>
+                                                <h4 style={{ color: "#a78bfa", display: "flex", alignItems: "center", gap: 6 }}>
+                                                    <BarChart2 size={12} /> Financial Activity Summary
+                                                </h4>
+                                                <div style={{ 
+                                                    background: "rgba(167, 139, 250, 0.05)", 
+                                                    border: "1px solid rgba(167, 139, 250, 0.2)",
+                                                    borderRadius: 8,
+                                                    padding: 12,
+                                                    fontSize: 12,
+                                                    color: "#cbd5e1"
+                                                }}>
+                                                    {(() => {
+                                                        try {
+                                                            const extra = JSON.parse(detail.evidence.extra);
+                                                            if (extra.bullets && extra.bullets.length > 0) {
+                                                                return (
+                                                                    <ul style={{ padding: "0 0 0 18px", margin: 0 }}>
+                                                                        {extra.bullets.map((b: string, i: number) => (
+                                                                            <li key={i} style={{ marginBottom: 4 }}>{b}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                );
+                                                            }
+                                                            return <span style={{ color: "#64748b" }}>No linked transactions found for this period.</span>;
+                                                        } catch {
+                                                            return null;
+                                                        }
+                                                    })()}
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* ── Participants ── */}
                                         {detail.participants.length > 0 && (
