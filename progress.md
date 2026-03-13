@@ -59,8 +59,14 @@
 ## 5-Question Reboot Check
 | Question | Answer |
 |----------|--------|
-| Where am I? | Phase 21 Complete |
-| Where am I going? | Phase 22: Document Generation & Automated Flagging Strategy |
-| What's the goal? | Transition from evidence collection to automated distillation and reporting. |
-| What have I learned? | Centralized attachment mapping and forensic status (read/delivered) are critical for establishing evidentiary intent. |
-| What have I done? | Unified 270k+ chats, centralized attachments, and integrated 4.4k+ flagged cards into the Evidence Hub. |
+| Where am I? | Phase 22 Complete |
+| Where am I going? | Phase 23: Automated Narrative Generation & Evidence Package |
+| What's the goal? | Transition from evidence collection and flagging to automated narration and legal report drafting. |
+| What have I learned? | Targeted date-range extraction (Inside Disclosures) and cross-database discrepancy analysis (Shadow Orders) are highly effective at surfacing specific misconduct patterns. |
+| What have I done? | Extracted 213 inside disclosures, detected 1,775 shadow orders, and integrated 1,988 flagged cards into the Evidence Hub. |
+
+### Phase 22: Shadow Order Detection & Inside Disclosure [2026-03-12]
+- **Targeted Extraction**: Isolated 213 communications during SG employment windows (Legacy, Constellation).
+- **Financial Discrepancy Analysis**: Detected 1,775 "Shadow Orders" by cross-referencing chat keywords against Printavo `invoice_num`.
+- **Structural Integration**: 1,988 flagged records loaded into `evidence_hub.db` as `EvidenceCard` entries.
+- **Reporting**: Generated `phase_22_pattern_of_conduct.md` forensic report.
