@@ -117,7 +117,11 @@ const sourceColor = (t: string) => {
 
 const parseTags = (tags: string): string[] => {
     if (!tags) return [];
-    try { const arr = JSON.parse(tags); return Array.isArray(arr) ? arr : []; }
+    try { 
+        const arr = JSON.parse(tags); 
+        if (!Array.isArray(arr)) return [];
+        return Array.from(new Set(arr.map(t => String(t))));
+    }
     catch { return []; }
 };
 

@@ -1,15 +1,19 @@
 {
 	"folders": [
 		{
+			"name": "lawmodel1",
 			"path": "."
 		},
 		{
+			"name": ".gemini",
 			"path": "../../../../Users/iseepatterns-ms-m4/.gemini"
 		},
 		{
+			"name": ".config",
 			"path": "../../../../Users/iseepatterns-ms-m4/.config"
 		},
 		{
+			"name": "context",
 			"path": "../context"
 		}
 	],

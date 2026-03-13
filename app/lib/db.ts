@@ -52,12 +52,12 @@ let _imessageDb: Database.Database | null = null;
 export function getCommDb(): Database.Database {
     if (!_commDb) {
         const dbPath = IS_LAMBDA
-            ? path.join(DATA_ROOT, "mbox_index.db")
+            ? path.join(DATA_ROOT, "mbox_metadata.db")
             : path.join(
                 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
                 "data",
                 "MBOX_LOCKER",
-                "mbox_index.db"
+                "mbox_metadata.db"
             );
         _commDb = new Database(dbPath, { readonly: true });
         _commDb.pragma("journal_mode = WAL");
@@ -69,12 +69,12 @@ export function getCommDb(): Database.Database {
 export function getCommDbWritable(): Database.Database {
     if (!_commDbRW) {
         const dbPath = IS_LAMBDA
-            ? path.join(DATA_ROOT, "mbox_index.db")
+            ? path.join(DATA_ROOT, "mbox_metadata.db")
             : path.join(
                 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
                 "data",
                 "MBOX_LOCKER",
-                "mbox_index.db"
+                "mbox_metadata.db"
             );
         _commDbRW = new Database(dbPath); // default is read-write
         _commDbRW.pragma("journal_mode = WAL");
@@ -134,10 +134,12 @@ export function getWorkbenchDb(): Database.Database {
  */
 export function getImessageDb(): Database.Database {
     if (!_imessageDb) {
-        const dbPath = path.join(EVIDENCE_DIR, "imessage_LG_and_RyanHayes_ONLY.db");
+        const dbPath = IS_LAMBDA
+            ? path.join(DATA_ROOT, "chat.db")
+            : "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db";
         _imessageDb = new Database(dbPath, { readonly: true });
         _imessageDb.pragma("journal_mode = WAL");
-        _imessageDb.pragma("cache_size = -8000"); // 8MB cache
+        _imessageDb.pragma("cache_size = -32000"); // 32MB cache for large chat DB
     }
     return _imessageDb;
 }
@@ -153,7 +155,6 @@ export function getDb(name: string): Database.Database {
             ? path.join(VAULT_ROOT, "db", `${name}.db`)
             : path.join(
                 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data",
-                "data",
                 `${name}.db`
             );
         _genericDbs[name] = new Database(dbPath, { readonly: true });

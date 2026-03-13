@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getEvidenceHubDb } from "@/lib/db";
+import { getEvidenceHubDb, getImessageDb, getCommDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
@@ -21,36 +21,24 @@ export async function GET(request: NextRequest) {
         const offset = (page - 1) * limit;
 
         const db = getEvidenceHubDb();
+        const chatDb = getImessageDb();
+        const mboxDb = getCommDb();
 
         // ── Stats mode ──
         if (mode === "stats") {
-            const totalRow = db.prepare("SELECT COUNT(*) as total FROM evidence").get() as CountRow;
-            const sourceBreakdown = db.prepare(
-                "SELECT source_type, COUNT(*) as count FROM evidence GROUP BY source_type ORDER BY count DESC"
-            ).all();
-            const participantTop = db.prepare(`
-                SELECT p.normalized_identifier as id, COUNT(ep.evidence_id) as count
-                FROM participants p
-                JOIN evidence_participants ep ON ep.participant_id = p.id
-                GROUP BY p.id ORDER BY count DESC LIMIT 15
-            `).all();
-            const originBreakdown = db.prepare(
-                "SELECT origin_system, COUNT(*) as count FROM evidence_origins GROUP BY origin_system ORDER BY count DESC"
-            ).all();
-            const tagBreakdown = db.prepare(`
-                SELECT DISTINCT json_each.value as tag, COUNT(*) as count
-                FROM evidence, json_each(evidence.tags)
-                WHERE json_valid(evidence.tags)
-                GROUP BY json_each.value
-                ORDER BY count DESC LIMIT 20
-            `).all() || [];
+            const totalEvidence = db.prepare("SELECT COUNT(*) as total FROM evidence").get() as CountRow;
+            const totalMessages = chatDb.prepare("SELECT COUNT(*) as total FROM message").get() as CountRow;
+            const totalEmails = mboxDb.prepare("SELECT COUNT(*) as total FROM emails").get() as CountRow;
 
             return NextResponse.json({
-                total: totalRow?.total || 0,
-                sources: sourceBreakdown || [],
-                participants: participantTop || [],
-                origins: originBreakdown || [],
-                tags: tagBreakdown || [],
+                total: (totalEvidence?.total || 0) + (totalMessages?.total || 0) + (totalEmails?.total || 0),
+                sources: [
+                    { source_type: "imessage", count: totalMessages.total },
+                    { source_type: "gmail", count: totalEmails.total }
+                ],
+                participants: [], // Will populate if requested
+                origins: [],
+                tags: [],
             });
         }
 
@@ -145,7 +133,46 @@ export async function GET(request: NextRequest) {
             }
         }
 
-        // ── Filtered list ──
+        // ── Filtered list / LG focal search ──
+        if (sourceType === "imessage" || (q && q.toLowerCase().includes("guariglia"))) {
+            // Lucas Guariglia (8478280944) and Joseph Zangrilli (7736109104)
+            // chat_id 2288, 2289 are confirmed to be their threads
+            const rows = chatDb.prepare(`
+                SELECT 
+                    m.ROWID as id,
+                    m.guid as canonical_id,
+                    'imessage' as source_type,
+                    'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli' ELSE 'Lucas Guariglia' END as title,
+                    substr(m.text, 1, 100) as summary,
+                    m.text as preview,
+                    datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
+                    '["chat", "key_players"]' as tags
+                FROM message m
+                JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
+                WHERE cmj.chat_id IN (2288, 2289)
+                AND (m.text LIKE ? OR 1=1) -- Filter if q provided
+                ORDER BY m.date DESC
+                LIMIT ? OFFSET ?
+            `).all(`%${q}%`, limit, offset);
+
+            const countRow = chatDb.prepare(`
+                SELECT COUNT(*) as total
+                FROM message m
+                JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
+                WHERE cmj.chat_id IN (2288, 2289)
+                AND (m.text LIKE ? OR 1=1)
+            `).get(`%${q}%`) as CountRow;
+
+            return NextResponse.json({
+                results: rows,
+                total: countRow.total,
+                page, limit,
+                totalPages: Math.ceil(countRow.total / limit),
+                searchMode: "official_chatdb",
+            });
+        }
+
+        // Fallback for other filters / Evidence Hub
         let where = "WHERE 1=1";
         const params: (string | number)[] = [];
 

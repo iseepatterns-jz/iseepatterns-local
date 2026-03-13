@@ -20,21 +20,19 @@ A local AI-powered legal and financial forensic assistant with **hybrid search**
 
 ```text
 lawmodel1/
-├── app/                                   # Next.js / RAG application (iseepatterns)
-│   └── ...                                # API routes, UI, agents
-├── rag_law_assistant.py                   # CLI legal RAG assistant (legacy/companion)
-├── ingest/                                # Python Forensic Ingestion Layer
-│   ├── evidence_card.py                   # Unified Schema
-│   ├── pdf_ingest.py                      # OCR + Unstructured
-│   ├── email_ingest.py                    # MBOX/EML Parser
-│   ├── imessage_ingest.py                 # Chat.db Parser
-│   └── load_to_sqlite.py                  # Normalization to DB
+├── app/                                   # Next.js Application (Evidence Hub UI)
+├── scripts/                               # Functional Utilities & One-time Scripts
+│   ├── rag_law_assistant.py               # CLI RAG Companion
+│   ├── update_chain_of_custody.py         # Evidence hashing/tracking
+│   └── ...
+├── data/                                  # Current "Source of Truth" Data
+│   ├── MBOX_LOCKER/                       # 8GB mbox_metadata.db
+│   ├── transcripts/                       # Extracted message log CSVs
+│   ├── players.db                         # Person Intelligence profiles
+│   └── ...
 ├── chatdb_storage/                        # iMessage forensic storage
-│   ├── consolidated_investigation_m1_imac.db # Master 270k+ message database
-│   └── exports/
-│       └── pivots/                        # Targeted forensic extraction
-│           ├── generate_chat_evidence_cards.py
-│           └── integrate_chat_to_hub.py
+│   └── m1studio_2025-05-31.../db/decoded/ # Official 18k LG/JZ thread
+├── ingest/                                # Forensic Ingestion Layer
 └── ...
 ```
 
