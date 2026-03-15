@@ -46,8 +46,8 @@ let _workbenchDb: Database.Database | null = null;
 let _imessageDb: Database.Database | null = null;
 
 /**
- * Communications database (mbox_index.db) — READ ONLY
- * Focused: 8 Rowboat Creative accounts, drafts excluded, clean bodies.
+ * Communications database (gmail_master_index.db) — READ ONLY
+ * Master email index with 741k records.
  */
 export function getCommDb(): Database.Database {
     if (!_commDb) {
@@ -57,7 +57,9 @@ export function getCommDb(): Database.Database {
                 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
                 "data",
                 "MBOX_LOCKER",
-                "mbox_metadata.db"
+                "2024-06-22_GMAIL_MBOX_ALL_LOCKER",
+                "2024-06-22_GMAIL_ALL_MBOX_ZIPPED",
+                "gmail_master_index.db"
             );
         _commDb = new Database(dbPath, { readonly: true });
         _commDb.pragma("journal_mode = WAL");
@@ -74,7 +76,9 @@ export function getCommDbWritable(): Database.Database {
                 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
                 "data",
                 "MBOX_LOCKER",
-                "mbox_metadata.db"
+                "2024-06-22_GMAIL_MBOX_ALL_LOCKER",
+                "2024-06-22_GMAIL_ALL_MBOX_ZIPPED",
+                "gmail_master_index.db"
             );
         _commDbRW = new Database(dbPath); // default is read-write
         _commDbRW.pragma("journal_mode = WAL");
@@ -115,7 +119,7 @@ export function getWorkbenchDb(): Database.Database {
             _workbenchDb.pragma("foreign_keys = ON");
 
             // Initialize schema if needed
-            const schemaFiles = ["workbench.sql", "transcript_annotations.sql"];
+            const schemaFiles = ["workbench.sql", "transcript_annotations.sql", "missing_schemas.sql", "timeline.sql"];
             schemaFiles.forEach(file => {
                 const schemaPath = path.join(PROJECT_ROOT, "schemas", file);
                 if (fs.existsSync(schemaPath)) {
