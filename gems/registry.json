@@ -1,0 +1,190 @@
+{
+  "version": "1.0.0",
+  "case_id": "RC-2026",
+  "client_id": "rowboat-creative",
+  "project_root": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+  "updated_at": "2026-03-15T11:24:00-05:00",
+  "gems": [
+    {
+      "id": "gem-email-mbox",
+      "name": "Email Evidence (MBOX)",
+      "status": "active",
+      "description": "Ingests Gmail MBOX zip exports into a searchable, indexed email database with full-text search, label classification, and body extraction.",
+      "inputs": {
+        "raw_files": [
+          "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/",
+          "data/MBOX_LOCKER/2023-06-08_GMAIL_MBOX_LEGAL_LOCKER/",
+          "data/MBOX_LOCKER/2023-06-08_GMAIL_MBOX_SG_LOCKER/",
+          "data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/"
+        ],
+        "metadata_csv": "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-metadata.csv",
+        "file_types": [".zip", ".mbox", ".csv"]
+      },
+      "outputs": {
+        "databases": {
+          "mbox_metadata.db": {
+            "location": "data/MBOX_LOCKER/mbox_metadata.db",
+            "tables": ["emails", "drive_links", "emails_fts"],
+            "schema": "schemas/mbox_metadata.sql",
+            "access": "read-only"
+          },
+          "gmail_master_index.db": {
+            "location": "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db",
+            "tables": ["emails"],
+            "schema": "derived from mbox_metadata.sql",
+            "access": "read-write",
+            "notes": "Working index for the ALL locker; labels being added by update_labels_optimized.py"
+          }
+        },
+        "filtered_databases": [
+          "data/MBOX_LOCKER/accounting_all.db",
+          "data/MBOX_LOCKER/accounting_ashley_myles.db",
+          "data/MBOX_LOCKER/emails_LG_SM_SH_JZ.db",
+          "data/MBOX_LOCKER/email_search_results_LG_LEONARD_MAYERSKY.db",
+          "data/MBOX_LOCKER/email_search_results_LG_PAMELA_VISVARDIS.db",
+          "data/MBOX_LOCKER/emails_LUCAS_x_LEONARD_MAYERSKY.db"
+        ]
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/mbox_metadata_ingest.py",
+          "ingest/mbox_body_extract.py"
+        ],
+        "utility": [
+          "scripts/index_mbox_master.py",
+          "scripts/extract_mbox_accounts.py",
+          "scripts/extract_accountant_emails.py",
+          "scripts/extract_accountant_emails_refined.py",
+          "scripts/extract_side_business_emails.py",
+          "scripts/search_4person_emails.py",
+          "scripts/create_accounting_db.py",
+          "scripts/create_ashley_myles_db.py",
+          "data/MBOX_LOCKER/search_mbox_zips.py",
+          "data/MBOX_LOCKER/add_labels_to_emails.py"
+        ]
+      },
+      "schemas": ["schemas/mbox_metadata.sql"],
+      "canonical_id_format": "rfc822_id (e.g., <CABx...@mail.gmail.com>)",
+      "evidence_source_type": "email",
+      "dependencies": [],
+      "api_routes": [
+        "app/app/api/communications/",
+        "app/app/api/search/",
+        "app/app/api/match-eml/",
+        "app/app/api/coc/"
+      ],
+      "ui_pages": [
+        "app/app/communications/",
+        "app/app/evidence-hub/"
+      ],
+      "db_accessor": "getCommDb()"
+    },
+    {
+      "id": "gem-imessage-chatdb",
+      "name": "iMessage Evidence (ChatDB)",
+      "status": "active",
+      "description": "Ingests Apple iMessage chat.db backups, decodes message bodies, consolidates across devices, and extracts forensic admissions.",
+      "inputs": {
+        "raw_files": [
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/",
+          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/"
+        ],
+        "file_types": [".db"]
+      },
+      "outputs": {
+        "databases": {
+          "chat_master.db": {
+            "location": "data/chat_master.db",
+            "tables": ["message", "handle", "chat", "chat_message_join"],
+            "access": "read-only"
+          },
+          "consolidated_investigation.db": {
+            "location": "chatdb_storage/consolidated_investigation_m1_imac.db",
+            "tables": ["messages_merged"],
+            "access": "read-only",
+            "notes": "576 MB merged from both devices"
+          },
+          "reconciliation.db": {
+            "location": "chatdb_storage/reconciliation.db",
+            "tables": ["reconciliation"],
+            "access": "read-only"
+          }
+        }
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/imessage_ingest.py"
+        ],
+        "utility": [
+          "scripts/consolidate_forensic_chats.py",
+          "scripts/extract_imessage_admissions.py",
+          "scripts/check_imessage_overlap.py",
+          "scripts/correlate_imessages_flights.py"
+        ]
+      },
+      "schemas": [],
+      "canonical_id_format": "message_guid (e.g., p:0/... or UUID)",
+      "evidence_source_type": "imessage",
+      "dependencies": [],
+      "api_routes": [
+        "app/app/api/imessages/",
+        "app/app/api/transcripts/"
+      ],
+      "ui_pages": [
+        "app/app/transcripts/",
+        "app/app/evidence-hub/"
+      ],
+      "db_accessor": "getImessageDb()"
+    },
+    {
+      "id": "gem-financial-txns",
+      "name": "Financial Transactions",
+      "status": "active",
+      "description": "Normalizes RBC statements, Printavo orders, Amazon purchases, and QuickBooks data into a unified transactions table. Significant events (>$5k) promoted to Evidence Hub.",
+      "inputs": {
+        "raw_files": [
+          "data/FINANCIAL_LOCKER/",
+          "data/STATEMENTS_LOCKER/",
+          "data/AMAZON_LOCKER/",
+          "data/DRAWS_LOCKER/",
+          "data/OWNER_CASH_INFUSION_LOCKER/"
+        ],
+        "file_types": [".csv", ".xlsx", ".pdf"]
+      },
+      "outputs": {
+        "databases": {
+          "workbench.db": {
+            "location": "app/workbench.db (auto-created)",
+            "tables": ["accounts", "transactions"],
+            "schema": "schemas/financials.sql",
+            "access": "read-write"
+          }
+        }
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/financial_ingest.py",
+          "ingest/financial_to_evidence_hub.py"
+        ],
+        "utility": [
+          "scripts/ingest_financial_truth.py",
+          "scripts/financial_discrepancy_matcher.py",
+          "scripts/ingest_amazon_to_evidence_hub.py",
+          "scripts/ingest_flights_to_evidence_hub.py",
+          "analyze_draws.py"
+        ]
+      },
+      "schemas": ["schemas/financials.sql"],
+      "canonical_id_format": "txn_{source}_{id} (e.g., txn_RBC_2020-05-26-001)",
+      "evidence_source_type": "financial",
+      "dependencies": [],
+      "api_routes": [
+        "app/app/api/financials/"
+      ],
+      "ui_pages": [
+        "app/app/financials/"
+      ],
+      "db_accessor": "getWorkbenchDb()"
+    }
+  ]
+}
