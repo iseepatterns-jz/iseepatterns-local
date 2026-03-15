@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LawModel1 Evidence Flow Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --accent: #58a6ff;
+      --email: #ff7b72;
+      --imessage: #79c0ff;
+      --financial: #7ee787;
+      --tax: #d2a8ff;
+      --player: #ffa657;
+      --legal: #a5d6ff;
+      --transcript: #ff9bce;
+      --hub: #f2cc60;
+      --rag: #79c0ff;
+      --coc: #3fb950;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px 40px;
+      border-bottom: 1px border var(--border);
+      background: var(--panel);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+    .badge {
+      background: rgba(88, 166, 255, 0.1);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(88, 166, 255, 0.2);
+    }
+
+    .main-canvas {
+      flex: 1;
+      padding: 40px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+      position: relative;
+    }
+
+    /* Layers */
+    .layer {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .layer-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .nodes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: flex-start;
+    }
+
+    /* Node Styles */
+    .node {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      width: 240px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .node:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .node-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .node-type {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .node-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .node-desc {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+    }
+
+    .node-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      margin-top: 12px;
+      color: var(--accent);
+      opacity: 0.8;
+    }
+
+    /* Colors by Data Type */
+    .type-email { border-top: 4px solid var(--email) !important; }
+    .type-imessage { border-top: 4px solid var(--imessage) !important; }
+    .type-financial { border-top: 4px solid var(--financial) !important; }
+    .type-tax { border-top: 4px solid var(--tax) !important; }
+    .type-player { border-top: 4px solid var(--player) !important; }
+    .type-legal { border-top: 4px solid var(--legal) !important; }
+    .type-transcript { border-top: 4px solid var(--transcript) !important; }
+    .type-hub { border-top: 4px solid var(--hub) !important; }
+    .type-rag { border-top: 4px solid var(--rag) !important; }
+    .type-coc { border-top: 4px solid var(--coc) !important; }
+
+    /* Modal Overlay (Optional/Future) */
+    .details-pane {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 400px;
+      height: 100%;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+      padding: 40px;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .details-pane.active { transform: translateX(0); }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      color: var(--text-dim);
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* Footer */
+    .footer {
+      padding: 20px 40px;
+      border-top: 1px solid var(--border);
+      background: var(--panel);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+      .nodes { justify-content: center; }
+      .node { width: 100%; max-width: 320px; }
+    }
+
+    /* Interactive Expand/Collapse */
+    .expandable-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .node.expanded .expandable-content {
+      max-height: 200px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .script-item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .dependency-map {
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 40px;
+    }
+
+    .dep-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+    }
+
+    .dep-gem { font-weight: 700; width: 180px; }
+    .dep-arrow { color: var(--text-dim); }
+    .dep-targets { color: var(--accent); }
+    .dep-none { color: var(--text-dim); font-style: italic; }
+
+    .critical-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+      font-size: 0.8rem;
+    }
+
+    .critical-table th, .critical-table td {
+      text-align: left;
+      padding: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .critical-table th { background: rgba(255,255,255,0.05); color: var(--text-dim); }
+    .critical-table code { font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Evidence Flow Architecture</h1>
+    <div style="color:var(--text-dim); font-size: 0.8rem; margin-top: 4px;">LawModel1 Forensic Governance · Project RC-2026</div>
+  </div>
+  <div class="badge">ARCH-SPEC v2.0</div>
+</header>
+
+<div class="main-canvas">
+
+  <div class="legend">
+    <div class="legend-item"><span class="dot" style="background:var(--email)"></span> Email</div>
+    <div class="legend-item"><span class="dot" style="background:var(--imessage)"></span> iMessage</div>
+    <div class="legend-item"><span class="dot" style="background:var(--financial)"></span> Financials</div>
+    <div class="legend-item"><span class="dot" style="background:var(--tax)"></span> Tax</div>
+    <div class="legend-item"><span class="dot" style="background:var(--player)"></span> Players</div>
+    <div class="legend-item"><span class="dot" style="background:var(--legal)"></span> Legal</div>
+    <div class="legend-item"><span class="dot" style="background:var(--hub)"></span> Evidence Hub</div>
+    <div class="legend-item"><span class="dot" style="background:var(--coc)"></span> Chain of Custody</div>
+  </div>
+
+  <!-- Layer 1: Sources -->
+  <div class="layer">
+    <div class="layer-title">Layer 1: Raw Sources & Lockers</div>
+    <div class="nodes">
+      <div class="node type-email" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">LOCKER</span></div>
+        <div class="node-title">MBOX_LOCKER</div>
+        <div class="node-desc">402k+ emails across 4 date-stamped Gmail exports.</div>
+        <div class="node-id">data/MBOX_LOCKER/</div>
+        <div class="expandable-content">
+          <span class="script-item">• 2024-06-22 ALL MBOX</span>
+          <span class="script-item">• 2023-06-08 LEGAL MBOX</span>
+        </div>
+      </div>
+      <div class="node type-imessage" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">STORAGE</span></div>
+        <div class="node-title">chatdb_storage</div>
+        <div class="node-desc">Direct Apple chat.db backups from M1 Max & iMac.</div>
+        <div class="node-id">chatdb_storage/</div>
+      </div>
+      <div class="node type-financial" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">LOCKER</span></div>
+        <div class="node-title">FINANCIAL_LOCKER</div>
+        <div class="node-desc">RBC statements, Printavo CSVs, QB Exports.</div>
+        <div class="node-id">data/FINANCIAL_LOCKER/</div>
+      </div>
+      <div class="node type-tax" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">LOCKER</span></div>
+        <div class="node-title">TAXES_LOCKER</div>
+        <div class="node-desc">1120-S and K-1 partner tax returns.</div>
+        <div class="node-id">data/TAXES_LOCKER/</div>
+      </div>
+      <div class="node type-legal" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">LOCKER</span></div>
+        <div class="node-title">COURT_LOCKER</div>
+        <div class="node-desc">Receiver reports, motions, orders, exhibits.</div>
+        <div class="node-id">data/COURT_LOCKER/</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 2: Processing -->
+  <div class="layer">
+    <div class="layer-title">Layer 2: Processing & Ingestion (Gems)</div>
+    <div class="nodes">
+      <div class="node type-email" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">GEM</span></div>
+        <div class="node-title">gem-email-mbox</div>
+        <div class="node-desc">Unified indexer for massive email sets.</div>
+        <div class="node-id">ingest/mbox_metadata_ingest.py</div>
+        <div class="expandable-content">
+          <span class="script-item">scripts/index_mbox_master.py</span>
+          <span class="script-item">scripts/extract_accountants.py</span>
+        </div>
+      </div>
+      <div class="node type-imessage" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">GEM</span></div>
+        <div class="node-title">gem-imessage-chatdb</div>
+        <div class="node-desc">Forensic decoding and admission extraction.</div>
+        <div class="node-id">ingest/imessage_ingest.py</div>
+        <div class="expandable-content">
+          <span class="script-item">scripts/consolidate_chats.py</span>
+          <span class="script-item">scripts/extract_admissions.py</span>
+        </div>
+      </div>
+      <div class="node type-financial" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">GEM</span></div>
+        <div class="node-title">gem-financial-txns</div>
+        <div class="node-desc">Normalization of disparate financial records.</div>
+        <div class="node-id">ingest/financial_ingest.py</div>
+      </div>
+      <div class="node type-player" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">GEM</span></div>
+        <div class="node-title">gem-players</div>
+        <div class="node-desc">Entity reconciliation and profile builder.</div>
+        <div class="node-id">ingest/linkedin_ingest.py</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 3: Databases -->
+  <div class="layer">
+    <div class="layer-title">Layer 3: Canonical Databases</div>
+    <div class="nodes">
+      <div class="node type-email" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">SQLITE</span></div>
+        <div class="node-title">mbox_metadata.db</div>
+        <div class="node-desc">Master index (402k rows, 8.5 GB).</div>
+        <div class="node-id">data/MBOX_LOCKER/</div>
+        <div class="expandable-content">
+          <span class="script-item">TABLE: emails</span>
+          <span class="script-item">TABLE: drive_links</span>
+        </div>
+      </div>
+      <div class="node type-imessage" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">SQLITE</span></div>
+        <div class="node-title">chat_master.db</div>
+        <div class="node-desc">Consolidated decoded chat history.</div>
+        <div class="node-id">data/chat_master.db</div>
+      </div>
+      <div class="node type-hub" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">MASTER</span></div>
+        <div class="node-title">evidence_hub.db</div>
+        <div class="node-desc">The Canonical Source of Truth (643k records).</div>
+        <div class="node-id">data/evidence_hub.db</div>
+        <div class="expandable-content">
+          <span class="script-item">TABLE: evidence</span>
+          <span class="script-item">TABLE: participants</span>
+          <span class="script-item">TABLE: entities</span>
+        </div>
+      </div>
+      <div class="node type-coc" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">AUDIT</span></div>
+        <div class="node-title">workbench.db</div>
+        <div class="node-desc">Working overlays: exhibits, claims, COC.</div>
+        <div class="node-id">app/workbench.db</div>
+        <div class="expandable-content">
+          <span class="script-item">TABLE: evidence_assignments</span>
+          <span class="script-item">TABLE: coc_notes_audit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Layer 4: Intelligence -->
+  <div class="layer">
+    <div class="layer-title">Layer 4: RAG & AI Intelligence</div>
+    <div class="nodes">
+      <div class="node type-rag" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">HYBRID</span></div>
+        <div class="node-title">gem-rag-search</div>
+        <div class="node-desc">BM25 + Vector Similarity (RRF Fusion).</div>
+        <div class="node-id">app/lib/rag.ts</div>
+        <div class="expandable-content">
+          <span class="script-item">ChromaDB (Vector)</span>
+          <span class="script-item">bm25_index.pkl (Keyword)</span>
+          <span class="script-item">FlashRank (Rerank)</span>
+        </div>
+      </div>
+      <div class="node" style="border-top: 4px solid #fff !important;" onclick="toggleExpand(this)">
+        <div class="node-header"><span class="node-type">OLLAMA</span></div>
+        <div class="node-title">qwen2.5-32b-forensic</div>
+        <div class="node-desc">Synthesizer & Analyst dual-persona LLM.</div>
+        <div class="node-id">Modelfile.forensic</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gem Dependencies -->
+  <h2 style="margin-top:48px; font-size:1.2rem; font-weight:700; margin-bottom:16px;">🧩 Gem Dependencies — The Topology of Truth</h2>
+  <div class="dependency-map">
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--email)">📧 gem-email-mbox</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--imessage)">💬 gem-imessage-chatdb</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--financial)">💰 gem-financial-txns</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--tax)">📋 gem-tax-returns</span>
+      <span class="dep-gem" style="color:var(--tax)">📋 gem-tax-returns</span>
+      <span class="dep-arrow">depends on →</span>
+      <span class="dep-targets">gem-financial-txns</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--player)">👤 gem-players</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--legal)">⚖️ gem-legal-docs</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--transcript)">🎙️ gem-transcripts</span>
+      <span class="dep-none">No dependencies (root gem)</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--hub)">🃏 gem-evidence-cards</span>
+      <span class="dep-arrow">depends on →</span>
+      <span class="dep-targets">gem-email-mbox, gem-imessage-chatdb, gem-financial-txns, gem-players</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--rag)">🔍 gem-rag-search</span>
+      <span class="dep-arrow">depends on →</span>
+      <span class="dep-targets">gem-evidence-cards, gem-legal-docs</span>
+    </div>
+    <div class="dep-row">
+      <span class="dep-gem" style="color:var(--coc)">🔒 gem-chain-of-custody</span>
+      <span class="dep-arrow">depends on →</span>
+      <span class="dep-targets">gem-email-mbox, gem-imessage-chatdb, gem-financial-txns</span>
+    </div>
+  </div>
+
+  <!-- Critical Links Table -->
+  <h2 style="margin-top:48px; font-size:1.2rem; font-weight:700; margin-bottom:16px;">🔗 Critical Links — Never Break These</h2>
+  <table class="critical-table">
+    <thead>
+      <tr><th>From</th><th>To</th><th>Link Key</th><th>Why It Matters</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>MBOX zip files</td>
+        <td><code>mbox_metadata.db</code></td>
+        <td><code>zip_source</code>, <code>mbox_source</code></td>
+        <td>Chain of custody — traces email to physical zip file</td>
+      </tr>
+      <tr>
+        <td><code>mbox_metadata.db</code></td>
+        <td><code>evidence_hub.db</code></td>
+        <td><code>canonical_id</code> = <code>rfc822_id</code></td>
+        <td>Deduplication — single source of truth</td>
+      </tr>
+      <tr>
+        <td><code>evidence_hub.db</code></td>
+        <td><code>evidence_origins</code></td>
+        <td><code>origin_system</code>, <code>source_file</code></td>
+        <td>Multi-source provenance tracking</td>
+      </tr>
+      <tr>
+        <td><code>evidence</code></td>
+        <td><code>participants</code></td>
+        <td><code>evidence_participants</code> junction</td>
+        <td>Identity — who said what to whom</td>
+      </tr>
+      <tr>
+        <td><code>participants</code></td>
+        <td><code>entities</code></td>
+        <td><code>participant_entities</code> junction</td>
+        <td>Alias consolidation — 44 real people</td>
+      </tr>
+      <tr>
+        <td><code>evidence_hub.db</code></td>
+        <td><code>workbench.db</code></td>
+        <td><code>evidence_assignments.evidence_id</code></td>
+        <td>Exhibit assignment — court readiness</td>
+      </tr>
+      <tr>
+        <td><code>workbench.db</code></td>
+        <td><code>claims</code></td>
+        <td><code>claim_evidence.evidence_id</code></td>
+        <td>Legal claims — case strategy</td>
+      </tr>
+      <tr>
+        <td><code>transactions</code></td>
+        <td><code>evidence_hub.db</code></td>
+        <td><code>transactions.evidence_id</code></td>
+        <td>Financial correlation — follow the money</td>
+      </tr>
+      <tr>
+        <td><code>players.db</code></td>
+        <td><code>evidence_hub.db</code></td>
+        <td><code>bridge_players_to_hub.py</code></td>
+        <td>Entity-evidence link — profile intelligence</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+<div class="footer">
+  LawModel1 Evidence Flow Architecture · Case RC-2026 · Generated 2026-03-15 · Governance Agent v1.0
+</div>
+
+<script>
+function toggleExpand(node) {
+  node.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
