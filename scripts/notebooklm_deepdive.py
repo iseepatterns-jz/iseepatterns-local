@@ -19,6 +19,7 @@ Usage:
   python scripts/notebooklm_deepdive.py --days 7               # Last 7 days
   python scripts/notebooklm_deepdive.py --dry-run              # Preview brief only
   python scripts/notebooklm_deepdive.py --list-templates       # List options
+  python scripts/notebooklm_deepdive.py --output-dir ~/Desktop/RC-NLM-Briefs
 """
 
 import sys
@@ -32,7 +33,8 @@ from datetime import datetime, timedelta, timezone
 BASE_DIR       = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 EVIDENCE_HUB   = BASE_DIR / "data" / "evidence_hub.db"
 TEMPLATES_FILE = BASE_DIR / "prompts" / "notebooklm_templates.json"
-BRIEFINGS_DIR  = BASE_DIR / "data" / "notebooklm_briefs"
+# Default output dir — override with --output-dir to keep briefs outside the workspace
+DEFAULT_BRIEFS_DIR = Path.home() / "Documents" / "RC-NLM-Briefs"
 
 # ──────────────── LOGGING ────────────────
 def log(msg, level="INFO"):
@@ -209,8 +211,10 @@ def run(args):
     # Get evidence (read-only)
     evidence = get_new_evidence(days=args.days)
 
-    # Build briefs
-    BRIEFINGS_DIR.mkdir(parents=True, exist_ok=True)
+    # Resolve output directory — prefer --output-dir, fall back to default outside workspace
+    output_dir = Path(args.output_dir).expanduser().resolve() if args.output_dir else DEFAULT_BRIEFS_DIR
+    output_dir.mkdir(parents=True, exist_ok=True)
+    log(f"Output dir: {output_dir}")
     session_id = datetime.now().strftime("%Y-%m-%d_%H-%M")
     brief_paths = []
 
@@ -218,7 +222,7 @@ def run(args):
         log(f"Generating brief: {template['name']}")
         content = generate_brief(evidence, template, preamble)
         brief_name = f"{session_id}_{template['id']}.md"
-        brief_path = BRIEFINGS_DIR / brief_name
+        brief_path = output_dir / brief_name
         brief_path.write_text(content)
         brief_paths.append((template, brief_path))
         log(f"Brief saved: {brief_path}", "OK")
@@ -270,6 +274,9 @@ def main():
         help="Template ID (default: all). Use --list-templates to see options.")
     parser.add_argument("--days", type=int, default=30,
         help="Days of recent evidence to include (default: 30)")
+    parser.add_argument("--output-dir", default=None,
+        help=f"Directory to write briefs to (default: {DEFAULT_BRIEFS_DIR}). "
+             "Set this to a path OUTSIDE lawmodel1 to keep the workspace clean.")
     parser.add_argument("--dry-run", action="store_true",
         help="Generate briefs only, skip upload instructions")
     parser.add_argument("--list-templates", action="store_true",
