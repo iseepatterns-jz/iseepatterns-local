@@ -55,12 +55,17 @@ jobs:
 
       - name: Set up Python
         run: |
-          # Use the existing venv — avoid installing anything into the workspace
-          PYTHON="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/.venv-3.14/bin/python"
-          if [[ ! -f "$PYTHON" ]]; then
-            echo "❌ venv Python not found at $PYTHON"
+          # notebooklm_deepdive.py uses stdlib only — no venv required.
+          # Prefer Homebrew Python 3, fall back to /usr/bin/python3.
+          if command -v python3 &>/dev/null; then
+            PYTHON=$(command -v python3)
+          elif [[ -f "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/.venv-3.14/bin/python" ]]; then
+            PYTHON="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/.venv-3.14/bin/python"
+          else
+            echo "❌ No python3 found"
             exit 1
           fi
+          echo "✓ Python: $($PYTHON --version) at $PYTHON"
           echo "PYTHON=$PYTHON" >> $GITHUB_ENV
 
       - name: Resolve template input
