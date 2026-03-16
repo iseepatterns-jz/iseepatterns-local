@@ -205,7 +205,8 @@ def run_notebooklm_deepdive(all_templates: bool = False):
 
         result = subprocess.run(cmd, capture_output=False, text=True, timeout=120)
         if result.returncode == 0:
-            log("[gem-notebooklm] ✓ Brief(s) generated. Check AUDIO_OVERVIEW_LOCKER.")
+            log("[gem-notebooklm] ✓ Brief(s) generated → ~/Documents/RC-NLM-Briefs/")
+            log("[gem-notebooklm]   Upload .md brief to NotebookLM → generate Audio Overview → download MP3 outside workspace.")
         else:
             log(f"[gem-notebooklm] Completed with warnings (exit {result.returncode}).")
     except Exception as ex:
