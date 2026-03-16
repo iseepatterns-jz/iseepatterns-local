@@ -27,23 +27,42 @@ import {
 } from "lucide-react";
 
 
-const NAV_ITEMS = [
-    { label: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
-    { label: "Communications", href: "/communications", icon: Mail, enabled: true },
-    { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
-    { label: "Workbench", href: "/workbench", icon: Briefcase, enabled: true },
-    { label: "Evidence Hub", href: "/evidence-hub", icon: Shield, enabled: true },
-    { label: "Players", href: "/players", icon: Users, enabled: true },
-    { label: "Transcripts", href: "/transcripts", icon: FileText, enabled: true },
-    { label: "Legal", href: "/legal", icon: Scale, enabled: true },
-    { label: "Legal Research", href: "/legal/research", icon: Brain, enabled: true },
-    { label: "Case Corner", href: "/case-corner", icon: Target, enabled: true },
-    { label: "Briefing Room", href: "/briefing", icon: Presentation, enabled: true },
-    { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
-    { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
-    { label: "Chain of Custody", href: "/coc", icon: ClipboardList, enabled: true }, // ← NEW
-    { label: "Memory Gems", href: "/gems", icon: Gem, enabled: false },
+const NAV_GROUPS = [
+    {
+        title: "Recon",
+        items: [
+            { label: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
+            { label: "Discovery", href: "/evidence-hub", icon: Shield, enabled: true },
+            { label: "Players", href: "/players", icon: Users, enabled: true },
+        ]
+    },
+    {
+        title: "Analyze",
+        items: [
+            { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
+            { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
+            { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
+            { label: "History", href: "/coc", icon: ClipboardList, enabled: true },
+        ]
+    },
+    {
+        title: "Strategize",
+        items: [
+            { label: "Workbench", href: "/workbench", icon: Briefcase, enabled: true },
+            { label: "Strategy", href: "/case-corner", icon: Target, enabled: true },
+            { label: "Research", href: "/legal/research", icon: Brain, enabled: true },
+        ]
+    },
+    {
+        title: "Present",
+        items: [
+            { label: "Briefing Room", href: "/briefing", icon: Presentation, enabled: true },
+        ]
+    }
 ];
+
+// Flat list for path matching
+const NAV_ITEMS_FLAT = NAV_GROUPS.flatMap(g => g.items);
 
 
 export default function Sidebar() {
@@ -152,55 +171,59 @@ export default function Sidebar() {
 
 
             {/* ─ Navigation ─ */}
-            <nav style={{ flex: 1 }}>
-                {!collapsed && (
-                    <div
-                        style={{
-                            fontSize: "0.65rem",
-                            fontWeight: 700,
-                            letterSpacing: "0.1em",
-                            textTransform: "uppercase" as const,
-                            color: "var(--text-muted)",
-                            padding: "0 1.25rem",
-                            marginBottom: "0.5rem",
-                        }}
-                    >
-                        Data Pods
+            <nav style={{ flex: 1, overflowY: "auto", paddingBottom: "1.5rem" }}>
+                {NAV_GROUPS.map((group) => (
+                    <div key={group.title} style={{ marginBottom: "1.25rem" }}>
+                        {!collapsed && (
+                            <div
+                                style={{
+                                    fontSize: "0.6rem",
+                                    fontWeight: 800,
+                                    letterSpacing: "0.15em",
+                                    textTransform: "uppercase" as const,
+                                    color: "var(--text-muted)",
+                                    padding: "0 1.25rem",
+                                    marginBottom: "0.5rem",
+                                    opacity: 0.6
+                                }}
+                            >
+                                {group.title}
+                            </div>
+                        )}
+                        {group.items.map((item) => {
+                            const isActive =
+                                item.href === "/"
+                                    ? pathname === "/"
+                                    : pathname.startsWith(item.href);
+                            const Icon = item.icon;
+
+                            return item.enabled ? (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`nav-item ${isActive ? "active" : ""}`}
+                                    title={collapsed ? item.label : undefined}
+                                    style={collapsed ? { justifyContent: "center", paddingLeft: 0, paddingRight: 0 } : undefined}
+                                >
+                                    <Icon size={18} />
+                                    {!collapsed && <span>{item.label}</span>}
+                                </Link>
+                            ) : (
+                                <div key={item.href} className="nav-item disabled" style={collapsed ? { justifyContent: "center", paddingLeft: 0, paddingRight: 0 } : undefined} title={collapsed ? item.label : undefined}>
+                                    <Icon size={18} />
+                                    {!collapsed && (
+                                        <>
+                                            <span>{item.label}</span>
+                                            <span className="badge badge-cyan" style={{ marginLeft: "auto", fontSize: "0.6rem" }}>
+                                                Soon
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
-                )}
-                {NAV_ITEMS.map((item) => {
-                    const isActive =
-                        item.href === "/"
-                            ? pathname === "/"
-                            : pathname.startsWith(item.href);
-                    const Icon = item.icon;
-
-
-                    return item.enabled ? (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={`nav-item ${isActive ? "active" : ""}`}
-                            title={collapsed ? item.label : undefined}
-                            style={collapsed ? { justifyContent: "center", paddingLeft: 0, paddingRight: 0 } : undefined}
-                        >
-                            <Icon size={18} />
-                            {!collapsed && <span>{item.label}</span>}
-                        </Link>
-                    ) : (
-                        <div key={item.href} className="nav-item disabled" style={collapsed ? { justifyContent: "center", paddingLeft: 0, paddingRight: 0 } : undefined} title={collapsed ? item.label : undefined}>
-                            <Icon size={18} />
-                            {!collapsed && (
-                                <>
-                                    <span>{item.label}</span>
-                                    <span className="badge badge-cyan" style={{ marginLeft: "auto", fontSize: "0.6rem" }}>
-                                        Soon
-                                    </span>
-                                </>
-                            )}
-                        </div>
-                    );
-                })}
+                ))}
             </nav>
 
 

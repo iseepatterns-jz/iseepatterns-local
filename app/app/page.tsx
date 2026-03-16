@@ -15,6 +15,7 @@ import {
   Headphones,
   X,
   ArrowRight,
+  Target,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -87,18 +88,12 @@ interface SearchResults {
   players: SearchResult[];
 }
 
-const POD_CONFIG: {
-  key: keyof SearchResults;
-  label: string;
-  icon: typeof Mail;
-  color: string;
-}[] = [
-    { key: "emails", label: "Emails", icon: Mail, color: "var(--accent-cyan)" },
-    { key: "messages", label: "iMessages", icon: MessageSquare, color: "var(--accent-purple)" },
-    { key: "transcripts", label: "Transcripts", icon: Headphones, color: "var(--accent-orange)" },
-    { key: "legal", label: "Legal", icon: Scale, color: "var(--accent-red, #e63946)" },
-    { key: "players", label: "Players", icon: Users, color: "var(--accent-emerald)" },
-  ];
+const POD_CONFIG = [
+    { key: "discovery", label: "Discovery Hub", icon: Search, color: "var(--accent-cyan)", href: "/evidence-hub", description: "Search across all emails, texts, and transcripts." },
+    { key: "analyze", label: "Analyze", icon: Activity, color: "var(--accent-purple)", href: "/correlator", description: "Connect the dots between players and evidence." },
+    { key: "strategy", label: "Strategy Hub", icon: Target, color: "var(--accent-red)", href: "/case-corner", description: "Build the theory of the case and manage claims." },
+    { key: "presentation", label: "Briefing Room", icon: Scale, color: "var(--accent-emerald)", href: "/briefing", description: "Prepare outcomes for attorneys and court." },
+];
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -438,8 +433,14 @@ export default function DashboardPage() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {POD_CONFIG.map(({ key, label, icon: Icon, color }) => {
-              const items = searchResults[key];
+            {[
+              { key: "emails", label: "Emails", icon: Mail, color: "var(--accent-cyan)" },
+              { key: "messages", label: "iMessages", icon: MessageSquare, color: "var(--accent-purple)" },
+              { key: "transcripts", label: "Transcripts", icon: Headphones, color: "var(--accent-orange)" },
+              { key: "legal", label: "Legal", icon: Scale, color: "var(--accent-red)" },
+              { key: "players", label: "Players", icon: Users, color: "var(--accent-emerald)" },
+            ].map(({ key, label, icon: Icon, color }) => {
+              const items = (searchResults as any)[key];
               if (!items || items.length === 0) return null;
               return (
                 <div key={key}>
@@ -479,7 +480,7 @@ export default function DashboardPage() {
                       gap: "0.25rem",
                     }}
                   >
-                    {items.map((item) => (
+                    {items.map((item: any) => (
                       <Link
                         key={String(item.id)}
                         href={item.link}
@@ -549,6 +550,69 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* ═══ Hub Navigation ═══ */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: "1.25rem",
+          marginBottom: "2rem",
+        }}
+      >
+        {POD_CONFIG.map((hub) => {
+          const Icon = hub.icon;
+          return (
+            <Link
+              key={hub.key}
+              href={hub.href}
+              className="glass-panel"
+              style={{
+                padding: "1.5rem",
+                textDecoration: "none",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+                transition: "all 0.2s ease",
+                border: "1px solid var(--border-glass)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = hub.color;
+                e.currentTarget.style.transform = "translateY(-4px)";
+                e.currentTarget.style.background = `linear-gradient(135deg, rgba(255,255,255,0.03) 0%, ${hub.color}05 100%)`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "var(--border-glass)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.background = "var(--bg-glass)";
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{
+                  padding: "0.5rem",
+                  borderRadius: "10px",
+                  background: `${hub.color}15`,
+                  color: hub.color,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}>
+                  <Icon size={20} />
+                </div>
+                <ArrowRight size={14} style={{ opacity: 0.3 }} />
+              </div>
+              <div>
+                <div style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "0.25rem" }}>
+                  {hub.label}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>
+                  {hub.description}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
       {/* Stat Cards */}
       <div

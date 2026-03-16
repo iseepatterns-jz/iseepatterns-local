@@ -75,7 +75,15 @@ schema, forensic, evidence, locker, canonical_id, provenance
 | Evidence source files | `data/*_LOCKER/` | Raw evidence organized by type |
 | Generated outputs | `exports/` | Dossiers, attorney packages, letters |
 | API routes | `app/app/api/` | Next.js API handlers |
-| UI pages | `app/app/[page]/` | Next.js page components |
+| UI pages | `app/app/[page]/` | Next.js page components (Organized by Workflow) |
+
+### UI Architecture (Workflow-Driven)
+
+The UI is organized into four logical stages reflecting the forensic lifecycle:
+1. **RECON**: `evidence-hub` (Discovery Hub), `communications`, `transcripts`
+2. **ANALYZE**: `correlator`, `players`
+3. **STRATEGIZE**: `case-corner` (Strategy Hub), `legal`
+4. **PRESENT**: `briefing` (Briefing Room)
 
 ---
 
