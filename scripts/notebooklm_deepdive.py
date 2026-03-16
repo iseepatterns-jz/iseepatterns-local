@@ -63,12 +63,12 @@ def get_new_evidence(days: int = 30) -> list[dict]:
             conn.row_factory = sqlite3.Row
             cur = conn.execute(
                 """
-                SELECT e.id, e.title, e.description, e.evidence_date,
-                       e.source_type, e.significance_score, e.tags,
-                       e.created_at, e.summary
+                SELECT e.id, e.title, e.summary, e.body_snippet,
+                       e.source_type, e.tags,
+                       e.created_at, e.start_timestamp
                 FROM evidence e
                 WHERE e.created_at >= ?
-                ORDER BY e.evidence_date DESC
+                ORDER BY e.start_timestamp DESC
                 LIMIT 100
                 """,
                 (cutoff,)
@@ -99,9 +99,9 @@ def get_evidence_stats() -> dict:
             row = conn.execute("SELECT MAX(created_at) FROM evidence").fetchone()
             stats["last_ingested"] = row[0] if row else "unknown"
 
-            # High-significance items
+            # High-value items (estimated by body_snippet length > 200 chars)
             row = conn.execute(
-                "SELECT COUNT(*) FROM evidence WHERE significance_score >= 7"
+                "SELECT COUNT(*) FROM evidence WHERE length(body_snippet) > 200"
             ).fetchone()
             stats["high_significance"] = row[0] if row else 0
 
@@ -135,7 +135,7 @@ def generate_brief(new_evidence: list[dict], template_id: str, templates: dict) 
         "",
         "## Evidence Repository Status",
         f"- **Total evidence items:** {stats.get('total', 'unavailable')}",
-        f"- **High-significance items (score >= 7):** {stats.get('high_significance', 'unavailable')}",
+        f"- **High-value items (detailed body_snippet):** {stats.get('high_significance', 'unavailable')}",
         f"- **Last ingested:** {stats.get('last_ingested', 'unknown')}",
         "",
     ]
@@ -154,13 +154,12 @@ def generate_brief(new_evidence: list[dict], template_id: str, templates: dict) 
         ]
         for i, ev in enumerate(new_evidence[:50], 1):  # cap at 50
             tags = ev.get("tags", "") or ""
-            significance = ev.get("significance_score", "?")
-            ev_date = ev.get("evidence_date", "")[:10] if ev.get("evidence_date") else "unknown"
+            ev_date = (ev.get("start_timestamp") or "")[:10] or "unknown"
             lines += [
                 f"### {i}. [{ev.get('source_type','?').upper()}] {ev.get('title', 'Untitled')}",
-                f"**Date:** {ev_date} | **Significance:** {significance}/10 | **Tags:** {tags}",
+                f"**Date:** {ev_date} | **Tags:** {tags}",
                 "",
-                ev.get("summary") or ev.get("description") or "(No summary available)",
+                ev.get("summary") or ev.get("body_snippet") or "(No summary available)",
                 "",
             ]
     else:
@@ -213,8 +212,6 @@ def create_notebook_via_nlm(title: str, brief_path: Path) -> str | None:
     log(f"Auth status: {result.stdout.strip()[:200]}")
 
     # Step 2: We output instructions for the agent to follow interactively
-    # The notebooklm skill requires manual browser interaction for notebook creation
-    # We'll provide the complete ready-to-use brief path and instructions
     log("", "OK")
     log("NotebookLM notebook creation requires an agent browser session.", "WARN")
     log("The brief has been prepared and is ready to upload.", "OK")
