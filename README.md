@@ -2,8 +2,12 @@
 
 A local AI-powered legal and financial forensic assistant with **hybrid search** (BM25 + vector), **cross-encoder reranking**, and a **unified evidence hub** tying together legal PDFs, emails, iMessages, Printavo, QuickBooks, and bank/credit-card data — all running on your Apple M4 Max using a single `qwen2.5-32b-forensic` model.
 
-## Features
-
+- **Workflow-Driven UI**: Reorganized into logical investigation stages:
+  - **Recon**: Evidence Hub & Communications.
+  - **Analyze**: Correlator & Player Profiles.
+  - **Strategize**: Case Corner & Legal Library.
+  - **Present**: Briefing Room.
+- **Consolidated Dashboard Hubs**: Unified entry points for "Discovery Hub" (Emails/Texts/Transcripts) and "Strategy Hub" (Claims/Legal).
 - **Unified Financial Hub**: Consolidation of ~24k RBC and Printavo records with cross-linking to evidence.
 - **Evidence Hub (Backend)**: Master SQLite database linking emails, iMessages, and legal documents.
 - **Hybrid Search**: BM25 keyword matching + vector similarity (RRF) over normalized “evidence cards.”
@@ -69,7 +73,7 @@ lawmodel1/
 │   └── m1studio_2025-05-31.../db/decoded/ # Official 18k LG/JZ thread
 ├── ingest/                                # Forensic Ingestion Layer
 ├── docs/                                  # Documentation & evidence flow diagram
-└── ...
+├── ...
 ```
 
 ## Setup
