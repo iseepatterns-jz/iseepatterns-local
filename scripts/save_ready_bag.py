@@ -11,8 +11,12 @@ import sys
 import shutil
 import json
 import sqlite3
+import subprocess
 from datetime import datetime
 from pathlib import Path
+
+# gem-notebooklm hook
+NOTEBOOKLM_SCRIPT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/notebooklm_deepdive.py")
 
 # Paths
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
@@ -185,11 +189,41 @@ def generate_manifest():
             "hashes": manifest
         }, mf, indent=2)
 
+def run_notebooklm_deepdive(all_templates: bool = False):
+    """gem-notebooklm hook — fires after export package is generated."""
+    if not NOTEBOOKLM_SCRIPT.exists():
+        log("[gem-notebooklm] Script not found, skipping.")
+        return
+
+    log("[gem-notebooklm] Generating new evidence brief...")
+    try:
+        cmd = [sys.executable, str(NOTEBOOKLM_SCRIPT)]
+        if not all_templates:
+            # Default: just the new-evidence-spotlight for quick review
+            cmd += ["--template", "new-evidence-spotlight", "--days", "30"]
+        # else: no --template flag = all 5 templates
+
+        result = subprocess.run(cmd, capture_output=False, text=True, timeout=120)
+        if result.returncode == 0:
+            log("[gem-notebooklm] ✓ Brief(s) generated. Check AUDIO_OVERVIEW_LOCKER.")
+        else:
+            log(f"[gem-notebooklm] Completed with warnings (exit {result.returncode}).")
+    except Exception as ex:
+        log(f"[gem-notebooklm] Error: {ex}")
+
+
 def main():
     log("--- Starting READY BAG Overhaul ---")
     ensure_dirs()
     process_inbox()
     generate_export_package()
+
+    # gem-notebooklm: Generate new-evidence-spotlight brief automatically
+    # Pass --all-templates to generate all 5 audio overview briefs:
+    #   python scripts/save_ready_bag.py --all-nlm-templates
+    all_nlm = "--all-nlm-templates" in sys.argv
+    run_notebooklm_deepdive(all_templates=all_nlm)
+
     log("--- Process Complete ---")
 
 if __name__ == "__main__":
