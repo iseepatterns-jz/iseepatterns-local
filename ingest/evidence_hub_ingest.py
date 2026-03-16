@@ -29,8 +29,7 @@ from typing import Dict, Optional
 PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 DB_PATH = PROJECT_ROOT / "data" / "evidence_hub.db"
 
-IMAC_CHAT_DB = PROJECT_ROOT / "chatdb_storage" / "imac_2025-06-01_chatdb_old_mac_os_no_decode_needed" / "2025-06-01_original_file_from_imac" / "chat.db"
-M1STUDIO_CHAT_DB = PROJECT_ROOT / "chatdb_storage" / "m1studio_2025-05-31_chatdb_decodedBody_added" / "db" / "decoded" / "2025-05-31_decoded_body_all_chat_from_m1studio.db"
+CHAT_MASTER_DB = PROJECT_ROOT / "data" / "chat_master.db"
 EMAIL_DB = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "emails_LG_SM_SH_JZ.db"
 MBOX_METADATA_DB = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "mbox_metadata.db"
 
@@ -688,8 +687,7 @@ def main():
     start = time.time()
 
     if args.all or args.imessage:
-        ingestor.ingest_imessage(IMAC_CHAT_DB, "CHAT_DB_IMAC")
-        ingestor.ingest_imessage(M1STUDIO_CHAT_DB, "CHAT_DB_M1STUDIO")
+        ingestor.ingest_imessage(CHAT_MASTER_DB, "CHAT_DB_CONSOLIDATED")
 
     if args.email:
         ingestor.ingest_email(EMAIL_DB)

@@ -8,6 +8,10 @@ export async function GET() {
         const db = getCommDb();
         console.log("CoC API: got db connection");
 
+        // Attach mbox_index.db to the connection so we can query chain_of_custody
+        const INDEX_DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db";
+        db.exec(`ATTACH DATABASE '${INDEX_DB_PATH}' AS index_db`);
+
         let records: unknown[] = [];
         try {
             const stmt = db.prepare(`
@@ -19,9 +23,8 @@ export async function GET() {
           size_bytes,
           case_id,
           notes,
-          ingested_at,
-          last_updated_at
-        FROM chain_of_custody
+          ingested_at
+        FROM index_db.chain_of_custody
         ORDER BY id ASC
       `);
             records = stmt.all();

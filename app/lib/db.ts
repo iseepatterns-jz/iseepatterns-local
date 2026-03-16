@@ -139,8 +139,8 @@ export function getWorkbenchDb(): Database.Database {
 export function getImessageDb(): Database.Database {
     if (!_imessageDb) {
         const dbPath = IS_LAMBDA
-            ? path.join(DATA_ROOT, "chat.db")
-            : "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db";
+            ? path.join(DATA_ROOT, "chat_master.db")
+            : path.join(PROJECT_ROOT, "data", "chat_master.db");
         _imessageDb = new Database(dbPath, { readonly: true });
         _imessageDb.pragma("journal_mode = WAL");
         _imessageDb.pragma("cache_size = -32000"); // 32MB cache for large chat DB

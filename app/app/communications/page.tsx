@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 interface EmailRow {
+    row_id: number;
     msg_id: string;
     account: string;
     sender: string;
@@ -349,7 +350,7 @@ export default function CommunicationsPage() {
                             <tbody>
                                 {data.results.map((row) => (
                                     <tr
-                                        key={row.msg_id}
+                                        key={row.row_id}
                                         onClick={() => openDetail(row.msg_id)}
                                     >
                                         <td style={{ maxWidth: 180 }}>{row.sender || "—"}</td>

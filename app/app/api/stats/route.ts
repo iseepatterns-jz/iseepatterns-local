@@ -8,20 +8,20 @@ export async function GET() {
         const db = getCommDb();
 
         const totalEmails = db
-            .prepare("SELECT COUNT(*) as count FROM messages")
+            .prepare("SELECT COUNT(*) as count FROM emails")
             .get() as { count: number };
 
         const uniqueSenders = db
-            .prepare("SELECT COUNT(DISTINCT sender) as count FROM messages")
+            .prepare("SELECT COUNT(DISTINCT from_addr) as count FROM emails")
             .get() as { count: number };
 
         const uniqueAccounts = db
-            .prepare("SELECT COUNT(DISTINCT account) as count FROM messages")
+            .prepare("SELECT COUNT(DISTINCT account) as count FROM emails")
             .get() as { count: number };
 
         const dateRange = db
             .prepare(
-                "SELECT MIN(date) as earliest, MAX(date) as latest FROM messages WHERE date IS NOT NULL AND date != ''"
+                "SELECT MIN(date_sent) as earliest, MAX(date_sent) as latest FROM emails WHERE date_sent IS NOT NULL AND date_sent != ''"
             )
             .get() as { earliest: string; latest: string };
 

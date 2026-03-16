@@ -14,6 +14,11 @@ ROOT = Path(__file__).resolve().parent  # because api_server.py is in lawmodel1 
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+# Add scripts directory to sys.path
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 # Import pieces from your existing code
 from rag_law_assistant import (
     CHROMA_DB_PATH,

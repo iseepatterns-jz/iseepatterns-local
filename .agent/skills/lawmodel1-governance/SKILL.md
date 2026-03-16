@@ -46,7 +46,6 @@ schema, forensic, evidence, locker, canonical_id, provenance
 │   └── types/              # TypeScript type definitions
 ├── data/                   # SOURCE OF TRUTH — all evidence data
 │   ├── *_LOCKER/           # Organized evidence lockers (15+)
-│   │   └── unused/          # Legacy/superseded databases
 │   ├── evidence_cards/     # Generated evidence card JSONs
 │   ├── memos/              # Investigation memos
 │   ├── transcripts/        # Call/meeting transcripts
@@ -61,7 +60,6 @@ schema, forensic, evidence, locker, canonical_id, provenance
 ├── ingest/                 # PERMANENT ingestion modules (Python package)
 ├── schemas/                # SQL schema definitions (canonical)
 ├── scripts/                # ONE-TIME or utility scripts
-│   └── unused/              # Legacy/superseded scripts
 ├── tools/                  # Standalone tool scripts
 └── prompts/                # LLM prompt templates
 ```
@@ -72,7 +70,6 @@ schema, forensic, evidence, locker, canonical_id, provenance
 |:---|:---|:---|
 | Reusable ingestion pipeline | `ingest/` | Will be called repeatedly; is part of the evidence pipeline |
 | One-time utility or analysis | `scripts/` | Run once or ad-hoc; not part of core pipeline |
-| Superseded scripts | `scripts/unused/` | Scripts replaced by better tools or master indexes |
 | Standalone CLI tool | `tools/` | Self-contained tool with its own argument parsing |
 | SQL schema definition | `schemas/` | ANY new table in ANY database |
 | Evidence source files | `data/*_LOCKER/` | Raw evidence organized by type |
@@ -92,33 +89,35 @@ schema, forensic, evidence, locker, canonical_id, provenance
 | `evidence_hub.db` | `data/` | READ-ONLY* | Canonical evidence store (643k+ records) |
 | `players.db` | `data/` | READ-ONLY | Person intelligence (44+ profiles) |
 | `workbench.db` | `app/` (auto-created) | READ-WRITE | Assignments, annotations, timeline, claims |
-| `chat_master.db` | `data/` | READ-ONLY | Consolidated iMessage storage |
+| `chat_master.db` | `data/` | READ-ONLY | Unified forensic iMessage index (277k records) |
 | `brains.db` | Project root | READ-WRITE | Brain/task orchestration |
 | `chroma_db/` | Project root | READ-WRITE | Vector embeddings for RAG |
 | `bm25_index.pkl` | Project root | READ-ONLY | BM25 keyword search index (340 MB) |
 
 *evidence_hub.db is written to only by ingest scripts, never by the UI/API layer.
 
-### Legacy/Unused Databases (Move to `unused/` folders)
-- 📧 `mbox_metadata.db` (Primary Email Index, 8.5 GB)
-- 📧 `accountant_correspondence.db` (Filtered accountant emails)
-- 📧 `fifth_third_correspondence.db` (Fifth Third Bank communications)
-- 📧 `mayersky_correspondence.db` (Leonard Mayersky communications)
-- 📧 `side_business_correspondence.db` (Side business evidence)
-- 📧 `accounting_all.db` (All accounting@ emails)
-- 📧 `accounting_ashley_myles.db` (Ashley Myles persona threads)
-- 📧 `emails_LG_SM_SH_JZ.db` (4-person email index, 4 GB)
+### Specialized Correspondence Databases
+
+| Database | Location | Purpose |
+|:---|:---|:---|
+| `accountant_correspondence.db` | `data/` | Filtered accountant emails |
+| `fifth_third_correspondence.db` | `data/` | Fifth Third Bank communications |
+| `mayersky_correspondence.db` | `data/` | Leonard Mayersky communications |
+| `side_business_correspondence.db` | `data/` | Side business evidence |
+| `accounting_all.db` | `data/MBOX_LOCKER/` | All accounting@ emails |
+| `accounting_ashley_myles.db` | `data/MBOX_LOCKER/` | Ashley Myles persona threads |
+| `emails_LG_SM_SH_JZ.db` | `data/MBOX_LOCKER/` | 4-person email index (4 GB) |
 
 ### Database Connection Layer
 
 All database connections go through `app/lib/db.ts`. Available accessors:
 
 ```typescript
-getCommDb()          // gmail_master_index.db (READ-ONLY)
-getCommDbWritable()  // gmail_master_index.db (READ-WRITE, use sparingly)
+getCommDb()          // mbox_metadata.db (READ-ONLY)
+getCommDbWritable()  // mbox_metadata.db (READ-WRITE, use sparingly)
 getEvidenceHubDb()   // evidence_hub.db (READ-ONLY)
 getWorkbenchDb()     // workbench.db (READ-WRITE, auto-schema)
-getImessageDb()      // chat.db decoded (READ-ONLY)
+getImessageDb()      // chat_master.db consolidated index (READ-ONLY)
 getCaseCornerDb()    // workbench.db with case_corner schema applied
 getDb(name)          // Generic accessor for data/*.db (READ-ONLY)
 ```
@@ -142,7 +141,7 @@ All schemas MUST be defined in `schemas/` before being used. Current canonical s
 - `evidence_participants` — Junction: evidence ↔ participants (many-to-many)
 - `evidence_fts` — FTS5 full-text search (auto-synced via triggers)
 
-### mbox_metadata.sql — Tables in `gmail_master_index.db`
+### mbox_metadata.sql — Tables in `mbox_metadata.db`
 - `emails` — Full index of all Gmail MBOX exports
   - **Dedup key**: `UNIQUE(rfc822_id, account)`
   - **Provenance**: `locker_source`, `zip_source`, `mbox_source`
@@ -289,7 +288,7 @@ For evidence to be court-admissible:
    - `coc_notes_audit` table
    - `evidence_annotations` with `created_by` and `created_at`
 
-4. **No Direct Modification**: Raw evidence databases (`gmail_master_index.db`, `evidence_hub.db`) 
+4. **No Direct Modification**: Raw evidence databases (`mbox_metadata.db`, `evidence_hub.db`) 
    are READ-ONLY from the UI/API layer. All annotations, assignments, and notes go into 
    `workbench.db` as a separate overlay.
 
@@ -307,18 +306,18 @@ For evidence to be court-admissible:
 | Route | Database(s) | Purpose |
 |:---|:---|:---|
 | `/api/evidence-hub` | evidence_hub.db | Browse/search canonical evidence |
-| `/api/communications` | gmail_master_index.db | Email search and viewer |
+| `/api/communications` | mbox_metadata.db | Email search and viewer |
 | `/api/workbench` | workbench.db | Exhibit assignments |
-| `/api/correlator` | evidence_hub.db + gmail_master_index.db | Cross-source patterns |
+| `/api/correlator` | evidence_hub.db + mbox_metadata.db | Cross-source patterns |
 | `/api/players` | players.db | Person profiles |
 | `/api/timeline` | workbench.db | Timeline events |
 | `/api/financials` | workbench.db | Financial transactions |
-| `/api/coc` | gmail_master_index.db + workbench.db | Chain of custody |
+| `/api/coc` | mbox_metadata.db + workbench.db | Chain of custody |
 | `/api/case-corner` | workbench.db | Claims management |
 | `/api/transcripts` | workbench.db | Transcript viewer |
 | `/api/briefing` | evidence_hub.db + workbench.db | Case briefing |
 | `/api/imessages` | chat.db decoded | iMessage search |
-| `/api/search` | gmail_master_index.db | Full-text email search |
+| `/api/search` | mbox_metadata.db | Full-text email search |
 | `/api/legal` | chroma_db + bm25 | Legal document search |
 | `/api/ai` | Ollama (qwen2.5-32b-forensic) | AI analysis |
 | `/api/stats` | Multiple | Dashboard statistics |
@@ -327,7 +326,7 @@ For evidence to be court-admissible:
 | `/api/files` | Filesystem | File serving |
 | `/api/calendar` | workbench.db | Calendar data |
 | `/api/auth` | N/A | Authentication |
-| `/api/match-eml` | gmail_master_index.db | EML file matching |
+| `/api/match-eml` | mbox_metadata.db | EML file matching |
 
 ---
 

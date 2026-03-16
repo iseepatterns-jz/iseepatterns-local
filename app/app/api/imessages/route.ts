@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCommDb } from "@/lib/db";
+import { getImessageDb } from "@/lib/db";
 import Database from "better-sqlite3";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
         const nearDate = url.searchParams.get("near_date") || "";
         const offset = (page - 1) * limit;
 
-        const db = getCommDb();
+        const db = getImessageDb();
 
         // ── Temporal proximity mode (bounded range instead of full scan) ──
         if (nearDate) {
