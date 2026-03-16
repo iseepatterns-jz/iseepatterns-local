@@ -19,7 +19,6 @@ Usage:
   python scripts/notebooklm_deepdive.py --days 7               # Last 7 days
   python scripts/notebooklm_deepdive.py --dry-run              # Preview brief only
   python scripts/notebooklm_deepdive.py --list-templates       # List options
-  python scripts/notebooklm_deepdive.py --output-dir ~/Desktop/RC-NLM-Briefs
 """
 
 import sys
@@ -32,6 +31,7 @@ from datetime import datetime, timedelta, timezone
 # ──────────────── PATHS ────────────────
 BASE_DIR       = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 EVIDENCE_HUB   = BASE_DIR / "data" / "evidence_hub.db"
+PLAYERS_DB     = BASE_DIR / "data" / "players.db"
 TEMPLATES_FILE = BASE_DIR / "prompts" / "notebooklm_templates.json"
 # Default output dir — override with --output-dir to keep briefs outside the workspace
 DEFAULT_BRIEFS_DIR = Path.home() / "Documents" / "RC-NLM-Briefs"
@@ -59,6 +59,88 @@ NOT_EVIDENCE_MD_HEADER = """\
 > ingested into evidence_hub.db · cited in legal filings · treated as fact
 > without independent verification against original source records.
 """
+
+
+# ──────────────── PLAYER CARDS (READ-ONLY) ────────────────
+def get_players() -> list[dict]:
+    """Pull all player cards from players.db. READ-ONLY. Returns [] if db missing."""
+    if not PLAYERS_DB.exists():
+        log(f"players.db not found at {PLAYERS_DB} — skipping player roster", "WARN")
+        return []
+    try:
+        with sqlite3.connect(f"file:{PLAYERS_DB}?mode=ro", uri=True) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                """
+                SELECT slug, display_name, title, company, profile_type,
+                       aliases, email_addresses, phone_numbers, summary, notes
+                FROM players
+                ORDER BY id
+                """
+            ).fetchall()
+            players = [dict(r) for r in rows]
+            log(f"Loaded {len(players)} player cards from players.db", "OK")
+            return players
+    except Exception as ex:
+        log(f"Error reading players.db: {ex}", "WARN")
+        return []
+
+
+def build_player_roster_md(players: list[dict]) -> str:
+    """Render player cards as a granular markdown section for the brief."""
+    if not players:
+        return ""
+    lines = [
+        "## Key Players & Entities",
+        "*Sourced live from players.db — canonical record for all names and roles*",
+        "",
+    ]
+    for p in players:
+        ptype = (p.get("profile_type") or "person").upper()
+        name  = p.get("display_name", "Unknown")
+        title = p.get("title") or ""
+        co    = p.get("company") or ""
+        header = f"### [{ptype}] {name}"
+        if title or co:
+            header += f" — {', '.join(x for x in [title, co] if x)}"
+        lines.append(header)
+
+        # Aliases
+        try:
+            aliases = json.loads(p.get("aliases") or "[]")
+        except Exception:
+            aliases = [x.strip() for x in (p.get("aliases") or "").split(",") if x.strip()]
+        if aliases:
+            lines.append(f"**Aliases / AKA:** {', '.join(aliases)}")
+
+        # Email addresses
+        try:
+            emails = json.loads(p.get("email_addresses") or "[]")
+        except Exception:
+            emails = [x.strip() for x in (p.get("email_addresses") or "").split(",") if x.strip()]
+        if emails:
+            lines.append(f"**Email(s):** {', '.join(emails)}")
+
+        # Phone numbers
+        try:
+            phones = json.loads(p.get("phone_numbers") or "[]")
+        except Exception:
+            phones = [x.strip() for x in (p.get("phone_numbers") or "").split(",") if x.strip()]
+        if phones:
+            lines.append(f"**Phone(s):** {', '.join(phones)}")
+
+        # Summary / bio
+        if p.get("summary"):
+            lines.append(f"")
+            lines.append(p["summary"])
+
+        # Investigator notes
+        if p.get("notes"):
+            lines.append(f"")
+            lines.append(f"**Investigator notes:** {p['notes']}")
+
+        lines.append("")
+    return "\n".join(lines)
 
 
 # ──────────────── EVIDENCE QUERY (READ-ONLY) ────────────────
@@ -108,7 +190,7 @@ def get_evidence_stats() -> dict:
 
 
 # ──────────────── BRIEF GENERATOR ────────────────
-def generate_brief(evidence: list[dict], template: dict, preamble: str) -> str:
+def generate_brief(evidence: list[dict], template: dict, preamble: str, players: list[dict] | None = None) -> str:
     """Build the outbound markdown brief to upload to NotebookLM."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     stats = get_evidence_stats()
@@ -123,6 +205,18 @@ def generate_brief(evidence: list[dict], template: dict, preamble: str) -> str:
         "",
         preamble,
         "",
+    ]
+
+    # Inject live player roster from players.db
+    if players:
+        lines += [
+            build_player_roster_md(players),
+            "",
+            "---",
+            "",
+        ]
+
+    lines += [
         "## Evidence Snapshot",
         f"- **Total records:** {stats.get('total', 'n/a')}",
         f"- **Last ingested:** {stats.get('last_ingested', 'unknown')}",
@@ -211,7 +305,10 @@ def run(args):
     # Get evidence (read-only)
     evidence = get_new_evidence(days=args.days)
 
-    # Resolve output directory — prefer --output-dir, fall back to default outside workspace
+    # Pull player cards from players.db (read-only)
+    players = get_players()
+
+    # Resolve output directory — prefer --output-dir, fall back to default
     output_dir = Path(args.output_dir).expanduser().resolve() if args.output_dir else DEFAULT_BRIEFS_DIR
     output_dir.mkdir(parents=True, exist_ok=True)
     log(f"Output dir: {output_dir}")
@@ -220,7 +317,7 @@ def run(args):
 
     for template in selected:
         log(f"Generating brief: {template['name']}")
-        content = generate_brief(evidence, template, preamble)
+        content = generate_brief(evidence, template, preamble, players)
         brief_name = f"{session_id}_{template['id']}.md"
         brief_path = output_dir / brief_name
         brief_path.write_text(content)
@@ -281,6 +378,7 @@ def main():
         help="Generate briefs only, skip upload instructions")
     parser.add_argument("--list-templates", action="store_true",
         help="List available templates and exit")
+
 
     args = parser.parse_args()
 
