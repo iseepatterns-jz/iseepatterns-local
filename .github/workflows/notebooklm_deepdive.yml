@@ -1,0 +1,105 @@
+name: gem-notebooklm — Generate Brief
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Triggers:
+#   - Manual: GitHub UI → Actions tab → "Run workflow" (choose template + days)
+#   - Auto:   Every push to main
+#
+# Runs on a SELF-HOSTED runner (your Mac) because evidence_hub.db is local.
+# Briefs land in ~/Documents/RC-NLM-Briefs/ — never inside the repo.
+# Audio overviews are generated manually in NotebookLM and stored separately.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+    inputs:
+      template:
+        description: "Template to run"
+        required: false
+        default: "new-evidence-spotlight"
+        type: choice
+        options:
+          - new-evidence-spotlight
+          - full-case-overview
+          - financial-crimes
+          - sg-employment-timeline
+          - agency-referral-brief
+          - all
+      days:
+        description: "Days of evidence to include"
+        required: false
+        default: "30"
+        type: string
+
+jobs:
+  generate-brief:
+    name: Generate NotebookLM Brief
+    # ── Self-hosted runner required — evidence_hub.db is local-only ──
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Validate evidentiary firewall
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "⚠  EVIDENTIARY FIREWALL CHECK"
+          echo "   Briefs go to: ~/Documents/RC-NLM-Briefs/"
+          echo "   Nothing is written into the repo."
+          echo "   Audio overviews: download manually outside workspace."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: Set up Python
+        run: |
+          # Use the existing venv — avoid installing anything into the workspace
+          PYTHON="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/.venv-3.14/bin/python"
+          if [[ ! -f "$PYTHON" ]]; then
+            echo "❌ venv Python not found at $PYTHON"
+            exit 1
+          fi
+          echo "PYTHON=$PYTHON" >> $GITHUB_ENV
+
+      - name: Resolve template input
+        id: params
+        run: |
+          # workflow_dispatch wins over push default
+          TEMPLATE="${{ github.event.inputs.template }}"
+          DAYS="${{ github.event.inputs.days }}"
+          # Fallback for push trigger
+          TEMPLATE="${TEMPLATE:-new-evidence-spotlight}"
+          DAYS="${DAYS:-30}"
+          echo "template=$TEMPLATE" >> $GITHUB_OUTPUT
+          echo "days=$DAYS"         >> $GITHUB_OUTPUT
+          echo "▶ Template: $TEMPLATE | Days: $DAYS"
+
+      - name: Generate brief
+        run: |
+          SCRIPT="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/notebooklm_deepdive.py"
+          OUTDIR="$HOME/Documents/RC-NLM-Briefs"
+          TEMPLATE="${{ steps.params.outputs.template }}"
+          DAYS="${{ steps.params.outputs.days }}"
+
+          if [[ "$TEMPLATE" == "all" ]]; then
+            $PYTHON "$SCRIPT" \
+              --days "$DAYS" \
+              --output-dir "$OUTDIR"
+          else
+            $PYTHON "$SCRIPT" \
+              --template "$TEMPLATE" \
+              --days "$DAYS" \
+              --output-dir "$OUTDIR"
+          fi
+
+      - name: List generated briefs
+        run: |
+          echo ""
+          echo "Generated briefs in ~/Documents/RC-NLM-Briefs/:"
+          ls -lh "$HOME/Documents/RC-NLM-Briefs/" | tail -10
+          echo ""
+          echo "✓ Upload the .md file(s) above to notebooklm.google.com"
+          echo "✓ Generate Audio Overview → download MP3 to external storage"
+          echo "✗ Do NOT commit briefs back to this repo"
