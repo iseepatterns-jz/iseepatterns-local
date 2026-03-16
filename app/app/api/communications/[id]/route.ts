@@ -13,10 +13,10 @@ export async function GET(
 
         const row = db
             .prepare(
-                `SELECT msg_id, account, sender, subject, date, body,
+                `SELECT id as row_id, message_id as msg_id, account, sender, subject, date, body,
                 thread_id, source_file, source_hash, zip_path,
                 byte_offset, client_id, case_id, created_at
-         FROM messages WHERE msg_id = ?`
+         FROM emails WHERE message_id = ?`
             )
             .get(id);
 

@@ -22,7 +22,7 @@ export async function GET(
         // Get the anchor email
         const anchor = db
             .prepare(
-                `SELECT msg_id, subject, date, sender, account FROM messages WHERE msg_id = ?`
+                `SELECT message_id as msg_id, subject, date, sender, account FROM emails WHERE message_id = ?`
             )
             .get(id) as { msg_id: string; subject: string; date: string; sender: string; account: string } | undefined;
 
@@ -43,9 +43,9 @@ export async function GET(
         // Single query: LIKE '%base_subject' catches all Re:/Fwd: prefixes
         const threadMessages = db
             .prepare(
-                `SELECT DISTINCT msg_id, sender, account, subject, date, body,
-                        source_file, zip_path, client_id, case_id
-                 FROM messages
+                `SELECT DISTINCT id as row_id, message_id as msg_id, sender, account, subject, date, body,
+                        mbox_name as source_file, zip_file as zip_path, client_id, case_id
+                 FROM emails
                  WHERE subject LIKE ?
                  ORDER BY date ASC`
             )

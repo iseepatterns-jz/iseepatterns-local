@@ -37,6 +37,7 @@ interface SectionInfo {
     totalItems: number;
 }
 interface EmailRow {
+    row_id: number;
     msg_id: string;
     account: string;
     sender: string;
@@ -67,6 +68,7 @@ interface IMessage {
 }
 
 interface ThreadEmail {
+    row_id: number;
     msg_id: string;
     sender: string;
     account: string;
@@ -182,7 +184,7 @@ export default function CorrelatorPage() {
     const [threadEmails, setThreadEmails] = useState<ThreadEmail[]>([]);
     const [threadSubject, setThreadSubject] = useState("");
     const [showThread, setShowThread] = useState(false);
-    const [selectedForEvidence, setSelectedForEvidence] = useState<Set<string>>(new Set());
+    const [selectedForEvidence, setSelectedForEvidence] = useState<Set<number>>(new Set());
     const [threadExpanded, setThreadExpanded] = useState<string | null>(null);
 
     /* state — iMessage selection */
@@ -313,7 +315,7 @@ export default function CorrelatorPage() {
             setIsCorrelating(false);
             setThreadEmails(threadData.thread || []);
             setThreadSubject(threadData.base_subject || "");
-            setSelectedForEvidence(new Set((threadData.thread || []).map((t: ThreadEmail) => t.msg_id)));
+            setSelectedForEvidence(new Set((threadData.thread || []).map((t: ThreadEmail) => t.row_id)));
 
             if (detail.date) {
                 setTimeout(() => {
@@ -425,17 +427,17 @@ export default function CorrelatorPage() {
         }
     };
 
-    const toggleEvidence = (msgId: string) => {
+    const toggleEvidence = (rowId: number) => {
         setSelectedForEvidence((prev) => {
             const next = new Set(prev);
-            if (next.has(msgId)) next.delete(msgId);
-            else next.add(msgId);
+            if (next.has(rowId)) next.delete(rowId);
+            else next.add(rowId);
             return next;
         });
     };
 
     const selectAllEvidence = () => {
-        setSelectedForEvidence(new Set(threadEmails.map((t) => t.msg_id)));
+        setSelectedForEvidence(new Set(threadEmails.map((t) => t.row_id)));
     };
 
     const deselectAllEvidence = () => {
@@ -513,8 +515,8 @@ export default function CorrelatorPage() {
                     <div className="correlator-list">
                         {emails.map((e) => (
                             <div
-                                key={e.msg_id}
-                                className={`correlator-email-row ${selectedEmail?.msg_id === e.msg_id ? "active" : ""}`}
+                                key={e.row_id}
+                                className={`correlator-email-row ${selectedEmail?.row_id === e.row_id ? "active" : ""}`}
                                 onClick={() => selectEmail(e.msg_id)}
                             >
                                 <div className="correlator-email-subject">{e.subject || "(no subject)"}</div>
@@ -601,12 +603,12 @@ export default function CorrelatorPage() {
 
                             <div className="correlator-list" style={{ padding: "0.25rem 0.5rem" }}>
                                 {threadEmails.map((t, idx) => {
-                                    const isSelected = selectedForEvidence.has(t.msg_id);
+                                    const isSelected = selectedForEvidence.has(t.row_id);
                                     const isExpanded = threadExpanded === t.msg_id;
-                                    const isCurrent = t.msg_id === selectedEmail.msg_id;
+                                    const isCurrent = t.row_id === selectedEmail.row_id;
                                     return (
-                                        <div key={t.msg_id} className={`correlator-thread-item ${isCurrent ? "current" : ""}`}>
-                                            <div className="correlator-thread-row" onClick={() => toggleEvidence(t.msg_id)}>
+                                        <div key={t.row_id} className={`correlator-thread-item ${isCurrent ? "current" : ""}`}>
+                                            <div className="correlator-thread-row" onClick={() => toggleEvidence(t.row_id)}>
                                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flex: 1, minWidth: 0 }}>
                                                     {isSelected
                                                         ? <CheckSquare size={14} style={{ color: "var(--accent-cyan)", flexShrink: 0 }} />
