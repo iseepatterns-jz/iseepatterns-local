@@ -12,7 +12,12 @@
         "raw_files": [
           "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/"
         ],
-        "metadata_csv": "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-metadata.csv",
+        "metadata_csvs": [
+          "2024-06-22-all-metadata.csv",
+          "2024-06-30_lg-metadata.csv",
+          "sggmail-metadata.csv",
+          "leggmail-metadata.csv"
+        ],
         "file_types": [".zip", ".mbox", ".csv"]
       },
       "outputs": {
@@ -22,7 +27,7 @@
             "tables": ["emails", "drive_links", "emails_fts"],
             "schema": "schemas/mbox_metadata.sql",
             "access": "read-write",
-            "notes": "Primary master index for all queries; 741k records."
+            "notes": "Primary master index for all queries; 746k+ records."
           }
         },
         "filtered_databases": [
@@ -34,7 +39,8 @@
         "ingest": "ingest/mbox_metadata_ingest.py",
         "utilities": [
           "scripts/index_mbox_master.py",
-          "scripts/recover_indexing.py"
+          "scripts/recover_indexing.py",
+          "scripts/consolidate_mbox_index.py"
         ]
       },
       "api_routes": ["/api/communications", "/api/search", "/api/coc"],

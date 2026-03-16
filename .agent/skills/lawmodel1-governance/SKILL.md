@@ -88,7 +88,7 @@ schema, forensic, evidence, locker, canonical_id, provenance
 
 | Database | Location | Access | Purpose |
 |:---|:---|:---|:---|
-| `gmail_master_index.db` | `data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/` | READ-ONLY | Primary master email index (741k+ records) |
+| `gmail_master_index.db` | `data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/` | READ-ONLY | Primary master email index (746k+ records) |
 | `evidence_hub.db` | `data/` | READ-ONLY* | Canonical evidence store (643k+ records) |
 | `players.db` | `data/` | READ-ONLY | Person intelligence (44+ profiles) |
 | `workbench.db` | `app/` (auto-created) | READ-WRITE | Assignments, annotations, timeline, claims |
