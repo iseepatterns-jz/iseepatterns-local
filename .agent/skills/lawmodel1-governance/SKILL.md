@@ -12,7 +12,62 @@ This document defines the core rules, architectural patterns, and quality standa
 
 ---
 
-## 2. The Gem System (Plugin Architecture)
+## 2. Project Root & Directory Standards
+
+```
+/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/
+├── .agent/skills/          # Agent skills (including this governance skill)
+├── app/                    # Next.js frontend (App Router)
+│   ├── app/                # Pages and API routes
+│   │   ├── api/            # 22 API route directories
+│   │   └── [page]/         # 15 page directories
+│   ├── components/         # Shared React components
+│   ├── lib/                # Core libraries (db.ts, rag.ts, bm25.ts)
+│   └── types/              # TypeScript type definitions
+├── data/                   # SOURCE OF TRUTH — all evidence data
+│   ├── *_LOCKER/           # Organized evidence lockers (15+)
+│   ├── evidence_cards/     # Generated evidence card JSONs
+│   ├── memos/              # Investigation memos
+│   ├── transcripts/        # Call/meeting transcripts
+│   ├── evidence_hub.db     # Canonical evidence store
+│   ├── players.db          # Person intelligence
+│   └── chat_master.db      # Consolidated iMessages
+├── chatdb_storage/         # iMessage forensic storage (raw)
+├── chroma_db/              # Vector embeddings (ChromaDB)
+├── docs/                   # Documentation and handoffs
+├── exports/                # Generated outputs (dossiers, letters, packages)
+├── gems/                   # Gem registry (modular pipeline definitions)
+├── ingest/                 # PERMANENT ingestion modules (Python package)
+├── schemas/                # SQL schema definitions (canonical)
+├── scripts/                # ONE-TIME or utility scripts
+├── tools/                  # Standalone tool scripts
+└── prompts/                # LLM prompt templates
+```
+
+### Placement Rules
+
+| Type | Location | When |
+|:---|:---|:---|
+| Reusable ingestion pipeline | `ingest/` | Will be called repeatedly; is part of the evidence pipeline |
+| One-time utility or analysis | `scripts/` | Run once or ad-hoc; not part of core pipeline |
+| Standalone CLI tool | `tools/` | Self-contained tool with its own argument parsing |
+| SQL schema definition | `schemas/` | ANY new table in ANY database |
+| Evidence source files | `data/*_LOCKER/` | Raw evidence organized by type |
+| Generated outputs | `exports/` | Dossiers, attorney packages, letters |
+| API routes | `app/app/api/` | Next.js API handlers |
+| UI pages | `app/app/[page]/` | Next.js page components (Organized by Workflow) |
+
+### UI Architecture (Workflow-Driven)
+
+The UI is organized into four logical stages reflecting the forensic lifecycle:
+1. **RECON**: `evidence-hub` (Discovery Hub), `communications`, `transcripts`
+2. **ANALYZE**: `correlator`, `players`
+3. **STRATEGIZE**: `case-corner` (Strategy Hub), `legal`
+4. **PRESENT**: `briefing` (Briefing Room)
+
+---
+
+## 3. The Gem System (Plugin Architecture)
 A "Gem" is a self-contained unit of functionality (e.g., `gem-gmail`).
 *   **Registration**: Every Gem MUST be registered in `gems/registry.json`.
 *   **Structure**:
@@ -23,7 +78,7 @@ A "Gem" is a self-contained unit of functionality (e.g., `gem-gmail`).
 
 ---
 
-## 3. SQLite Protocol
+## 4. SQLite Protocol
 *   **Production/Lambda**: Use `better-sqlite3` in read-only mode where possible.
 *   **Journal Mode**: All databases SHOULD use `PRAGMA journal_mode = WAL` for concurrent access.
 *   **Foreign Keys**: ALWAYS enable `PRAGMA foreign_keys = ON` in the Workbench.
@@ -31,7 +86,7 @@ A "Gem" is a self-contained unit of functionality (e.g., `gem-gmail`).
 
 ---
 
-## 4. UI/UX: The Premium Aesthetic
+## 5. UI/UX: The Premium Aesthetic
 The interface must reflect the high stakes of forensic legal work.
 *   **Design Language**: Use "Glassmorphism" (high transparency, blurring, subtle borders).
 *   **Colors**: 
@@ -41,14 +96,14 @@ The interface must reflect the high stakes of forensic legal work.
 
 ---
 
-## 5. Security & Verification
+## 6. Security & Verification
 *   **Hashing**: All ingested forensic files MUST have their SHA-256 hash recorded.
 *   **Provenance**: Every piece of evidence in the Hub MUST link back to its original source file and hash.
 *   **Chain of Custody**: Any manual modification of data (overrides) MUST be logged in an `audit_log` table within `workbench.db`.
 
 ---
 
-## 6. Development Workflow
+## 7. Development Workflow
 1.  **Plan**: Check `docs/` and `gems/registry.json` before creating new files.
 2.  **Implement**: Follow directory conventions strictly.
 3.  **GEM Validation**: Verify that new routes/pages are added to the Registry.
@@ -56,34 +111,38 @@ The interface must reflect the high stakes of forensic legal work.
 
 ---
 
-## 7. Python vs. Typescript
+## 8. Python vs. Typescript
 *   **Python**: Use for data processing, heavy ingest, and heavy-lifting logic (LLM extraction, OCR).
 *   **TypeScript (React/Next.js)**: Use for UI and core application logic (API mediation).
 
 ---
 
-## 8. Naming Conventions
+## 9. Naming Conventions
 *   **Files/Dirs**: `snake_case` for Python/scripts, `directory-kebab-case` for UI routes.
 *   **Code**: `camelCase` for TypeScript, `snake_case` for Python.
 *   **SQL Tables**: `snake_case`.
 
 ---
 
-## 9. Error Handling
+## 10. Error Handling
 *   **API**: Always return consistent JSON: `{ "success": boolean, "data"?: any, "error"?: string }`.
 *   **Ingest**: Provide detailed logs in `debug_ingest.log` for troubleshooting.
 
 ---
 
-## 10. The Rosetta Stone
+## 11. The Rosetta Stone
 The master translation layer that links bank descriptions to internal player IDs.
 *   **Format**: `data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv`.
 *   **Usage**: All financial normalization MUST check the Rosetta Stone for player attribution.
 
 ---
 
-## 11. Verification Logic
-1.  **THE Gavel**: Verify that all files have been registered and categorized properly.
+## 12. Forensic Integrity Audit (FIA)
+
+The **Forensic Integrity Audit (FIA)** is a mandatory synchronization procedure. It ensures that raw evidence (Lockers), canonical data (Hub), and strategic intelligence (Brain) remain in perfect harmony.
+
+### The Audit Trinity:
+1.  **THE LOCKERS**: Verify all raw files are ingested and metadata preserved.
 2.  **THE HUB**: Verify `canonical_id` formats and participant linkages.
 3.  **THE BRAIN**: Verify that Rosetta Stone and Walkthrough artifact counts are up to date.
 

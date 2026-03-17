@@ -53,14 +53,7 @@ export function getCommDb(): Database.Database {
     if (!_commDb) {
         const dbPath = IS_LAMBDA
             ? path.join(DATA_ROOT, "mbox_metadata.db")
-            : path.join(
-                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
-                "data",
-                "MBOX_LOCKER",
-                "2024-06-22_GMAIL_MBOX_ALL_LOCKER",
-                "2024-06-22_GMAIL_ALL_MBOX_ZIPPED",
-                "gmail_master_index.db"
-            );
+            : path.join(DATA_ROOT, "..", "data", "MBOX_LOCKER", "mbox_metadata.db");
         _commDb = new Database(dbPath, { readonly: true });
         _commDb.pragma("journal_mode = WAL");
         _commDb.pragma("cache_size = -64000"); // 64MB cache
@@ -72,14 +65,7 @@ export function getCommDbWritable(): Database.Database {
     if (!_commDbRW) {
         const dbPath = IS_LAMBDA
             ? path.join(DATA_ROOT, "mbox_metadata.db")
-            : path.join(
-                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
-                "data",
-                "MBOX_LOCKER",
-                "2024-06-22_GMAIL_MBOX_ALL_LOCKER",
-                "2024-06-22_GMAIL_ALL_MBOX_ZIPPED",
-                "gmail_master_index.db"
-            );
+            : path.join(DATA_ROOT, "..", "data", "MBOX_LOCKER", "mbox_metadata.db");
         _commDbRW = new Database(dbPath); // default is read-write
         _commDbRW.pragma("journal_mode = WAL");
         _commDbRW.pragma("cache_size = -64000");
@@ -119,7 +105,7 @@ export function getWorkbenchDb(): Database.Database {
             _workbenchDb.pragma("foreign_keys = ON");
 
             // Initialize schema if needed
-            const schemaFiles = ["workbench.sql", "transcript_annotations.sql", "missing_schemas.sql", "timeline.sql"];
+            const schemaFiles = ["workbench.sql", "transcript_annotations.sql", "missing_schemas.sql", "timeline.sql", "financial_import.sql"];
             schemaFiles.forEach(file => {
                 const schemaPath = path.join(PROJECT_ROOT, "schemas", file);
                 if (fs.existsSync(schemaPath)) {

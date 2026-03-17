@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Paths
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
-DB_PATH = BASE_DIR / "data/financial/financial_hub.db"
+DB_PATH = BASE_DIR / "data/rowboat-creative/RC-2026/db/workbench.db"
 CARDS_DIR = BASE_DIR / "data/evidence_cards"
 
 def link_tax_to_ledger():

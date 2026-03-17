@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 # Paths
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
 EC_DIR = BASE_DIR / "evidence_cards"
-DB_PATH = BASE_DIR / "financial" / "financial_hub.db"
+DB_PATH = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 # Regex patterns for IDs
 RE_INVOICE = re.compile(r"(?:Invoice|Inv|Order|Job)\s*#?\s*(\d{5,7})", re.I)
@@ -20,7 +20,7 @@ def get_db_maps():
     cursor = conn.cursor()
     
     # Map Invoice Number -> Master Row ID
-    cursor.execute("SELECT order_id, master_row_id FROM financial_master WHERE order_id IS NOT NULL")
+    cursor.execute("SELECT invoice_num, master_row_id FROM master_transactions WHERE invoice_num IS NOT NULL")
     master_map = {row[0]: row[1] for row in cursor.fetchall() if row[0]}
     
     conn.close()

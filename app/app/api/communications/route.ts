@@ -28,7 +28,9 @@ export async function GET(request: NextRequest) {
 
                 const rows = db
                     .prepare(
-                        `SELECT m.id as row_id, m.message_id as msg_id, m.email_account as account, m.from_addr as sender, m.subject, m.date, m.mbox_name as source_file, m.zip_file as zip_path
+                        `SELECT m.id as row_id, m.rfc822_id as msg_id, m.account, m.from_addr as sender, m.subject, m.date_sent as date, 
+                                m.mbox_source as source_file, m.zip_source as zip_path, m.locker_source,
+                                SUBSTR(m.body, 1, 200) as body_snippet
                          FROM emails_fts f
                          JOIN emails m ON m.id = f.rowid
                          WHERE emails_fts MATCH ?
@@ -56,7 +58,7 @@ export async function GET(request: NextRequest) {
         const params: (string | number)[] = [];
 
         if (q) {
-            whereClause += " AND (subject LIKE ? OR from_addr LIKE ? OR message_id LIKE ? OR body_snippet LIKE ? OR to_addr LIKE ? OR email_account LIKE ?)";
+            whereClause += " AND (subject LIKE ? OR from_addr LIKE ? OR rfc822_id LIKE ? OR body LIKE ? OR to_addr LIKE ? OR account LIKE ?)";
             const pattern = `%${q}%`;
             params.push(pattern, pattern, pattern, pattern, pattern, pattern);
         }
@@ -74,9 +76,11 @@ export async function GET(request: NextRequest) {
         // Fetch page
         const rows = db
             .prepare(
-                `SELECT id as row_id, message_id as msg_id, email_account as account, from_addr as sender, subject, date, mbox_name as source_file, zip_file as zip_path
+                `SELECT id as row_id, rfc822_id as msg_id, account, from_addr as sender, subject, date_sent as date, 
+                        mbox_source as source_file, zip_source as zip_path, locker_source,
+                        SUBSTR(body, 1, 200) as body_snippet
                  FROM emails ${whereClause}
-                 ORDER BY date DESC
+                 ORDER BY date_sent DESC
                  LIMIT ? OFFSET ?`
             )
             .all(...params, limit, offset);

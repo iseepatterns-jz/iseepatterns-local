@@ -6,7 +6,7 @@ import uuid
 from pathlib import Path
 
 DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
-FINANCIAL_DIR = DATA_DIR / "financial"
+FINANCIAL_DIR = DATA_DIR / "FINANCIAL_LOCKER" / "ROWBOAT_CREATIVE_ROSETTASTONE"
 SCHEMAS_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/schemas")
 
 # Unified Workbench DB
@@ -119,7 +119,7 @@ def run_ingestion():
     init_workbench_schemas()
 
     # 1. RBC Master Transactions
-    master_csv = FINANCIAL_DIR / "rbc-statement-transactions-master-sheet-full.csv"
+    master_csv = FINANCIAL_DIR / "rbc-rosettastone-statement-transactions-master-sheet-full.csv"
     if master_csv.exists():
         ingest_master_to_workbench(master_csv)
     

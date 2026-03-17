@@ -9,7 +9,7 @@ from datetime import datetime
 # Configuration
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
 ROSETTA_CSV = BASE_DIR / "FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv"
-HUB_DB = BASE_DIR / "evidence_hub.db"
+HUB_DB = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 # Indices based on manual inspection
 IDX_YEAR = 0
@@ -106,7 +106,7 @@ def ingest():
                 cursor.execute("""
                 INSERT OR IGNORE INTO evidence_origins (evidence_id, origin_system, source_file, source_rowid)
                 VALUES (?, ?, ?, ?)
-                """, (evidence_id, 'ROSETTASTONE_LOCKER', str(ROSETTA_CSV), str(i+2)))
+                """, (evidence_id, 'FINANCIAL_LOCKER (Rosetta Stone)', str(ROSETTA_CSV), str(i+2)))
                 
                 # Link participant
                 pid = get_or_create_participant(cursor, user)

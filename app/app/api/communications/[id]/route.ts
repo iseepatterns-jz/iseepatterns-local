@@ -11,19 +11,36 @@ export async function GET(
         const { id } = await params;
         const db = getCommDb();
 
-        const row = db
+        console.log(`[API] Fetching email detail for ID: ${id}`);
+
+        let row = db
             .prepare(
-                `SELECT id as row_id, message_id as msg_id, account, sender, subject, date, body,
-                thread_id, source_file, source_hash, zip_path,
-                byte_offset, client_id, case_id, created_at
-         FROM emails WHERE message_id = ?`
+                `SELECT id as row_id, rfc822_id as msg_id, account, from_addr as sender, 
+                        subject, date_sent as date, body, mbox_source as source_file, zip_source as zip_path,
+                        locker_source
+                 FROM emails WHERE rfc822_id = ?`
             )
             .get(id);
 
-        if (!row) {
-            return NextResponse.json({ error: "Message not found" }, { status: 404 });
+        // Fallback: search by integer id if not found by rfc822_id
+        if (!row && !isNaN(Number(id))) {
+            console.log(`[API] Email not found by rfc822_id, trying integer id: ${id}`);
+            row = db
+                .prepare(
+                    `SELECT id as row_id, rfc822_id as msg_id, account, from_addr as sender, 
+                            subject, date_sent as date, body, mbox_source as source_file, zip_source as zip_path,
+                            locker_source
+                     FROM emails WHERE id = ?`
+                )
+                .get(Number(id));
         }
 
+        if (!row) {
+            console.warn(`[API] Email NOT FOUND for ID: ${id}`);
+            return NextResponse.json({ error: "Email not found" }, { status: 404 });
+        }
+
+        console.log(`[API] Found email: ${(row as any).subject}`);
         return NextResponse.json(row);
     } catch (error) {
         console.error("Message detail API error:", error);

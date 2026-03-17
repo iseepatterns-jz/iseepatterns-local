@@ -184,8 +184,8 @@ class BodyExtractor:
             self.conn.commit()
             self.conn.close()
 
-    def _match_and_update(self, msg_id: str, body: str, body_single: str, zip_name: str, mbox_name: str):
-        """Match a parsed message to the metadata DB and update body."""
+    def _match_and_update(self, msg_id: str, body: str, body_single: str, zip_name: str, mbox_name: str, in_reply_to: str = None, refs: str = None):
+        """Match a parsed message to the metadata DB and update body and forensic headers."""
         # Normalize message ID
         clean_id = msg_id.strip().strip('<>')
         if not clean_id:
@@ -204,9 +204,9 @@ class BodyExtractor:
             try:
                 self.conn.execute(
                     """UPDATE emails SET body = ?, body_single = ?, has_body = 1,
-                       zip_source = ?, mbox_source = ?
+                       zip_source = ?, mbox_source = ?, in_reply_to = ?, refs = ?
                        WHERE id = ?""",
-                    (body[:50000], body_single[:10000], zip_name, mbox_name, rid)
+                    (body[:50000], body_single[:10000], zip_name, mbox_name, in_reply_to, refs, rid)
                 )
                 self.stats['updated'] += 1
             except Exception:
@@ -258,7 +258,9 @@ class BodyExtractor:
                     continue
 
                 body_single = extract_body_single(body)
-                self._match_and_update(msg_id, body, body_single, zip_name, mbox_name)
+                in_reply_to = (msg.get('In-Reply-To') or '').strip()
+                references = (msg.get('References') or '').strip()
+                self._match_and_update(msg_id, body, body_single, zip_name, mbox_name, in_reply_to, references)
 
                 if count % 5000 == 0:
                     self.conn.commit()
@@ -299,7 +301,9 @@ class BodyExtractor:
                     continue
 
                 body_single = extract_body_single(body)
-                self._match_and_update(msg_id, body, body_single, "raw", mbox_name)
+                in_reply_to = (msg.get('In-Reply-To') or '').strip()
+                references = (msg.get('References') or '').strip()
+                self._match_and_update(msg_id, body, body_single, "raw", mbox_name, in_reply_to, references)
 
                 if count % 1000 == 0:
                     self.conn.commit()

@@ -8,11 +8,11 @@ from typing import Dict, Any, Set
 from .evidence_card import EvidenceCard
 
 WHITELIST_HANDLES = {
-    "joe@rowboatcreative.com",  # Joseph Zangrilli
-    "+17736109104",  # Joseph Zangrilli  
-    "lucas@rowboatcreative.com",  # Lucas Guariglia
-    "+18478280944@tmomail.net",  # Lucas Guariglia
-    "+17736109104",  # Lucas Guariglia
+    # Joseph Zangrilli (Owner)
+    "+17736109104", "joe@rowboatcreative.com",
+    
+    # Authoritative Players (from identify-players.csv)
+    "+18478280944", "lucas@rowboatcreative.com", # Lucas Guariglia
     "+17043407505",  # Suzanne Guariglia
     "+17738529219",  # Leonard Mayersky
     "+17083075156",  # Pamela Visvardis
@@ -21,24 +21,17 @@ WHITELIST_HANDLES = {
     "+13127254059",  # Ryan Hayes
     "+18478040165",  # Henry Badani
     "+18473870518",  # Steven Farag
-    "george.g@rudderservices.com",  # George Grigorakos
-    "+13124203036",  # George Grigorakos
-    "+13124203036",  # Elliot Hershik
+    "+13124203036", "george.g@rudderservices.com", # George Grigorakos
+    "+16305311521",  # Elliot Hershik
     "+16307018110",  # Sheri Highland
-    "abel@rowboatcreative.com",  # Abel Rodriguez
-    "+17736366744",  # Abel Rodriguez
-    "patrick@rowboatcreative.com",  # Patrick Houdek
-    "+17736366744",  # Patrick Houdek
+    "+17736366744", "abel@rowboatcreative.com",  # Abel Rodriguez
+    "patrick@rowboatcreative.com", # Patrick Houdek
     "+14847588413",  # Jeff Paolino
-    "jay@rowboatcreative.com",  # Jay Goebel
-    "+17733549538",  # Jay Goebel
-    "stephanie@rowboatcreative.com",  # Stephanie Cuccinella
-    "+12245670848",  # Stephanie Cuccinella
+    "+17733549538", "jay@rowboatcreative.com",  # Jay Goebel
+    "+12245670848", "stephanie@rowboatcreative.com", # Stephanie Cuccinella
     "+17737190088",  # Kevin Rotter
-    "fiddes56@gmail.com",  # Luke Fiddes
-    "+13093393391",  # Luke Fiddes
-    "taylor@pendulum-creative.com",  # Taylor Smith
-    "+18043176988",  # Taylor Smith
+    "fiddes56@gmail.com", "+13093393391",  # Luke Fiddes
+    "taylor@pendulum-creative.com", "+18043176988",  # Taylor Smith
     "+17738515303",  # John Azara
     "+17735161720",  # Wally Klejka
     "+13122753110",  # David Baum
@@ -54,7 +47,17 @@ WHITELIST_HANDLES = {
     "+17733019422",  # Jose Aburto
     "+16304325005",  # Amber Dys
     "+16302729916",  # Stevie Hopkins
-    # add others as needed
+    "+18474319455",  # Adrienne Guariglia
+    "+13127201399",  # Marie Hale
+    "+13125151010",  # James Johansen
+    "+13125437354",  # Gregory Jordan
+    "+17818711003",  # Jaclyn Torrey
+    "+13123443801",  # Samuel Tanios
+    "+17734433476",  # Oladipo Folami
+    
+    # User Explicit Corrections & Relevant Clients
+    "+17734196004", "joe@vita-morte.com", "joe@joefreshgoods.com", # Joe FreshGoods (Joe Robinson)
+    "+17085281818",  # Tom Labadie (Corrected)
 }
 
 DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")

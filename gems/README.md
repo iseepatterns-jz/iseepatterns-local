@@ -16,6 +16,7 @@ Gems are modular evidence pipeline definitions. Each gem declares its inputs, ou
 | `gem-evidence-cards` | All sources → evidence_hub.db | email, imessage, financial, players |
 | `gem-rag-search` | ChromaDB + BM25 → LLM answers | evidence-cards, legal-docs |
 | `gem-chain-of-custody` | Provenance + audit tracking | email, imessage, financial |
+| `gem-paralegal-exports` | Attorney export packages → exhibits + letters | evidence-cards, players, chain-of-custody |
 
 ## How It Works
 

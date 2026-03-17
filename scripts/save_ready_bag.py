@@ -15,8 +15,8 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-# gem-notebooklm hook
-NOTEBOOKLM_SCRIPT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/notebooklm_deepdive.py")
+# gem-paralegal-exports hook
+PARALEGAL_SCRIPT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/generate_paralegal_exports.py")
 
 # Paths
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
@@ -38,12 +38,11 @@ def ensure_dirs():
     dirs = [
         INBOX_DIR, 
         ATTORNEY_PACKAGE, 
-        ATTORNEY_PACKAGE / "00_forensic_summaries",
-        ATTORNEY_PACKAGE / "01_narrative",
-        ATTORNEY_PACKAGE / "02_timeline",
-        ATTORNEY_PACKAGE / "03_evidence_cards",
-        ATTORNEY_PACKAGE / "04_dossiers",
-        ATTORNEY_PACKAGE / "05_letters",
+        ATTORNEY_PACKAGE / "00_summaries",
+        ATTORNEY_PACKAGE / "01_exhibits",
+        ATTORNEY_PACKAGE / "02_dossiers",
+        ATTORNEY_PACKAGE / "03_letters",
+        ATTORNEY_PACKAGE / "04_evidence_cards",
         LETTERS_DIR, 
         LETTERS_DIR / "agency", 
         LETTERS_DIR / "attorneys"
@@ -107,15 +106,15 @@ def generate_export_package():
     # 0. Forensic Summaries
     if PRESENTATION_LOCKER.exists():
         log("Packing forensic summaries from presentation locker...")
-        target = ATTORNEY_PACKAGE / "00_forensic_summaries"
+        target = ATTORNEY_PACKAGE / "00_summaries"
         for f in PRESENTATION_LOCKER.glob("*.md"):
             shutil.copy(str(f), str(target / f.name))
             log(f"  + Added summary: {f.name}")
 
-    # 1. Timelines
+    # 1. Timelines (Go into exhibits)
     timelines_src = DATA_DIR / "timelines"
     if timelines_src.exists():
-        target = ATTORNEY_PACKAGE / "02_timeline"
+        target = ATTORNEY_PACKAGE / "01_exhibits"
         for t in timelines_src.glob("*.csv"):
             shutil.copy(str(t), str(target / t.name))
             log(f"  + Added timeline: {t.name}")
@@ -123,7 +122,7 @@ def generate_export_package():
     # 2. Filtered Evidence Cards
     if EVIDENCE_CARDS_DIR.exists():
         log("Filtering and packing high-quality EvidenceCards...")
-        target = ATTORNEY_PACKAGE / "03_evidence_cards"
+        target = ATTORNEY_PACKAGE / "04_evidence_cards"
         count = 0
         total = 0
         for c in EVIDENCE_CARDS_DIR.glob("*.json"):
@@ -133,25 +132,20 @@ def generate_export_package():
                 count += 1
         log(f"  + Packed {count} of {total} EvidenceCards (filtered low-quality).")
 
-    # 3. Dossiers
-    if DOSSIERS_DIR.exists():
-        log("Packing dossiers...")
-        target = ATTORNEY_PACKAGE / "04_dossiers"
-        for f in DOSSIERS_DIR.glob("*.md"):
-            shutil.copy(str(f), str(target / f.name))
-            log(f"  + Added dossier: {f.name}")
+    # 3. Dossiers — Handled by generate_paralegal_exports.py
+    # (Removed to prevent overwriting live dossiers with legacy placeholders)
 
     # 4. Letters
     if LETTERS_DIR.exists():
         log("Packing letters...")
-        target = ATTORNEY_PACKAGE / "05_letters"
+        target = ATTORNEY_PACKAGE / "03_letters"
         for f in LETTERS_DIR.glob("*.md"):
             shutil.copy(str(f), str(target / f.name))
             log(f"  + Added letter: {f.name}")
 
     # 5. Case Overview Population
     briefing_path = PRESENTATION_LOCKER / "lawyer_briefing_document.md"
-    overview_path = ATTORNEY_PACKAGE / "01_narrative" / "case_overview.md"
+    overview_path = ATTORNEY_PACKAGE / "00_summaries" / "case_overview.md"
     if briefing_path.exists():
         log("Generating narrative overview from briefing document...")
         with open(briefing_path, "r") as src:
@@ -161,7 +155,7 @@ def generate_export_package():
             narrative = parts[0].strip() if parts else content[:2000]
             
         with open(overview_path, "w") as f:
-            f.write(f"#{narrative}\n\n[Full Briefing included in 00_forensic_summaries]")
+            f.write(f"#{narrative}\n\n[Full Briefing included in 00_summaries]")
 
     generate_manifest()
     log("✓ Export package ready.")
@@ -189,28 +183,24 @@ def generate_manifest():
             "hashes": manifest
         }, mf, indent=2)
 
-def run_notebooklm_deepdive(all_templates: bool = False):
-    """gem-notebooklm hook — fires after export package is generated."""
-    if not NOTEBOOKLM_SCRIPT.exists():
-        log("[gem-notebooklm] Script not found, skipping.")
+def run_paralegal_exports():
+    """gem-paralegal-exports hook — regenerates attorney export package."""
+    if not PARALEGAL_SCRIPT.exists():
+        log("[gem-paralegal-exports] Script not found, skipping.")
         return
 
-    log("[gem-notebooklm] Generating new evidence brief...")
+    log("[gem-paralegal-exports] Regenerating attorney export package...")
     try:
-        cmd = [sys.executable, str(NOTEBOOKLM_SCRIPT)]
-        if not all_templates:
-            # Default: just the new-evidence-spotlight for quick review
-            cmd += ["--template", "new-evidence-spotlight", "--days", "30"]
-        # else: no --template flag = all 5 templates
-
-        result = subprocess.run(cmd, capture_output=False, text=True, timeout=120)
+        result = subprocess.run(
+            [sys.executable, str(PARALEGAL_SCRIPT)],
+            capture_output=False, text=True, timeout=120
+        )
         if result.returncode == 0:
-            log("[gem-notebooklm] ✓ Brief(s) generated → ~/Documents/RC-NLM-Briefs/")
-            log("[gem-notebooklm]   Upload .md brief to NotebookLM → generate Audio Overview → download MP3 outside workspace.")
+            log("[gem-paralegal-exports] ✓ Attorney package regenerated.")
         else:
-            log(f"[gem-notebooklm] Completed with warnings (exit {result.returncode}).")
+            log(f"[gem-paralegal-exports] Completed with warnings (exit {result.returncode}).")
     except Exception as ex:
-        log(f"[gem-notebooklm] Error: {ex}")
+        log(f"[gem-paralegal-exports] Error: {ex}")
 
 
 def main():
@@ -219,11 +209,8 @@ def main():
     process_inbox()
     generate_export_package()
 
-    # gem-notebooklm: Generate new-evidence-spotlight brief automatically
-    # Pass --all-templates to generate all 5 audio overview briefs:
-    #   python scripts/save_ready_bag.py --all-nlm-templates
-    all_nlm = "--all-nlm-templates" in sys.argv
-    run_notebooklm_deepdive(all_templates=all_nlm)
+    # gem-paralegal-exports: Regenerate attorney package with live DB data
+    run_paralegal_exports()
 
     log("--- Process Complete ---")
 

@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS emails (
     mbox_source     TEXT,                   -- Which .mbox file inside the zip
     body            TEXT,                   -- Full body (Phase 2)
     body_single     TEXT,                   -- First-message-only body (Phase 2)
+    in_reply_to     TEXT,                   -- Message-ID this is replying to
+    refs            TEXT,                   -- Space-separated Message-IDs in thread
     has_body        INTEGER DEFAULT 0,
     is_spam         INTEGER DEFAULT 0,
     is_draft        INTEGER DEFAULT 0,
@@ -51,6 +53,8 @@ CREATE INDEX IF NOT EXISTS idx_emails_date_sent   ON emails(date_sent);
 CREATE INDEX IF NOT EXISTS idx_emails_spam        ON emails(is_spam);
 CREATE INDEX IF NOT EXISTS idx_emails_from        ON emails(from_addr);
 CREATE INDEX IF NOT EXISTS idx_emails_has_body    ON emails(has_body);
+CREATE INDEX IF NOT EXISTS idx_emails_reply_to    ON emails(in_reply_to);
+CREATE INDEX IF NOT EXISTS idx_emails_refs        ON emails(refs);
 CREATE INDEX IF NOT EXISTS idx_drive_rfc822       ON drive_links(rfc822_id);
 CREATE INDEX IF NOT EXISTS idx_drive_account      ON drive_links(account);
 

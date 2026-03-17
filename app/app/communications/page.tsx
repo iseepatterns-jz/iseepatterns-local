@@ -24,6 +24,7 @@ interface EmailRow {
     date: string;
     source_file: string;
     zip_path: string;
+    locker_source: string;
     client_id: string;
     case_id: string;
 }
@@ -490,10 +491,17 @@ export default function CommunicationsPage() {
                                 <div style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--text-muted)" }}>
                                     Source Provenance
                                 </div>
-                                <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
-                                    {selectedEmail.source_hash
-                                        ? `${selectedEmail.source_hash.slice(0, 16)}…${selectedEmail.source_hash.slice(-8)}`
-                                        : "—"}
+                                <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "0.25rem" }}>
+                                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                                        {selectedEmail.source_hash
+                                            ? `${selectedEmail.source_hash.slice(0, 16)}…${selectedEmail.source_hash.slice(-8)}`
+                                            : "—"}
+                                    </span>
+                                    {selectedEmail.locker_source && (
+                                        <span className="badge badge-cyan" style={{ fontSize: "0.6rem", padding: "0.1rem 0.4rem" }}>
+                                            Locker: {selectedEmail.locker_source}
+                                        </span>
+                                    )}
                                 </div>
                                 <div style={{ fontSize: "0.75rem", marginTop: "0.125rem" }}>
                                     {selectedEmail.source_file || selectedEmail.zip_path || "—"}

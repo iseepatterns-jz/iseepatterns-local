@@ -12,8 +12,8 @@ from .imessage_ingest import generate_imessage_cards_for_db
 
 DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
 CARDS_OUT = DATA_DIR / "evidence_cards"
-FINANCIAL_HUB_DB = DATA_DIR / "financial" / "financial_hub.db"
-QUICKBOOKS_HUB_DB = DATA_DIR / "financial" / "quickbooks_hub.db"
+FINANCIAL_HUB_DB = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
+QUICKBOOKS_HUB_DB = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 os.makedirs(CARDS_OUT, exist_ok=True)
 
@@ -69,7 +69,7 @@ def generate_financial_cards():
             id=card_id,
             source_type="financial",
             file_path=str(FINANCIAL_HUB_DB),
-            origin_system="FINANCIAL_HUB",
+            origin_system="FINANCIAL_LOCKER",
             primary_ids=primary_ids,
             participants=[str(row.get("responsible", "")), str(row.get("user", ""))],
             start_timestamp=date_str,
@@ -100,7 +100,7 @@ def generate_financial_cards():
             id=card_id,
             source_type="financial",
             file_path=str(QUICKBOOKS_HUB_DB),
-            origin_system="QUICKBOOKS",
+            origin_system="FINANCIAL_LOCKER (QuickBooks)",
             primary_ids=primary_ids,
             participants=[str(row.get("customer_id", ""))],
             start_timestamp=row.get("date"),
@@ -122,7 +122,7 @@ def generate_financial_cards():
         card_id = str(uuid.uuid4())
         primary_ids = {"qb_bill_id": str(row.get("bill_id")), "vendor_id": str(row.get("vendor_id"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="QUICKBOOKS",
+            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="FINANCIAL_LOCKER (QuickBooks)",
             primary_ids=primary_ids, participants=[str(row.get("vendor_id", ""))],
             start_timestamp=row.get("date"), end_timestamp=row.get("date"),
             title=f"QB Bill: {row.get('vendor_id')}",
@@ -141,7 +141,7 @@ def generate_financial_cards():
         inv_num = row.get("invoice_num")
         primary_ids = {"invoice_number": str(inv_num), "customer_id": str(row.get("customer_id")), "po_number": str(row.get("po_num"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="PRINTAVO",
+            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="FINANCIAL_LOCKER (Printavo)",
             primary_ids=primary_ids, participants=[str(row.get("customer_full_name", ""))],
             start_timestamp=row.get("invoice_date"), end_timestamp=row.get("invoice_date"),
             title=f"Printavo Order #{inv_num}",
@@ -160,7 +160,7 @@ def generate_financial_cards():
         txn_id = row.get("payment_transaction_id")
         primary_ids = {"payment_txn_id": str(txn_id), "invoice_number": str(row.get("invoice_num")), "customer_id": str(row.get("customer_id"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="PRINTAVO",
+            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="FINANCIAL_LOCKER (Printavo)",
             primary_ids=primary_ids, participants=[str(row.get("name", ""))],
             start_timestamp=row.get("transaction_date"), end_timestamp=row.get("transaction_date"),
             title=f"Printavo Payment: {txn_id}",
@@ -178,7 +178,7 @@ def generate_financial_cards():
         card_id = str(uuid.uuid4())
         primary_ids = {"qb_purchase_id": str(row.get("purchase_id")), "account_id": str(row.get("account_id"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="QUICKBOOKS",
+            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="FINANCIAL_LOCKER (QuickBooks)",
             primary_ids=primary_ids, participants=[str(row.get("entity_id", ""))],
             start_timestamp=row.get("date"), end_timestamp=row.get("date"),
             title=f"QB Purchase: {row.get('entity_id')}",
@@ -197,7 +197,7 @@ def generate_financial_cards():
         po_num = row.get("po")
         primary_ids = {"po_number": str(po_num), "invoice_number": str(row.get("inv"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="PRINTAVO",
+            id=card_id, source_type="financial", file_path=str(FINANCIAL_HUB_DB), origin_system="FINANCIAL_LOCKER (Printavo)",
             primary_ids=primary_ids, participants=[],
             start_timestamp=None, end_timestamp=None,
             title=f"Printavo PO #{po_num}",
@@ -215,7 +215,7 @@ def generate_financial_cards():
         card_id = str(uuid.uuid4())
         primary_ids = {"qb_deposit_id": str(row.get("deposit_id")), "account_id": str(row.get("deposit_to_account_id"))}
         card = EvidenceCard(
-            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="QUICKBOOKS",
+            id=card_id, source_type="financial", file_path=str(QUICKBOOKS_HUB_DB), origin_system="FINANCIAL_LOCKER (QuickBooks)",
             primary_ids=primary_ids, participants=[],
             start_timestamp=row.get("date"), end_timestamp=row.get("date"),
             title=f"QB Deposit: {row.get('deposit_id')}",

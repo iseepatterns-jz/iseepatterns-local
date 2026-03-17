@@ -36,49 +36,56 @@ MBOX_METADATA_DB = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "mbox_metadata.db"
 # ── iMessage whitelist ─────────────────────────────────────────────────
 
 WHITELIST_HANDLES = {
-    "joe@rowboatcreative.com",
-    "+17736109104",
-    "lucas@rowboatcreative.com",
-    "+18478280944@tmomail.net",
-    "+17043407505",
-    "+17738529219",
-    "+17083075156",
-    "+17204540129",
-    "+18473801876",
-    "+13127254059",
-    "+18478040165",
-    "+18473870518",
-    "george.g@rudderservices.com",
-    "+13124203036",
-    "+16307018110",
-    "abel@rowboatcreative.com",
-    "+17736366744",
-    "patrick@rowboatcreative.com",
-    "+14847588413",
-    "jay@rowboatcreative.com",
-    "+17733549538",
-    "stephanie@rowboatcreative.com",
-    "+12245670848",
-    "+17737190088",
-    "fiddes56@gmail.com",
-    "+13093393391",
-    "taylor@pendulum-creative.com",
-    "+18043176988",
-    "+17738515303",
-    "+17735161720",
-    "+13122753110",
-    "+13128487283",
-    "+19135485577",
-    "+14066721522",
-    "+17577495856",
-    "+15105026585",
-    "+17735584454",
-    "+18572212405",
-    "+17739722946",
-    "+16309955836",
-    "+17733019422",
-    "+16304325005",
-    "+16302729916",
+    # Joseph Zangrilli (Owner)
+    "+17736109104", "joe@rowboatcreative.com",
+    
+    # Authoritative Players (from identify-players.csv)
+    "+18478280944", "lucas@rowboatcreative.com", # Lucas Guariglia
+    "+17043407505",  # Suzanne Guariglia
+    "+17738529219",  # Leonard Mayersky
+    "+17083075156",  # Pamela Visvardis
+    "+17204540129",  # Thomas Nitschke
+    "+18473801876",  # Michael Sanderson
+    "+13127254059",  # Ryan Hayes
+    "+18478040165",  # Henry Badani
+    "+18473870518",  # Steven Farag
+    "+13124203036", "george.g@rudderservices.com", # George Grigorakos
+    "+16305311521",  # Elliot Hershik
+    "+16307018110",  # Sheri Highland
+    "+17736366744", "abel@rowboatcreative.com",  # Abel Rodriguez
+    "patrick@rowboatcreative.com", # Patrick Houdek
+    "+14847588413",  # Jeff Paolino
+    "+17733549538", "jay@rowboatcreative.com",  # Jay Goebel
+    "+12245670848", "stephanie@rowboatcreative.com", # Stephanie Cuccinella
+    "+17737190088",  # Kevin Rotter
+    "fiddes56@gmail.com", "+13093393391",  # Luke Fiddes
+    "taylor@pendulum-creative.com", "+18043176988",  # Taylor Smith
+    "+17738515303",  # John Azara
+    "+17735161720",  # Wally Klejka
+    "+13122753110",  # David Baum
+    "+13128487283",  # Nicole Yalaz
+    "+19135485577",  # Jon Duong
+    "+14066721522",  # Carmel Halim
+    "+17577495856",  # Sam Cobb
+    "+15105026585",  # Sal Mohamed
+    "+17735584454",  # Eric Montanez
+    "+18572212405",  # Jimmy Bui
+    "+17739722946",  # Manny Caston
+    "+16309955836",  # Cameron Lowe
+    "+17733019422",  # Jose Aburto
+    "+16304325005",  # Amber Dys
+    "+16302729916",  # Stevie Hopkins
+    "+18474319455",  # Adrienne Guariglia
+    "+13127201399",  # Marie Hale
+    "+13125151010",  # James Johansen
+    "+13125437354",  # Gregory Jordan
+    "+17818711003",  # Jaclyn Torrey
+    "+13123443801",  # Samuel Tanios
+    "+17734433476",  # Oladipo Folami
+    
+    # User Explicit Corrections & Relevant Clients
+    "+17734196004", "joe@vita-morte.com", "joe@joefreshgoods.com", # Joe FreshGoods (Joe Robinson)
+    "+17085281818",  # Tom Labadie (Corrected)
 }
 
 # ── Helpers ────────────────────────────────────────────────────────────
@@ -239,6 +246,25 @@ class EvidenceHubIngestor:
             LEFT JOIN chat c ON cmj.chat_id = c.ROWID
             WHERE h.id IN ({placeholders})
         """
+        
+        # Get attachment info separately or via JSON group in SQLite (not supported in older sqlite)
+        # We will fetch attachment mappings for the whitelisted messages
+        msg_attachment_query = """
+            SELECT maj.message_id, a.guid, a.filename, a.mime_type, a.total_bytes
+            FROM message_attachment_join maj
+            JOIN attachment a ON maj.attachment_id = a.ROWID
+        """
+        attachments_map = {}
+        for row in src.execute(msg_attachment_query):
+            mid = row[0]
+            if mid not in attachments_map:
+                attachments_map[mid] = []
+            attachments_map[mid].append({
+                'guid': row[1],
+                'filename': row[2],
+                'mime_type': row[3],
+                'size': row[4]
+            })
 
         rows = src.execute(query, wl).fetchall()
         total = len(rows)
@@ -267,17 +293,29 @@ class EvidenceHubIngestor:
 
             title = f"iMessage {'outgoing' if is_out else 'incoming'} in chat {chat_id}"
 
-            # Insert evidence
+            # Prepare primary IDs with attachments
+            att_info = attachments_map.get(row['rowid'], [])
+            p_ids = {
+                'message_guid': guid, 
+                'message_rowid': str(row['rowid']),
+                'chat_identifier': chat_id
+            }
+            if att_info:
+                p_ids['attachments'] = att_info
+
             try:
                 cur = self.hub_conn.execute(
-                    """INSERT OR IGNORE INTO evidence
+                    """INSERT INTO evidence
                        (canonical_id, source_type, title, body_snippet, start_timestamp,
                         primary_ids, card_id)
-                       VALUES (?, 'imessage', ?, ?, ?, ?, ?)""",
+                       VALUES (?, 'imessage', ?, ?, ?, ?, ?)
+                       ON CONFLICT(canonical_id) DO UPDATE SET
+                           primary_ids = excluded.primary_ids,
+                           updated_at = datetime('now')
+                    """,
                     (
                         canonical_id, title, body[:4000], ts,
-                        json.dumps({'message_guid': guid, 'message_rowid': str(row['rowid']),
-                                    'chat_identifier': chat_id}, ensure_ascii=False),
+                        json.dumps(p_ids, ensure_ascii=False),
                         None,
                     )
                 )

@@ -7,8 +7,8 @@ from pathlib import Path
 
 # Configuration
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
-FINANCIAL_DIR = BASE_DIR / "financial"
-DB_PATH = FINANCIAL_DIR / "financial_hub.db"
+FINANCIAL_DIR = BASE_DIR / "FINANCIAL_LOCKER" / "ROWBOAT_CREATIVE_ROSETTASTONE"
+DB_PATH = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 # CSV Files
 FILES = {
@@ -16,7 +16,7 @@ FILES = {
     "printavo_pos": "rbc-crm-printavo-purchase-order-data.csv",
     "printavo_txns": "rbc-crm-exportsTransactionsJob_export20240220.csv",
     "printavo_payments": "rbc-crm-printavo-paymentsExpensesExport-20240220.csv",
-    "master_statements": "rbc-statement-transactions-master-sheet-full.csv"
+    "master_statements": "rbc-rosettastone-statement-transactions-master-sheet-full.csv"
 }
 
 def setup_db():

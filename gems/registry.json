@@ -1,4 +1,9 @@
 {
+  "version": "1.0.0",
+  "case_id": "RC-2026",
+  "client_id": "rowboat-creative",
+  "project_root": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+  "updated_at": "2026-03-16T00:00:00-05:00",
   "gems": [
     {
       "id": "gem-imessages",
@@ -218,6 +223,41 @@
         "app/app/dashboard/"
       ],
       "db_accessor": "getEvidenceHubDb()"
+    },
+    {
+      "id": "gem-paralegal-exports",
+      "name": "Paralegal Export Generator",
+      "status": "active",
+      "description": "Generates attorney-ready, judge-presentable export packages from live evidence_hub.db, players.db, and workbench.db. Produces forensic summaries, player dossiers, agency referral letters, exhibit index, charge matrix, and a litigation-ready binder index. All player names sourced from players.db slugs. All claims cross-referenced with canonical evidence_id values.",
+      "inputs": {
+        "databases": [
+          "data/evidence_hub.db",
+          "data/players.db",
+          "app/workbench.db"
+        ]
+      },
+      "outputs": {
+        "directories": {
+          "attorney_package": {
+            "location": "exports/attorney_package/",
+            "structure": "00_summaries/ | 01_exhibits/ | 02_dossiers/ | 03_letters/ | 04_evidence_cards/ | binder_index.md"
+          }
+        }
+      },
+      "scripts": {
+        "main": "scripts/generate_paralegal_exports.py",
+        "utility": [
+          "scripts/generate_agency_letters.py",
+          "scripts/generate_binder_index.py"
+        ]
+      },
+      "schemas": [],
+      "canonical_id_format": "exhibit_{category}_{seq} (e.g., exhibit_wire_fraud_001)",
+      "evidence_source_type": "export",
+      "dependencies": ["gem-evidence-cards", "gem-players", "gem-chain-of-custody"],
+      "api_routes": [],
+      "ui_pages": [],
+      "db_accessor": "getEvidenceHubDb() + getDb('players') (read-only)"
     }
   ],
   "registry_version": "1.4.0",

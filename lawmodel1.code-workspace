@@ -17,5 +17,19 @@
 			"path": "../context"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"mcp.servers": {
+			"notebooklm": {
+				"command": "npx",
+				"args": [
+					"-y",
+					"notebooklm-mcp@latest"
+				],
+				"transport": "stdio",
+				"env": {
+					"NOTEBOOKLM_PROFILE": "standard"
+				}
+			}
+		}
+	}
 }

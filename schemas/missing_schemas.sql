@@ -85,3 +85,28 @@ CREATE TABLE IF NOT EXISTS claim_evidence (
     notes           TEXT,
     created_at      TEXT DEFAULT (datetime('now'))
 );
+
+-- Case Corner: Claim Players
+CREATE TABLE IF NOT EXISTS claim_players (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    claim_id        INTEGER NOT NULL REFERENCES claims(id),
+    player_slug     TEXT NOT NULL,
+    player_name     TEXT NOT NULL,
+    role            TEXT,                 -- 'SUBJECT', 'WITNESS', 'VICTIM', 'CONSPIRATOR'
+    notes           TEXT,
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
+-- Case Corner: Agency Submissions
+CREATE TABLE IF NOT EXISTS agency_submissions (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    slug                TEXT NOT NULL UNIQUE,
+    title               TEXT NOT NULL,
+    agency_type         TEXT,             -- 'FEDERAL', 'STATE', 'LOCAL'
+    submission_method   TEXT,             -- 'EMAIL', 'PORTAL', 'PHONE', 'MAIL'
+    contact_info        TEXT,             -- JSON dict
+    status              TEXT DEFAULT 'TODO', -- 'TODO', 'SUBMITTED', 'PENDING', 'ACCEPTED'
+    sort_order          INTEGER DEFAULT 0,
+    created_at          TEXT DEFAULT (datetime('now')),
+    updated_at          TEXT DEFAULT (datetime('now'))
+);
