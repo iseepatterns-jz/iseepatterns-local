@@ -61,17 +61,25 @@ def link_players():
 
     for pdf_path in pdf_files:
         rel_path = pdf_path.relative_to(PROJECT_ROOT)
-        canonical_id = f"legal_{get_hash(pdf_path)}"
+        # Governance: legal_{bates_prefix}_{id}
+        # Since these are raw locker files, we use 'COURT' as prefix and hash as ID
+        canonical_id = f"legal_COURT_{get_hash(pdf_path)[:8]}"
         
         # 1. Ingest into Evidence Hub if not already there
         content = extract_text(pdf_path)
         if not content:
             continue
 
+        # Governance: start_timestamp is required (ISO8601)
+        # Use file modification time as a forensic timestamp fallback
+        mtime = os.path.getmtime(pdf_path)
+        import datetime
+        timestamp = datetime.datetime.fromtimestamp(mtime).isoformat()
+
         h_conn.execute("""
-            INSERT OR IGNORE INTO evidence (canonical_id, source_type, title, summary, body_snippet)
-            VALUES (?, 'legal', ?, ?, ?)
-        """, (canonical_id, pdf_path.name, f"Legal Document: {pdf_path.name}", content[:4000]))
+            INSERT OR IGNORE INTO evidence (canonical_id, source_type, title, summary, body_snippet, start_timestamp)
+            VALUES (?, 'legal', ?, ?, ?, ?)
+        """, (canonical_id, pdf_path.name, f"Legal Document: {pdf_path.name}", content[:4000], timestamp))
         
         # Get the internal ID
         evidence_row = h_conn.execute("SELECT id FROM evidence WHERE canonical_id = ?", (canonical_id,)).fetchone()
