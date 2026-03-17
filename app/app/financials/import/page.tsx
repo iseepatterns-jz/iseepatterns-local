@@ -41,24 +41,33 @@ export default function StatementImportPage() {
     const deleteSession = async (id: number) => {
         if (!confirm("Are you sure you want to purge this session and all its transactions? This cannot be undone.")) return;
         
+        console.log(`[DELETE] Starting purge for session: ${id}`);
         setDeletingId(id);
         setError(null);
         try {
-            const res = await fetch(`/api/financials/import?id=${id}`, { 
-                method: "DELETE"
+            const formData = new FormData();
+            formData.append("action", "delete");
+            formData.append("id", id.toString());
+
+            const res = await fetch(`/api/financials/import`, { 
+                method: "POST",
+                body: formData
             });
 
             if (res.ok) {
+                console.log(`[DELETE] Success for session ${id}`);
                 await fetchSessions();
             } else {
                 const data = await res.json().catch(() => ({}));
                 const errMsg = data.error || data.detail || `Delete failed (${res.status})`;
                 setError(errMsg);
                 console.error("Purge failed:", errMsg);
+                alert(`Purge failed: ${errMsg}`);
             }
         } catch (e) {
             console.error("Delete error:", e);
             setError("Connection error during deletion");
+            alert("Delete error: Connection failed. Check terminal.");
         } finally {
             setDeletingId(null);
         }
@@ -142,7 +151,7 @@ export default function StatementImportPage() {
                                     width: 50, height: 50, borderRadius: "50%", 
                                     background: "var(--bg-glass)", border: "var(--glass-border)",
                                     display: "flex", alignItems: "center", justifyContent: "center" 
-                                }}>
+                                 }}>
                                     <Upload size={20} style={{ color: "var(--accent-cyan)" }} />
                                 </div>
                                 <div>
