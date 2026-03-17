@@ -1,97 +1,23 @@
 {
-  "version": "1.0.0",
-  "case_id": "RC-2026",
-  "client_id": "rowboat-creative",
-  "project_root": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
-  "updated_at": "2026-03-16T00:00:00-05:00",
   "gems": [
     {
-      "id": "gem-email-mbox",
-      "name": "Email Evidence (MBOX)",
+      "id": "gem-imessages",
+      "name": "iMessage Forensic Repository",
       "status": "active",
-      "description": "Ingests Gmail MBOX zip exports into a searchable, indexed email database with full-text search, label classification, and body extraction.",
+      "description": "Historical iMessage archives from LG's backups and exports. Used to identify gaslighting patterns and timeline admissions.",
       "inputs": {
         "raw_files": [
-          "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/"
+          "data/chat_master.db",
+          "data/jz_lg_imessage_logs_all_numbered.csv"
         ],
-        "metadata_csvs": [
-          "2024-06-22-all-metadata.csv",
-          "2024-06-30_lg-metadata.csv",
-          "sggmail-metadata.csv",
-          "leggmail-metadata.csv"
-        ],
-        "file_types": [".zip", ".mbox", ".csv"]
-      },
-      "outputs": {
-        "databases": {
-          "gmail_master_index.db": {
-            "location": "data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db",
-            "tables": ["emails", "drive_links", "emails_fts"],
-            "schema": "schemas/mbox_metadata.sql",
-            "access": "read-write",
-            "notes": "Primary master index for all queries; 741k records."
-          }
-        },
-        "filtered_databases": [
-          "data/MBOX_LOCKER/unused/accounting_all.db",
-          "data/MBOX_LOCKER/unused/emails_LG_SM_SH_JZ.db"
-        ]
-      },
-      "scripts": {
-        "ingest": [
-          "ingest/mbox_metadata_ingest.py",
-          "ingest/mbox_body_extract.py"
-        ],
-        "utility": [
-          "scripts/index_mbox_master.py",
-          "scripts/extract_mbox_accounts.py",
-          "scripts/extract_accountant_emails.py",
-          "scripts/extract_accountant_emails_refined.py",
-          "scripts/extract_side_business_emails.py",
-          "scripts/search_4person_emails.py",
-          "scripts/create_accounting_db.py",
-          "scripts/create_ashley_myles_db.py",
-          "scripts/parse_vault_xml_full.py",
-          "scripts/update_hub_vault_full.py",
-          "data/MBOX_LOCKER/search_mbox_zips.py",
-          "data/MBOX_LOCKER/add_labels_to_emails.py"
-        ]
-      },
-      "schemas": ["schemas/mbox_metadata.sql"],
-      "canonical_id_format": "rfc822_id (e.g., <CABx...@mail.gmail.com>)",
-      "evidence_source_type": "email",
-      "dependencies": [],
-      "api_routes": [
-        "app/app/api/communications/",
-        "app/app/api/search/",
-        "app/app/api/match-eml/",
-        "app/app/api/coc/"
-      ],
-      "ui_pages": [
-        "app/app/communications/",
-        "app/app/evidence-hub/"
-      ],
-      "db_accessor": "getCommDb()"
-    },
-    {
-      "id": "gem-imessage-chatdb",
-      "name": "iMessage Evidence (ChatDB)",
-      "status": "active",
-      "description": "Ingests Apple iMessage chat.db backups, decodes message bodies, consolidates across devices, and extracts forensic admissions.",
-      "inputs": {
-        "raw_files": [
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/",
-          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/"
-        ],
-        "file_types": [".db"]
+        "file_types": [".db", ".csv"]
       },
       "outputs": {
         "databases": {
           "chat_master.db": {
             "location": "data/chat_master.db",
-            "tables": ["message", "handle", "chat", "chat_message_join", "imessages"],
-            "access": "read-only",
-            "notes": "Unified forensic index (277k records) consolidated from M1 Studio and iMac; includes 'imessages' flattened view."
+            "tables": ["message", "handle", "chat"],
+            "access": "read-only"
           }
         }
       },
@@ -102,12 +28,9 @@
         "utility": [
           "scripts/consolidate_forensic_chats.py",
           "scripts/extract_imessage_admissions.py",
-          "scripts/check_imessage_overlap.py",
-          "scripts/correlate_imessages_flights.py",
-          "scripts/check_chat_guides.py"
+          "scripts/extract_gaslighting_patterns.py"
         ]
       },
-      "schemas": [],
       "canonical_id_format": "message_guid (e.g., p:0/... or UUID)",
       "evidence_source_type": "imessage",
       "dependencies": [],
@@ -120,6 +43,48 @@
         "app/app/evidence-hub/"
       ],
       "db_accessor": "getImessageDb()"
+    },
+    {
+      "id": "gem-gmail",
+      "name": "Gmail Evidence Locker",
+      "status": "active",
+      "description": "Full Gmail account index for lucas@rowboatcreative.com, rowboatcreative@gmail.com, and rowboatcreativeaccounting@gmail.com. Contains 741k+ records.",
+      "inputs": {
+        "raw_files": [
+          "data/MBOX_LOCKER/mbox_metadata.db",
+          "data/ROWBOAT_CREATIVE_LOCKER/2024-06-22-all-metadata.csv"
+        ],
+        "file_types": [".db", ".csv", ".mbox"]
+      },
+      "outputs": {
+        "databases": {
+          "mbox_metadata.db": {
+            "location": "data/MBOX_LOCKER/mbox_metadata.db",
+            "tables": ["messages", "labels"],
+            "access": "read-only"
+          }
+        }
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/mbox_metadata_ingest.py",
+          "scripts/update_mbox_labels.py"
+        ],
+        "utility": [
+          "scripts/search_emails.py",
+          "scripts/export_evidence_chain.py"
+        ]
+      },
+      "canonical_id_format": "message_id (e.g., <...-google.com>)",
+      "evidence_source_type": "email",
+      "dependencies": [],
+      "api_routes": [
+        "app/app/api/emails/"
+      ],
+      "ui_pages": [
+        "app/app/emails/"
+      ],
+      "db_accessor": "getCommDb()"
     },
     {
       "id": "gem-financial-txns",
@@ -164,10 +129,16 @@
       "evidence_source_type": "financial",
       "dependencies": [],
       "api_routes": [
-        "app/app/api/financials/"
+        "app/app/api/financials/",
+        "app/app/api/financials/import",
+        "app/app/api/financials/transactions",
+        "app/app/api/financials/automatch",
+        "app/app/api/financials/finalize-verification"
       ],
       "ui_pages": [
-        "app/app/financials/"
+        "app/app/financials/",
+        "app/app/financials/import",
+        "app/app/financials/review/[id]"
       ],
       "db_accessor": "getWorkbenchDb()"
     },
@@ -201,321 +172,61 @@
         ]
       },
       "schemas": ["schemas/tax_returns.sql"],
-      "canonical_id_format": "tax_{year}_{form} (e.g., tax_2020_1120S)",
+      "canonical_id_format": "tax_{year}_{entity}_{id}",
       "evidence_source_type": "tax",
-      "dependencies": ["gem-financial-txns"],
+      "dependencies": ["gem-financial-txns", "gem-gmail"],
       "api_routes": [
-        "app/app/api/financials/"
+        "app/app/api/taxes/"
       ],
       "ui_pages": [
-        "app/app/financials/"
+        "app/app/taxes/"
       ],
       "db_accessor": "getWorkbenchDb()"
     },
     {
-      "id": "gem-players",
-      "name": "Player Intelligence",
+      "id": "gem-evidence-hub",
+      "name": "The Hub (Evidence Dashboard)",
       "status": "active",
-      "description": "Manages person profiles, aliases, email addresses, phone numbers. Bridges player identities to the Evidence Hub participant/entity system.",
+      "description": "The unified interface for cross-source evidence correlation. Links emails, messages, and transactions by canonical_id.",
       "inputs": {
-        "raw_files": [
-          "data/LINKED_IN_PROFILE_LOCKER/"
-        ],
-        "file_types": [".pdf", ".json"]
-      },
-      "outputs": {
-        "databases": {
-          "players.db": {
-            "location": "data/players.db",
-            "tables": ["players", "player_files"],
-            "schema": "schemas/players.sql",
-            "access": "read-only"
-          }
-        }
-      },
-      "scripts": {
-        "ingest": [
-          "ingest/linkedin_ingest.py",
-          "ingest/ingest_profile_pdfs.py",
-          "ingest/bridge_players_to_hub.py",
-          "ingest/reconcile_entities.py"
-        ]
-      },
-      "schemas": ["schemas/players.sql"],
-      "canonical_id_format": "slug (lowercase, e.g., lucas-guariglia)",
-      "evidence_source_type": "profile",
-      "dependencies": [],
-      "api_routes": [
-        "app/app/api/players/",
-        "app/app/api/entities/"
-      ],
-      "ui_pages": [
-        "app/app/players/"
-      ],
-      "db_accessor": "getDb('players')"
-    },
-    {
-      "id": "gem-legal-docs",
-      "name": "Legal Documents",
-      "status": "active",
-      "description": "Ingests court filings, complaints, motions, receiver reports, and orders. Chunks by semantic structure, embeds into ChromaDB, and indexes in BM25.",
-      "inputs": {
-        "raw_files": [
-          "data/COURT_LOCKER/",
-          "legal_docs_business/",
-          "legal_docs_criminal/"
-        ],
-        "file_types": [".pdf"]
-      },
-      "outputs": {
-        "databases": {
-          "chroma_db": {
-            "location": "chroma_db/",
-            "tables": ["embeddings collection"],
-            "access": "read-write"
-          },
-          "bm25_index.pkl": {
-            "location": "bm25_index.pkl",
-            "access": "read-only"
-          }
-        }
-      },
-      "scripts": {
-        "ingest": [
-          "ingest/extract_pdf.py"
-        ],
-        "utility": [
-          "scripts/rag_law_assistant.py"
-        ]
-      },
-      "schemas": [],
-      "canonical_id_format": "legal_{bates_prefix}_{id} (e.g., legal_RBC_0001)",
-      "evidence_source_type": "legal",
-      "dependencies": [],
-      "api_routes": [
-        "app/app/api/legal/"
-      ],
-      "ui_pages": [
-        "app/app/legal/",
-        "app/app/legal/research/"
-      ],
-      "db_accessor": "ChromaDB + BM25 (via rag.ts)"
-    },
-    {
-      "id": "gem-transcripts",
-      "name": "Transcripts & Recordings",
-      "status": "active",
-      "description": "Processes call transcripts and meeting recordings into narrative timelines with annotation support.",
-      "inputs": {
-        "raw_files": [
-          "data/TRANSCRIPTS_LOCKER/",
-          "data/transcripts/"
-        ],
-        "file_types": [".txt", ".csv", ".pdf"]
-      },
-      "outputs": {
-        "databases": {
-          "workbench.db": {
-            "location": "app/workbench.db",
-            "tables": ["transcript_annotations"],
-            "schema": "schemas/transcript_annotations.sql",
-            "access": "read-write"
-          }
-        },
-        "files": [
-          "data/transcripts/narrative_timeline.md",
-          "data/transcripts/discrepancy_report.md"
-        ]
-      },
-      "scripts": {
-        "ingest": [
-          "ingest/transcript_analysis.py"
-        ],
-        "utility": [
-          "scripts/generate_forensic_narrative.py",
-          "scripts/generate_podcast_script.py",
-          "scripts/generate_podcast_audio.py"
-        ]
-      },
-      "schemas": ["schemas/transcript_annotations.sql"],
-      "canonical_id_format": "trs_{date}_{slug} (e.g., trs_2022-11-15_zoom-admission)",
-      "evidence_source_type": "transcript",
-      "dependencies": [],
-      "api_routes": [
-        "app/app/api/transcripts/"
-      ],
-      "ui_pages": [
-        "app/app/transcripts/"
-      ],
-      "db_accessor": "getWorkbenchDb()"
-    },
-    {
-      "id": "gem-evidence-cards",
-      "name": "Evidence Card Generation",
-      "status": "active",
-      "description": "Normalizes all evidence types into structured EvidenceCard JSON objects with summaries, bullets, timestamps, participants, and IDs. Populates the canonical evidence_hub.db.",
-      "inputs": {
-        "databases": [
-          "data/MBOX_LOCKER/mbox_metadata.db",
-          "data/chat_master.db",
-          "data/players.db",
-          "app/workbench.db"
-        ]
+        "raw_files": ["data/evidence_hub.db"],
+        "file_types": [".db"]
       },
       "outputs": {
         "databases": {
           "evidence_hub.db": {
             "location": "data/evidence_hub.db",
-            "tables": ["evidence", "evidence_origins", "participants", "entities", "participant_entities", "evidence_participants", "evidence_fts"],
-            "schema": "schemas/evidence_hub.sql",
-            "access": "write (ingest only)"
+            "tables": ["nexus", "evidence_source", "provenance"],
+            "access": "read-only"
           }
-        },
-        "files": [
-          "data/evidence_cards/",
-          "data/refined_cards_draft.json"
-        ]
+        }
       },
       "scripts": {
-        "ingest": [
-          "ingest/generate_evidence_cards.py",
-          "ingest/evidence_hub_ingest.py",
-          "ingest/evidence_hub_init.py",
-          "ingest/evidence_card.py",
-          "ingest/rag_evidence_bridge.py"
-        ],
         "utility": [
-          "scripts/ingest_refined_cards.py",
-          "scripts/link_evidence_metadata.py",
-          "scripts/harvester_accountant_evidence.py"
+          "scripts/rebuild_hub_index.py",
+          "scripts/check_hub_provenance.py"
         ]
       },
-      "schemas": ["schemas/evidence_hub.sql", "schemas/evidence_annotations.sql"],
-      "canonical_id_format": "inherits from source gem",
-      "evidence_source_type": "all",
-      "dependencies": ["gem-email-mbox", "gem-imessage-chatdb", "gem-financial-txns", "gem-players"],
+      "canonical_id_format": "nexus_uuid",
+      "evidence_source_type": "meta",
+      "dependencies": ["gem-imessages", "gem-gmail", "gem-financial-txns"],
       "api_routes": [
         "app/app/api/evidence-hub/"
       ],
       "ui_pages": [
-        "app/app/evidence-hub/"
+        "app/app/evidence-hub/",
+        "app/app/dashboard/"
       ],
       "db_accessor": "getEvidenceHubDb()"
-    },
-    {
-      "id": "gem-rag-search",
-      "name": "RAG / Hybrid Search",
-      "status": "active",
-      "description": "Hybrid BM25 + vector similarity search with FlashRank cross-encoder reranking. Powers the AI Analyst and Synthesizer personas.",
-      "inputs": {
-        "databases": [
-          "chroma_db/",
-          "bm25_index.pkl"
-        ]
-      },
-      "outputs": {
-        "api_responses": "Evidence cards returned to LLM"
-      },
-      "scripts": {
-        "ingest": [],
-        "utility": [
-          "scripts/rag_law_assistant.py"
-        ]
-      },
-      "schemas": [],
-      "model": {
-        "name": "qwen2.5-32b-forensic",
-        "base": "qwen2.5:32b-instruct",
-        "modelfile": "Modelfile.forensic",
-        "embedding_primary": "mxbai-embed-large",
-        "embedding_secondary": "nomic-embed-text"
-      },
-      "dependencies": ["gem-evidence-cards", "gem-legal-docs"],
-      "api_routes": [
-        "app/app/api/ai/"
-      ],
-      "ui_pages": [
-        "app/app/legal/research/"
-      ],
-      "server": "api_server.py (FastAPI on port 8000)"
-    },
-    {
-      "id": "gem-chain-of-custody",
-      "name": "Chain of Custody",
-      "status": "active",
-      "description": "Tracks provenance, hashing, and audit trails for all evidence. Ensures court admissibility by maintaining unbroken chains from raw source to exhibit.",
-      "inputs": {
-        "databases": [
-          "data/MBOX_LOCKER/mbox_metadata.db",
-          "data/evidence_hub.db",
-          "app/workbench.db"
-        ]
-      },
-      "outputs": {
-        "databases": {
-          "workbench.db": {
-            "location": "app/workbench.db",
-            "tables": ["coc_notes_audit", "workbench_audit", "evidence_assignments", "exhibit_sections"],
-            "schema": "schemas/workbench.sql + schemas/missing_schemas.sql",
-            "access": "read-write"
-          }
-        }
-      },
-      "scripts": {
-        "utility": [
-          "scripts/update_chain_of_custody.py",
-          "scripts/save_ready_bag.py"
-        ]
-      },
-      "schemas": ["schemas/workbench.sql", "schemas/missing_schemas.sql"],
-      "dependencies": ["gem-email-mbox", "gem-imessage-chatdb", "gem-financial-txns"],
-      "api_routes": [
-        "app/app/api/coc/",
-        "app/app/api/workbench/"
-      ],
-      "ui_pages": [
-        "app/app/coc/",
-        "app/app/workbench/"
-      ],
-      "db_accessor": "getWorkbenchDb()"
-    },
-    {
-      "id": "gem-paralegal-exports",
-      "name": "Paralegal Export Generator",
-      "status": "active",
-      "description": "Generates attorney-ready, judge-presentable export packages from live evidence_hub.db, players.db, and workbench.db. Produces forensic summaries, player dossiers, agency referral letters, exhibit index, charge matrix, and a litigation-ready binder index. All player names sourced from players.db slugs. All claims cross-referenced with canonical evidence_id values.",
-      "inputs": {
-        "databases": [
-          "data/evidence_hub.db",
-          "data/players.db",
-          "app/workbench.db"
-        ],
-        "source_docs": [
-          "exports/attorney_package/00_summaries/"
-        ]
-      },
-      "outputs": {
-        "directories": {
-          "attorney_package": {
-            "location": "exports/attorney_package/",
-            "structure": "00_summaries/ | 01_exhibits/ | 02_dossiers/ | 03_letters/ | 04_evidence_cards/ | binder_index.md"
-          }
-        }
-      },
-      "scripts": {
-        "main": "scripts/generate_paralegal_exports.py",
-        "utility": [
-          "scripts/generate_agency_letters.py",
-          "scripts/generate_binder_index.py"
-        ]
-      },
-      "schemas": [],
-      "canonical_id_format": "exhibit_{category}_{seq} (e.g., exhibit_wire_fraud_001)",
-      "evidence_source_type": "export",
-      "dependencies": ["gem-evidence-cards", "gem-players", "gem-chain-of-custody"],
-      "api_routes": [],
-      "ui_pages": [],
-      "db_accessor": "getEvidenceHubDb() + getDb('players') (read-only)"
     }
-  ]
+  ],
+  "registry_version": "1.4.0",
+  "project_id": "lawmodel1-RC-2026",
+  "client_id": "rowboat-creative",
+  "data_root_structure": {
+    "data_locker": "data/",
+    "artifact_outputs": "exports/",
+    "governance_docs": "docs/",
+    "central_db": "app/workbench.db"
+  }
 }
