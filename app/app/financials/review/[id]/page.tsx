@@ -22,6 +22,11 @@ interface Transaction {
     review_status: string;
     verification_status: string | null;
     master_id: number | null;
+    rosetta_user: string | null;
+    rosetta_account: string | null;
+    rosetta_category: string | null;
+    rosetta_company: string | null;
+    match_score: number | null;
 }
 
 interface Player {
@@ -253,7 +258,8 @@ export default function TransactionReviewPage() {
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)" }}>DESCRIPTION</th>
                                 <th style={{ textAlign: "right", padding: "12px", color: "var(--text-muted)", width: 100 }}>AMOUNT</th>
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>PAGE</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 180 }}>FORENSIC LINK</th>
+                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 200 }}>ROSETTA MATCH</th>
+                                <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>SCORE</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 160 }}>PLAYER (ROSETTA)</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 100 }}>STATUS</th>
                             </tr>
@@ -271,7 +277,7 @@ export default function TransactionReviewPage() {
                                         <div style={{ fontWeight: 500 }}>{t.description_raw}</div>
                                         {t.master_id !== null && (
                                             <div style={{ fontSize: "0.65rem", color: "var(--accent-emerald)", fontWeight: 700, letterSpacing: "0.05em" }}>
-                                                LINKED TO MASTER RECORD #{t.master_id}
+                                                LINKED TO MASTER #{t.master_id}
                                             </div>
                                         )}
                                     </td>
@@ -284,20 +290,40 @@ export default function TransactionReviewPage() {
                                     <td style={{ padding: "10px", textAlign: "center" }}>
                                         <span style={{ color: "var(--text-muted)", fontSize: "0.75rem", fontFamily: "var(--font-mono)" }}>#{t.page_number || "?"}</span>
                                     </td>
+                                    {/* Rosetta Match Context */}
                                     <td style={{ padding: "10px" }}>
-                                        {t.verification_status === "MATCHED" ? (
-                                            <div style={{ 
-                                                display: "inline-flex", alignItems: "center", gap: "0.4rem", 
-                                                padding: "2px 8px", borderRadius: 4, background: "rgba(16, 185, 129, 0.1)", 
-                                                color: "var(--accent-emerald)", border: "1px solid rgba(16, 185, 129, 0.2)",
-                                                fontSize: "0.65rem", fontWeight: 800
-                                            }}>
-                                                <CheckCircle size={10} /> VERIFIED MATCH
+                                        {t.rosetta_user ? (
+                                            <div style={{ fontSize: "0.75rem", lineHeight: 1.5 }}>
+                                                <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{t.rosetta_company}</div>
+                                                <div style={{ color: "var(--text-secondary)" }}>
+                                                    <span style={{ color: "var(--accent-cyan)", fontWeight: 600 }}>{t.rosetta_user}</span>
+                                                    {t.rosetta_account ? ` · ${t.rosetta_account}` : ""}
+                                                </div>
+                                                {t.rosetta_category && (
+                                                    <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>{t.rosetta_category}</div>
+                                                )}
                                             </div>
                                         ) : (
-                                            <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontWeight: 600 }}>
-                                                PENDING VERIFICATION
+                                            <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", fontStyle: "italic" }}>
+                                                No match
                                             </div>
+                                        )}
+                                    </td>
+                                    {/* Match Score */}
+                                    <td style={{ padding: "10px", textAlign: "center" }}>
+                                        {t.match_score ? (
+                                            <div style={{
+                                                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                                width: 32, height: 32, borderRadius: "50%", fontSize: "0.7rem", fontWeight: 800,
+                                                fontFamily: "var(--font-mono)",
+                                                background: t.match_score >= 100 ? "rgba(16, 185, 129, 0.15)" : t.match_score >= 80 ? "rgba(0, 255, 255, 0.1)" : "rgba(255, 200, 0, 0.1)",
+                                                color: t.match_score >= 100 ? "var(--accent-emerald)" : t.match_score >= 80 ? "var(--accent-cyan)" : "#ffc800",
+                                                border: `1px solid ${t.match_score >= 100 ? "rgba(16, 185, 129, 0.3)" : t.match_score >= 80 ? "rgba(0, 255, 255, 0.2)" : "rgba(255, 200, 0, 0.2)"}`
+                                            }}>
+                                                {t.match_score}
+                                            </div>
+                                        ) : (
+                                            <span style={{ color: "var(--text-muted)", fontSize: "0.65rem" }}>—</span>
                                         )}
                                     </td>
                                     <td style={{ padding: "10px" }}>

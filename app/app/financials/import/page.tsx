@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { 
     Upload, FileText, CheckCircle, AlertCircle, 
-    Loader2, Search, ArrowRight, Shield, History, Trash2
+    Loader2, Search, ArrowRight, Shield, History, Trash2,
+    RefreshCw, X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -27,47 +28,64 @@ export default function StatementImportPage() {
     const [sessions, setSessions] = useState<ImportSession[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const [refreshing, setRefreshing] = useState(false);
+    const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+
+    const showToast = (msg: string, type: "success" | "error" = "success") => {
+        setToast({ msg, type });
+        setTimeout(() => setToast(null), 4000);
+    };
 
     const fetchSessions = async () => {
+        setRefreshing(true);
         try {
-            const res = await fetch("/api/financials/import");
+            // Use timestamp to bust cache
+            const res = await fetch(`/api/financials/import?t=${Date.now()}`);
             const data = await res.json();
             setSessions(data);
         } catch (e) {
             console.error("Fetch sessions error:", e);
+            showToast("Failed to fetch sessions", "error");
+        } finally {
+            setRefreshing(false);
         }
     };
 
     const deleteSession = async (id: number) => {
         if (!confirm("Are you sure you want to purge this session and all its transactions? This cannot be undone.")) return;
         
-        console.log(`[DELETE] Starting purge for session: ${id}`);
+        console.log(`[DELETE-v2] Starting purge for session: ${id}`);
         setDeletingId(id);
         setError(null);
+        
         try {
-            const formData = new FormData();
-            formData.append("action", "delete");
-            formData.append("id", id.toString());
+            const body = new FormData();
+            body.append("action", "delete");
+            body.append("id", String(id));
 
-            const res = await fetch(`/api/financials/import`, { 
-                method: "POST",
-                body: formData
-            });
-
-            if (res.ok) {
-                console.log(`[DELETE] Success for session ${id}`);
-                await fetchSessions();
+            console.log("[DELETE-v2] Sending POST request...");
+            const res = await fetch("/api/financials/import", { method: "POST", body });
+            console.log("[DELETE-v2] Response status:", res.status);
+            
+            const json = await res.json().catch(() => ({ unknown: true }));
+            console.log("[DELETE-v2] Response body:", JSON.stringify(json));
+            
+            if (res.ok && json.success) {
+                showToast(`Session ${id} purged successfully.`);
+                // Immediately remove from local state for instant UI feedback
+                setSessions(prev => prev.filter(s => s.id !== id));
+                // Also refresh from server after a delay
+                setTimeout(fetchSessions, 1000);
             } else {
-                const data = await res.json().catch(() => ({}));
-                const errMsg = data.error || data.detail || `Delete failed (${res.status})`;
+                const errMsg = json.error || json.detail || `Delete failed (${res.status})`;
                 setError(errMsg);
-                console.error("Purge failed:", errMsg);
-                alert(`Purge failed: ${errMsg}`);
+                showToast(`Purge failed: ${errMsg}`, "error");
             }
-        } catch (e) {
-            console.error("Delete error:", e);
-            setError("Connection error during deletion");
-            alert("Delete error: Connection failed. Check terminal.");
+        } catch (e: any) {
+            console.error("[DELETE-v2] EXCEPTION:", e);
+            const msg = e?.message || "Unknown error";
+            setError(msg);
+            showToast(`Delete error: ${msg}`, "error");
         } finally {
             setDeletingId(null);
         }
@@ -218,9 +236,32 @@ export default function StatementImportPage() {
             </div>
 
             {/* History Section */}
-            <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <History size={16} style={{ color: "var(--text-muted)" }} />
-                <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>Import History</h2>
+            <div style={{ marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <History size={16} style={{ color: "var(--text-muted)" }} />
+                    <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>Import History</h2>
+                </div>
+                <button 
+                    onClick={fetchSessions}
+                    disabled={refreshing}
+                    style={{
+                        background: "rgba(0, 245, 212, 0.08)",
+                        border: "1px solid rgba(0, 245, 212, 0.2)",
+                        borderRadius: 6,
+                        padding: "4px 10px",
+                        color: "var(--accent-cyan)",
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        opacity: refreshing ? 0.6 : 1
+                    }}
+                >
+                    <RefreshCw size={12} className={refreshing ? "animate-spin" : ""} />
+                    Refresh
+                </button>
             </div>
 
             <div className="glass-panel" style={{ overflow: "hidden" }}>
@@ -282,33 +323,83 @@ export default function StatementImportPage() {
                                     }}>
                                         Review <ArrowRight size={12} />
                                     </Link>
-                                    <button 
-                                        type="button"
-                                        disabled={deletingId === s.id}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            deleteSession(s.id);
+                                    <form 
+                                        action={`/api/financials/import/delete`} 
+                                        method="GET"
+                                        style={{ display: "inline" }}
+                                        onSubmit={(e) => {
+                                            if (!confirm("Are you sure you want to purge this session and all its transactions? This cannot be undone.")) {
+                                                e.preventDefault();
+                                            }
                                         }}
-                                        style={{ 
-                                            background: "none", border: "none", 
-                                            color: deletingId === s.id ? "var(--text-muted)" : "var(--text-muted)", 
-                                            opacity: deletingId === s.id ? 0.4 : 1,
-                                            cursor: deletingId === s.id ? "not-allowed" : "pointer", 
-                                            transition: "color 0.2s", padding: "4px"
-                                        }}
-                                        onMouseEnter={e => { if (deletingId !== s.id) e.currentTarget.style.color = "var(--accent-red)"; }}
-                                        onMouseLeave={e => { if (deletingId !== s.id) e.currentTarget.style.color = "var(--text-muted)"; }}
-                                        title="Purge Session"
                                     >
-                                        {deletingId === s.id ? <Loader2 className="animate-spin" size={14} /> : <Trash2 size={14} />}
-                                    </button>
+                                        <input type="hidden" name="id" value={s.id} />
+                                        <button 
+                                            type="submit"
+                                            style={{ 
+                                                background: "none", border: "none", 
+                                                color: "var(--text-muted)", 
+                                                cursor: "pointer", 
+                                                transition: "color 0.2s", padding: "4px",
+                                                display: "inline-flex", alignItems: "center"
+                                            }}
+                                            onMouseEnter={e => e.currentTarget.style.color = "var(--accent-red)"}
+                                            onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
+                                            title="Purge Session"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* Toast System */}
+            {toast && (
+                <div style={{
+                    position: "fixed",
+                    bottom: "2rem",
+                    right: "2rem",
+                    padding: "1rem 1.5rem",
+                    borderRadius: 12,
+                    background: toast.type === "success" ? "rgba(16, 185, 129, 0.95)" : "rgba(239, 68, 68, 0.95)",
+                    color: "#fff",
+                    boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.5)",
+                    zIndex: 9999,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    animation: "slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backdropFilter: "blur(10px)"
+                }}>
+                    {toast.type === "success" ? <CheckCircle size={18} /> : <AlertCircle size={18} />}
+                    <span style={{ fontSize: "0.875rem", fontWeight: 600 }}>{toast.msg}</span>
+                    <button 
+                        onClick={() => setToast(null)}
+                        style={{ background: "none", border: "none", color: "rgba(255,255,255,0.6)", cursor: "pointer", padding: "4px" }}
+                    >
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
+
+            <style>{`
+                @keyframes slideInRight {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                .animate-spin {
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     );
 }

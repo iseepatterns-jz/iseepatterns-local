@@ -12,11 +12,19 @@ function ensureSchema(db: any) {
     const info = db.pragma("table_info(statement_transactions)");
     const columnNames = info.map((c: any) => c.name);
     
-    if (!columnNames.includes('master_id')) {
-        db.prepare("ALTER TABLE statement_transactions ADD COLUMN master_id INTEGER").run();
-    }
-    if (!columnNames.includes('verification_status')) {
-        db.prepare("ALTER TABLE statement_transactions ADD COLUMN verification_status TEXT DEFAULT 'PENDING'").run();
+    const requiredColumns: [string, string][] = [
+        ['master_id', 'INTEGER'],
+        ['verification_status', "TEXT DEFAULT 'PENDING'"],
+        ['rosetta_user', 'TEXT'],
+        ['rosetta_account', 'TEXT'],
+        ['rosetta_category', 'TEXT'],
+        ['rosetta_company', 'TEXT'],
+        ['match_score', 'INTEGER'],
+    ];
+    for (const [col, type] of requiredColumns) {
+        if (!columnNames.includes(col)) {
+            db.prepare(`ALTER TABLE statement_transactions ADD COLUMN ${col} ${type}`).run();
+        }
     }
 }
 
@@ -128,14 +136,33 @@ export async function POST(req: NextRequest) {
             });
 
             if (bestMatch && bestMatch.score >= 80) {
-                // High confidence match
+                // High confidence match — store Rosetta Stone fields for preview
+                const mr = bestMatch.record;
                 db.prepare(`
                     UPDATE statement_transactions 
-                    SET master_id = ?, verification_status = 'MATCHED'
+                    SET master_id = ?, verification_status = 'MATCHED',
+                        rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
+                        match_score = ?
                     WHERE id = ?
-                `).run(bestMatch.index, ft.id);
+                `).run(
+                    bestMatch.index,
+                    mr['User'] || '',
+                    mr['Account Type'] || mr['Account'] || '',
+                    mr['Category'] || '',
+                    mr['Company'] || mr['Description'] || '',
+                    bestMatch.score,
+                    ft.id
+                );
                 matchCount++;
-                matches.push({ forensicId: ft.id, masterIndex: bestMatch.index, score: bestMatch.score });
+                matches.push({
+                    forensicId: ft.id,
+                    masterIndex: bestMatch.index,
+                    score: bestMatch.score,
+                    rosetta_user: mr['User'] || '',
+                    rosetta_account: mr['Account Type'] || mr['Account'] || '',
+                    rosetta_category: mr['Category'] || '',
+                    rosetta_company: mr['Company'] || mr['Description'] || '',
+                });
             }
         }
 

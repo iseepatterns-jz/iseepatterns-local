@@ -16,22 +16,66 @@ const writeDebug = (msg: string) => {
  * Handles both session deletion (via action=delete) and PDF uploads.
  */
 export async function POST(req: NextRequest) {
+    writeDebug(`[API-POST] Request received at ${new Date().toISOString()}`);
     try {
         const formData = await req.formData();
         const action = formData.get("action");
 
         // Action: DELETE
         if (action === "delete") {
-            const id = formData.get("id");
+            const idStr = formData.get("id");
+            const id = idStr ? parseInt(idStr.toString(), 10) : null;
             writeDebug(`[POST-DELETE] Request to purge session ID: ${id}`);
-            if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
+            
+            if (!id || isNaN(id)) {
+                writeDebug(`[POST-DELETE] Error: Invalid ID received (${idStr})`);
+                return NextResponse.json({ error: "Valid ID required" }, { status: 400 });
+            }
             
             const db = getWorkbenchDb();
+            
+            // 1. Get storage path before deleting records
+            const fileInfo = db.prepare(`
+                SELECT f.storage_path, f.id as file_id
+                FROM import_sessions s
+                JOIN statement_files f ON s.statement_file_id = f.id
+                WHERE s.id = ?
+            `).get(id) as { storage_path: string, file_id: number } | undefined;
+
+            if (!fileInfo) {
+                writeDebug(`[POST-DELETE] Warning: Session ${id} not found in database`);
+                return NextResponse.json({ error: "Session not found" }, { status: 404 });
+            }
+
             db.transaction(() => {
-                db.prepare("DELETE FROM statement_transactions WHERE import_session_id = ?").run(id);
-                db.prepare("DELETE FROM import_sessions WHERE id = ?").run(id);
+                const txDel = db.prepare("DELETE FROM statement_transactions WHERE import_session_id = ?").run(id);
+                const sessDel = db.prepare("DELETE FROM import_sessions WHERE id = ?").run(id);
+                
+                writeDebug(`[POST-DELETE] DB: Deleted ${txDel.changes} transactions and ${sessDel.changes} session records for ID ${id}.`);
+
+                // 2. Check if this was the last session using that file
+                const otherSessions = db.prepare("SELECT id FROM import_sessions WHERE statement_file_id = ?").all(fileInfo.file_id);
+                if (otherSessions.length === 0) {
+                    writeDebug(`[POST-DELETE] File ${fileInfo.file_id} is no longer referenced. Deleting file records.`);
+                    db.prepare("DELETE FROM statement_files WHERE id = ?").run(fileInfo.file_id);
+                    
+                    // 3. Delete physical file
+                    if (fs.existsSync(fileInfo.storage_path)) {
+                        try {
+                            fs.unlinkSync(fileInfo.storage_path);
+                            writeDebug(`[POST-DELETE] Physical file deleted: ${fileInfo.storage_path}`);
+                        } catch (err) {
+                            writeDebug(`[POST-DELETE] ERROR deleting file: ${(err as Error).message}`);
+                        }
+                    } else {
+                        writeDebug(`[POST-DELETE] Physical file not found at: ${fileInfo.storage_path}`);
+                    }
+                } else {
+                    writeDebug(`[POST-DELETE] File ${fileInfo.file_id} still has ${otherSessions.length} other session(s). Keeping physical file.`);
+                }
             })();
-            writeDebug(`[POST-DELETE] Successfully purged session ${id}`);
+
+            writeDebug(`[POST-DELETE] Purge of session ${id} completed.`);
             return NextResponse.json({ success: true });
         }
 
@@ -155,6 +199,7 @@ export async function POST(req: NextRequest) {
  * Lists previous import sessions.
  */
 export async function GET() {
+    writeDebug("[API-GET] Fetching sessions...");
     try {
         const db = getWorkbenchDb();
         const sessions = db.prepare(`

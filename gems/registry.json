@@ -125,8 +125,7 @@
           "scripts/ingest_financial_truth.py",
           "scripts/financial_discrepancy_matcher.py",
           "scripts/ingest_amazon_to_evidence_hub.py",
-          "scripts/ingest_flights_to_evidence_hub.py",
-          "analyze_draws.py"
+          "scripts/ingest_flights_to_evidence_hub.py"
         ]
       },
       "schemas": ["schemas/financials.sql"],
@@ -258,9 +257,55 @@
       "api_routes": [],
       "ui_pages": [],
       "db_accessor": "getEvidenceHubDb() + getDb('players') (read-only)"
+    },
+    {
+      "id": "gem-ready-bag",
+      "name": "Ready Bag (Attorney Evidence Package)",
+      "status": "active",
+      "description": "The attorney-ready forensic evidence package. Curates validated manifests, misconduct reports, and player pivot tables from the forensic pipeline into a litigation-ready bundle. This is the terminal output of the entire evidence chain — from Locker → Hub → Paralegal → ReadyBag.",
+      "inputs": {
+        "databases": [
+          "data/evidence_hub.db",
+          "data/players.db",
+          "app/workbench.db"
+        ],
+        "directories": [
+          "exports/attorney_package/"
+        ]
+      },
+      "outputs": {
+        "directories": {
+          "ready_bag": {
+            "location": "exports/attorney_package/ready_bag/",
+            "structure": "README_ATTORNEY_MANIFEST.md | COMPLETE_FORENSIC_VALIDATION_MANIFEST.csv | validated_misconduct_manifest.csv | DIGITAL_BLINDSPOT_REPORT.md | phase_22_pattern_of_conduct.md | pivot_key_players.csv | sg_employment_disclosures.csv",
+            "access": "read-only (attorney-facing)"
+          }
+        }
+      },
+      "scripts": {
+        "main": "scripts/save_ready_bag.py",
+        "utility": [
+          "scripts/generate_paralegal_exports.py"
+        ]
+      },
+      "schemas": [],
+      "canonical_id_format": "N/A (manifest-level, not record-level)",
+      "evidence_source_type": "export",
+      "dependencies": ["gem-paralegal-exports", "gem-evidence-hub"],
+      "api_routes": [],
+      "ui_pages": [],
+      "verification": {
+        "fia_checks": [
+          "Verify all CSV manifests have non-zero row counts",
+          "Verify README_ATTORNEY_MANIFEST.md timestamp matches last pipeline run",
+          "Cross-check validated_misconduct_manifest.csv count against evidence_hub.db query",
+          "Verify pivot_key_players.csv player slugs match players.db"
+        ]
+      },
+      "db_accessor": "N/A (file-based output)"
     }
   ],
-  "registry_version": "1.4.0",
+  "registry_version": "1.5.0",
   "project_id": "lawmodel1-RC-2026",
   "data_root_structure": {
     "data_locker": "data/",
@@ -269,3 +314,4 @@
     "central_db": "app/workbench.db"
   }
 }
+
