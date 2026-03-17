@@ -262,7 +262,6 @@
   ],
   "registry_version": "1.4.0",
   "project_id": "lawmodel1-RC-2026",
-  "client_id": "rowboat-creative",
   "data_root_structure": {
     "data_locker": "data/",
     "artifact_outputs": "exports/",
