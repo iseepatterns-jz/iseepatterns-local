@@ -208,7 +208,7 @@ export async function POST(req: NextRequest) {
         
         // Map DB columns BACK to CSV headers
         const exportHeaders = [
-            "Year", "Date", "Amount", "amount_positive", "Description", "Transaction Type",
+            "Year", "Date", "Amount", "Description", "Transaction Type",
             "Account", "Account Type", "Bank", "User", "Responsible", "Category",
             "Class", "Type", "Type2", "Department", "Link", "Company",
             "Industry", "Invoice #", "Invoice URL", "Client", "Notes", "Url",
@@ -221,7 +221,6 @@ export async function POST(req: NextRequest) {
             "Year": r.year,
             "Date": r.date,
             "Amount": r.amount,
-            "amount_positive": r.amount_positive,
             "Description": r.description,
             "Transaction Type": r.transaction_type,
             "Account": r.account,
