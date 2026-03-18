@@ -105,50 +105,85 @@ export async function POST(req: NextRequest) {
             return rows;
         };
 
+        // Load Master Records
         const masterRecords = parseCSV(csvContent);
-        console.log(`[Automatch] sessionId=${sessionId}: Found ${forensicTxns.length} forensic txns and ${masterRecords.length} master records`);
 
-        // 3. Matching Logic
+        // NORMALIZATION HELPERS
+        const normalizeDate = (d: string) => {
+            if (!d) return "";
+            const parts = d.split("/");
+            if (parts.length >= 2) {
+                const m = parseInt(parts[0], 10);
+                const dPart = parseInt(parts[1], 10);
+                if (!isNaN(m) && !isNaN(dPart)) return `${m}/${dPart}`;
+            }
+            return d.trim();
+        };
+
+        const normalizeAccount = (a: any) => {
+            if (a === null || a === undefined) return "";
+            const s = String(a).trim();
+            // If it's a 4-digit numeric string with leading zero (0891), allow matching with 891
+            const numeric = parseInt(s, 10);
+            return isNaN(numeric) ? s : numeric.toString();
+        };
+
+        const fTxns = (forensicTxns as any[]).map(ft => ({
+            ...ft,
+            normDate: normalizeDate(ft.date),
+            normAccount: normalizeAccount(ft.final_account_id)
+        }));
+
+        const mRecs = masterRecords.map(mr => ({
+            ...mr,
+            normDate: normalizeDate(mr.Date),
+            normAccount: normalizeAccount(mr['Account'] || mr['Account Number'] || "")
+        }));
+
         const matches: any[] = [];
         let matchCount = 0;
-        const updateStmt = db.prepare(`
-            UPDATE statement_transactions 
-            SET master_id = ?, verification_status = 'MATCHED',
-                rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
-                match_score = ?, final_account_id = ?, player_id = ?
-            WHERE id = ?
-        `);
 
-        for (let i = 0; i < (forensicTxns as any[]).length; i++) {
-            const ft = (forensicTxns as any[])[i];
+        for (let i = 0; i < fTxns.length; i++) {
+            const ft = fTxns[i];
             const fAmount = Math.abs(ft.amount);
-            const fDate = (ft.date || "").trim();
             const fDesc = (ft.description_raw || "").toLowerCase();
 
             let bestMatch: any = null;
             let highestScore = 0;
 
-            masterRecords.forEach((mr: any, index: number) => {
-                if (!mr.Amount) return;
-                const mAmountStr = mr.Amount.replace(/[$,]/g, '');
+            mRecs.forEach((mr: any, index: number) => {
+                const mAmountStr = (mr.Amount || "0").replace(/[$,]/g, "");
                 const mAmount = Math.abs(parseFloat(mAmountStr));
                 if (isNaN(mAmount)) return;
 
-                const mDate = (mr.Date || "").trim();
-                const mDesc = (mr.Description || "").toLowerCase();
-
-                // 1. Amount must match or be extremely close
+                // 1. Amount match (allowing 1 cent diff)
                 if (Math.abs(fAmount - mAmount) > 0.01) return;
+
+                // 2. Account filter (if present in forensics)
+                if (ft.normAccount && ft.normAccount.length >= 3) {
+                    if (mr.normAccount !== ft.normAccount && !mr.normAccount.endsWith(ft.normAccount)) return;
+                }
+
+                // 3. Player filter (if present in forensics)
+                if (ft.player_id) {
+                    const mUser = (mr['User'] || "").trim().toUpperCase();
+                    let mPlayerId = null;
+                    if (mUser === 'JZ') mPlayerId = 28;
+                    else if (mUser === 'LG') mPlayerId = 25;
+                    else if (mUser === 'PH') mPlayerId = 45;
+                    if (mPlayerId && mPlayerId !== ft.player_id) return;
+                }
 
                 let score = 50; // Base score for amount match
 
-                // 2. Date match
-                if (mDate.startsWith(fDate) || mDate.includes(fDate)) {
+                // 4. Date match (normalized)
+                if (ft.normDate && ft.normDate === mr.normDate) {
                     score += 30;
                 }
 
-                // 3. Description match (fuzzy)
-                if (mDesc.includes(fDesc.slice(0, 10)) || fDesc.includes(mDesc.slice(0, 10))) {
+                // 5. Description fuzzy match
+                const mDesc = (mr.Description || "").toLowerCase();
+                if (mDesc.includes(fDesc.slice(0, 8)) || fDesc.includes(mDesc.slice(0, 8))) {
                     score += 20;
                 }
 
@@ -166,7 +201,6 @@ export async function POST(req: NextRequest) {
                 else if (userInitials === 'LG') playerId = 25;
                 else if (userInitials === 'PH') playerId = 45;
 
-                // Forensic tracing: Evidence links
                 const evidenceUrl = (mr['Link'] || mr['Invoice URL'] || '').trim();
 
                 const updateMatchStmt = db.prepare(`
@@ -185,8 +219,8 @@ export async function POST(req: NextRequest) {
                     mr['Category'] || '',
                     mr['Company'] || mr['Description'] || '',
                     bestMatch.score,
-                    mr['Account'] || '', 
-                    playerId,
+                    mr['Account'] || ft.final_account_id || '', 
+                    playerId || ft.player_id,
                     evidenceUrl || null,
                     ft.id
                 );

@@ -91,6 +91,11 @@ export async function POST(req: NextRequest) {
         const db = getWorkbenchDb();
 
         // 1. Get forensic matches with their statement metadata
+        const sessionInt = Number(sessionId);
+        if (isNaN(sessionInt)) {
+            return NextResponse.json({ error: "Invalid session ID" }, { status: 400 });
+        }
+
         const matches = db.prepare(`
             SELECT st.id, st.master_id, st.page_number, st.description_raw, st.amount, st.date,
                    st.rosetta_user, st.rosetta_account, st.rosetta_category, st.rosetta_company,
@@ -102,11 +107,16 @@ export async function POST(req: NextRequest) {
             WHERE st.import_session_id = ? 
               AND st.verification_status = 'MATCHED'
               AND st.review_status = 'REVIEWED'
-        `).all(sessionId) as any[];
+        `).all(sessionInt) as any[];
 
         if (matches.length === 0) {
+            // Diagnostic: Why are there no matches? 
+            const anyReviewed = db.prepare(`SELECT count(*) as count FROM statement_transactions WHERE import_session_id = ? AND review_status = 'REVIEWED'`).get(sessionInt) as any;
+            const anyMatched = db.prepare(`SELECT count(*) as count FROM statement_transactions WHERE import_session_id = ? AND verification_status = 'MATCHED'`).get(sessionInt) as any;
+            
             return NextResponse.json({
-                error: "No reviewed matches to finalize. Please approve transactions before finalizing."
+                error: `No approved matches found to finalize. (Stats for Session ${sessionInt}: ${anyReviewed?.count || 0} Reviewed, ${anyMatched?.count || 0} Matched). All matched records must be Reviewed (blue pill) before finalization.`,
+                debug: { anyReviewed: anyReviewed?.count, anyMatched: anyMatched?.count }
             }, { status: 400 });
         }
 
