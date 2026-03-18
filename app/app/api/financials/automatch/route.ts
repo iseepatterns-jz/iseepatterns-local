@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
             )
             AND (account_type = ? OR ? IS NULL)
             ORDER BY (CASE WHEN account = ? THEN 1 ELSE 0 END) DESC
-            LIMIT 1
+            LIMIT 5
         `);
 
         for (const ft of forensicTxns as any[]) {
@@ -150,65 +150,80 @@ export async function POST(req: NextRequest) {
             const prevDate = formatDate(prevDateObj);
             const nextDate = formatDate(nextDateObj);
             
-            const bestMatch = findMatchStmt.get(fAmount, targetDate, prevDate, nextDate, targetAccountType, targetAccountType, stmtAcct) as any;
+            // 3. Get all potential candidates (up to 5)
+            const candidates = findMatchStmt.all(fAmount, targetDate, prevDate, nextDate, targetAccountType, targetAccountType, stmtAcct) as any[];
 
-            if (bestMatch) {
-                const userInitials = (bestMatch.user_label || '').trim().toUpperCase();
+            let bestCandidate = null;
+            let score = 0;
+            let reason = "";
+
+            for (const candidate of candidates) {
+                const descMatch = candidate.description.toLowerCase().includes(fDescShort.toLowerCase());
+                const overlap = hasDescriptionOverlap(ft.description_raw, candidate.description);
+                const amountDelta = Math.abs(fAmount - Math.abs(candidate.amount));
+
+                // FUZZY GUARD: If there is ZERO meaningful keyword overlap, skip this candidate.
+                // This prevents "Google" from matching "Shell Oil" even if date/amount are identical.
+                if (!overlap && !descMatch) {
+                    console.log(`[Paralegal] Skipping candidate due to zero keyword overlap: ${ft.description_raw} vs ${candidate.description}`);
+                    continue;
+                }
+
+                // If we reach here, we have a valid fuzzy match
+                bestCandidate = candidate;
+                score = 95 + (descMatch ? 5 : 0);
+                reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
+                
+                if (candidate.account !== stmtAcct) {
+                    reason += ` (Cross-Acct: ${candidate.account})`;
+                }
+                
+                // If it's a perfect description match, we can stop searching.
+                if (descMatch) break;
+            }
+
+            if (bestCandidate) {
+                const userInitials = (bestCandidate.user || '').trim().toUpperCase();
                 let playerId = null;
                 if (userInitials === 'JZ') playerId = 28;
                 else if (userInitials === 'LG') playerId = 25;
                 else if (userInitials === 'PH') playerId = 45;
 
-                const evidenceUrl = (bestMatch.link || bestMatch.invoice_url || '').trim();
-                
-                // Determine match reason
-                const descMatch = bestMatch.description.toLowerCase().includes(fDescShort.toLowerCase());
-                const overlap = hasDescriptionOverlap(ft.description_raw, bestMatch.description);
-
-                // REJECT: If amount has a delta and description has ZERO overlap, it's a false positive.
-                const amountDelta = Math.abs(fAmount - Math.abs(bestMatch.amount));
-                if (amountDelta > 0 && !overlap && !descMatch) {
-                    console.log(`[Paralegal] Rejected False Positive: ${ft.description_raw} ($${fAmount}) vs ${bestMatch.description} ($${bestMatch.amount})`);
-                    continue; 
-                }
-
-                // WARNING: Even if amount is EXACT, if there is ZERO description overlap, we score it much lower or skip.
-                // In forensics, we'd rather be safe.
-                if (amountDelta === 0 && !overlap && !descMatch) {
-                   // Keep it but mark as low confidence? Or skip? Let's skip to be safe.
-                   console.log(`[Paralegal] Rejected Exact Amount mismatch: ${ft.description_raw} vs ${bestMatch.description}`);
-                   continue;
-                }
-
-                const reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
+                const evidenceUrl = (bestCandidate.link || bestCandidate.invoice_url || '').trim();
 
                 const updateMatchStmt = db.prepare(`
                     UPDATE statement_transactions 
-                    SET master_id = ?, verification_status = 'MATCHED',
-                        rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
-                        match_score = ?, match_reason = ?,
-                        final_account_id = ?, player_id = ?,
-                        evidence_url = ?, nc_flag = 0
+                    SET master_id = ?, 
+                        verification_status = 'MATCHED',
+                        rosetta_user = ?, 
+                        rosetta_account = ?, 
+                        rosetta_category = ?, 
+                        rosetta_company = ?,
+                        match_score = ?, 
+                        match_reason = ?,
+                        final_account_id = ?, 
+                        player_id = ?,
+                        evidence_url = ?, 
+                        nc_flag = 0
                     WHERE id = ?
                 `);
 
-                const score = 95 + (descMatch ? 5 : 0);
-
                 updateMatchStmt.run(
-                    bestMatch.master_id_val,
-                    bestMatch.user_label || '',
-                    bestMatch.account_type || bestMatch.account || '',
-                    bestMatch.category || '',
-                    bestMatch.company || bestMatch.description || '',
+                    bestCandidate.master_id_val,
+                    bestCandidate.user || '',
+                    bestCandidate.account || '',
+                    bestCandidate.category || '',
+                    bestCandidate.description || '',
                     score,
                     reason,
-                    bestMatch.account || ft.final_account_id || '', 
-                    playerId || ft.player_id,
+                    bestCandidate.account || null,
+                    playerId || null,
                     evidenceUrl || null,
                     ft.id
                 );
+                
                 matchCount++;
-                matches.push({ forensicId: ft.id, masterId: bestMatch.master_id_val, reason });
+                matches.push({ forensicId: ft.id, masterId: bestCandidate.master_id_val, reason });
             }
         }
 
