@@ -51,6 +51,24 @@ export default function TransactionReviewPage() {
     const [filter, setFilter] = useState("ALL");
     const [error, setError] = useState<string | null>(null);
 
+    // Draggable Column State
+    const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>({
+        "DATE": 80,
+        "DESCRIPTION": 300,
+        "AMOUNT": 100,
+        "PAGE": 50,
+        "ROSETTA MATCH": 240,
+        "SCORE": 50,
+        "REASON": 140,
+        "ACCOUNT": 70,
+        "PLAYER": 160,
+        "DOC": 40,
+        "STATUS": 100
+    });
+
+    const [isResizing, setIsResizing] = useState<string | null>(null);
+    const startXRef = useState<number>(0)[0]; // We use a ref-like pattern for mouse tracking
+
     const fetchPlayers = useCallback(async () => {
         try {
             const res = await fetch("/api/players");
@@ -89,6 +107,37 @@ export default function TransactionReviewPage() {
         fetchTransactions();
         fetchPlayers();
     }, [fetchTransactions, fetchPlayers]);
+
+    // Global Mouse Listeners for Resizing
+    useEffect(() => {
+        if (!isResizing) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            setColumnWidths(prev => {
+                const currentWidth = prev[isResizing];
+                const delta = e.movementX;
+                const nextWidth = Math.max(30, currentWidth + delta);
+                return { ...prev, [isResizing]: nextWidth };
+            });
+        };
+
+        const handleMouseUp = () => {
+            setIsResizing(null);
+            document.body.style.cursor = "default";
+            document.body.style.userSelect = "auto";
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+        
+        document.body.style.cursor = "col-resize";
+        document.body.style.userSelect = "none";
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, [isResizing]);
 
     const handleUpdate = async (ids: number[], updates: Partial<Transaction>) => {
         setSaving(true);
@@ -300,21 +349,48 @@ export default function TransactionReviewPage() {
             {/* Main Table View */}
             <div className="glass-panel" style={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <div style={{ overflowY: "auto", flex: 1 }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem", tableLayout: "fixed" }}>
                         <thead style={{ position: "sticky", top: 0, zIndex: 10, background: "var(--bg-panel)", borderBottom: "1px solid var(--border-glass)" }}>
                             <tr>
                                 <th style={{ padding: "12px", width: 40 }}><input type="checkbox" checked={selectedIds.length === filteredTransactions.length && filteredTransactions.length > 0} onChange={selectAll} /></th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 100 }}>DATE</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)" }}>DESCRIPTION</th>
-                                <th style={{ textAlign: "right", padding: "12px", color: "var(--text-muted)", width: 100 }}>AMOUNT</th>
-                                <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>PAGE</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 200 }}>ROSETTA MATCH</th>
-                                <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>SCORE</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 120 }}>REASON</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 80 }}>ACCOUNT</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 160 }}>PLAYER (ROSETTA)</th>
-                                <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 50 }}>DOC</th>
-                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 100 }}>STATUS</th>
+                                
+                                {[
+                                    { id: "DATE", label: "DATE" },
+                                    { id: "DESCRIPTION", label: "DESCRIPTION" },
+                                    { id: "AMOUNT", label: "AMOUNT", align: "right" as const },
+                                    { id: "PAGE", label: "PAGE", align: "center" as const },
+                                    { id: "ROSETTA MATCH", label: "ROSETTA MATCH" },
+                                    { id: "SCORE", label: "SCORE", align: "center" as const },
+                                    { id: "REASON", label: "REASON" },
+                                    { id: "ACCOUNT", label: "ACCOUNT" },
+                                    { id: "PLAYER", label: "PLAYER (ROSETTA)" },
+                                    { id: "DOC", label: "DOC", align: "center" as const },
+                                    { id: "STATUS", label: "STATUS" }
+                                ].map((col) => (
+                                    <th key={col.id} style={{ 
+                                        textAlign: col.align || "left", 
+                                        padding: "12px", 
+                                        color: "var(--text-muted)", 
+                                        width: columnWidths[col.id],
+                                        position: "relative",
+                                        whiteSpace: "nowrap",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis"
+                                    }}>
+                                        {col.label}
+                                        {/* Resize Handle */}
+                                        <div 
+                                            onMouseDown={(e) => { e.preventDefault(); setIsResizing(col.id); }}
+                                            style={{
+                                                position: "absolute", right: 0, top: 0, bottom: 0, width: "4px",
+                                                cursor: "col-resize", background: isResizing === col.id ? "var(--accent-cyan)" : "transparent",
+                                                transition: "background 0.2s", zIndex: 5
+                                            }}
+                                            onMouseEnter={(e) => (e.target as HTMLDivElement).style.background = "rgba(0, 255, 255, 0.3)"}
+                                            onMouseLeave={(e) => { if (isResizing !== col.id) (e.target as HTMLDivElement).style.background = "transparent" }}
+                                        />
+                                    </th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
