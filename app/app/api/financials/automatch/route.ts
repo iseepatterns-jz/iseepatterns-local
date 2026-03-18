@@ -87,6 +87,20 @@ export async function POST(req: NextRequest) {
         const stmtAcct = acctMatch ? acctMatch[1] : null;
 
         console.log(`[Paralegal Automatch] Session ${sessionId} | Filename: ${filename} | Parsed: Y:${stmtYear} M:${stmtMonth} Acct:${stmtAcct}`);
+        
+        // 1.5 Reset non-finalized matches so we can "repair" previous matching errors
+        db.prepare(`
+            UPDATE statement_transactions 
+            SET master_id = NULL, 
+                verification_status = 'PENDING',
+                match_score = 0,
+                match_reason = NULL,
+                rosetta_user = NULL,
+                rosetta_account = NULL,
+                rosetta_category = NULL,
+                rosetta_company = NULL
+            WHERE import_session_id = ? AND verification_status = 'MATCHED'
+        `).run(sessionId);
 
         const forensicTxns = db.prepare(`
             SELECT * FROM statement_transactions 

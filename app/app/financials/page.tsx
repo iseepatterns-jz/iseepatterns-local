@@ -300,7 +300,11 @@ export default function FinancialsPage() {
                 <>
                     <div style={{ marginBottom: "1rem", display: "flex", gap: "0.75rem", alignItems: "center" }}>
                         <Search size={14} style={{ color: "var(--text-muted)" }} />
-                        <input type="text" placeholder="Search transactions..."
+                        <input 
+                            id="tx-search"
+                            name="tx-search"
+                            type="text" 
+                            placeholder="Search transactions..."
                             value={search} onChange={e => setSearch(e.target.value)}
                             style={{
                                 background: "var(--bg-glass)", border: "var(--glass-border)",

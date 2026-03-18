@@ -189,7 +189,11 @@ export default function StatementImportPage() {
                             <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
                                 Bank / Institution
                             </label>
-                            <input type="text" placeholder="e.g. Chase, Amex, RBC" 
+                            <input 
+                                id="bank-name"
+                                name="bank-name"
+                                type="text" 
+                                placeholder="e.g. Chase, Amex, RBC" 
                                 value={bankName} onChange={e => setBankName(e.target.value)}
                                 style={{ 
                                     width: "100%", background: "var(--bg-glass)", border: "var(--glass-border)", 

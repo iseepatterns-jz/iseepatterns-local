@@ -265,6 +265,8 @@ export default function PlayersPage() {
                         style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }}
                     />
                     <input
+                        id="player-search"
+                        name="player-search"
                         className="input-glass"
                         placeholder="Search players by name, company, role..."
                         value={search}
