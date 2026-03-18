@@ -158,19 +158,23 @@ export async function POST(req: NextRequest) {
             let reason = "";
 
             for (const candidate of candidates) {
-                const descMatch = candidate.description.toLowerCase().includes(fDescShort.toLowerCase());
-                const overlap = hasDescriptionOverlap(ft.description_raw, candidate.description);
+                // Determine the "True" description. 2016 migration often put the amount in 'description' and merchant in 'company'.
+                const isNumericDesc = /^-?\d+(\.\d+)?$/.test(candidate.description || "");
+                const effectiveDesc = (isNumericDesc && candidate.company) ? candidate.company : (candidate.description || "");
+                
+                const descMatch = effectiveDesc.toLowerCase().includes(fDescShort.toLowerCase());
+                const overlap = hasDescriptionOverlap(ft.description_raw, effectiveDesc);
                 const amountDelta = Math.abs(fAmount - Math.abs(candidate.amount));
 
                 // FUZZY GUARD: If there is ZERO meaningful keyword overlap, skip this candidate.
-                // This prevents "Google" from matching "Shell Oil" even if date/amount are identical.
                 if (!overlap && !descMatch) {
-                    console.log(`[Paralegal] Skipping candidate due to zero keyword overlap: ${ft.description_raw} vs ${candidate.description}`);
+                    console.log(`[Paralegal] Skipping candidate due to zero keyword overlap: ${ft.description_raw} vs ${effectiveDesc}`);
                     continue;
                 }
 
                 // If we reach here, we have a valid fuzzy match
                 bestCandidate = candidate;
+
                 score = 95 + (descMatch ? 5 : 0);
                 reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
                 
