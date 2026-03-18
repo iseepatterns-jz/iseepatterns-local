@@ -41,9 +41,9 @@ export async function POST(req: NextRequest) {
         const db = getWorkbenchDb();
         ensureSchema(db);
 
-        // 1. Get Session context (Filename/Date Range)
+        // 1. Get Session context (Filename/Date Range/Type)
         const sessionInfo = db.prepare(`
-            SELECT s.id, f.original_filename, f.period_start, f.period_end
+            SELECT s.id, f.original_filename, f.period_start, f.period_end, f.statement_type
             FROM import_sessions s
             JOIN statement_files f ON s.statement_file_id = f.id
             WHERE s.id = ?
@@ -51,7 +51,12 @@ export async function POST(req: NextRequest) {
 
         if (!sessionInfo) return NextResponse.json({ error: 'Session not found' }, { status: 404 });
 
-        // Parse filename for Year, Month, and Account (e.g., 2016-02-10-statements-1249.pdf)
+        // Map statement type to Master Sheet account_type
+        let targetAccountType = null;
+        if (sessionInfo.statement_type === 'CREDIT_CARD') targetAccountType = 'Credit Card';
+        else if (sessionInfo.statement_type === 'CHECKING') targetAccountType = 'Checking';
+
+        // Parse filename...
         const filename = sessionInfo.original_filename;
         const dateMatch = filename.match(/(\d{4})[-_]?(\d{2})[-_]?(\d{2})/);
         const acctMatch = filename.match(/(\d{4})\.pdf$/i) || filename.match(/-(\d{4})-/);
@@ -78,6 +83,7 @@ export async function POST(req: NextRequest) {
             AND (
                 date = ? OR date = ? OR date = ?
             )
+            AND (account_type = ? OR ? IS NULL)
             ORDER BY (CASE WHEN account = ? THEN 1 ELSE 0 END) DESC
             LIMIT 1
         `);
@@ -109,7 +115,7 @@ export async function POST(req: NextRequest) {
             const prevDate = formatDate(prevDateObj);
             const nextDate = formatDate(nextDateObj);
             
-            const bestMatch = findMatchStmt.get(fAmount, targetDate, prevDate, nextDate, stmtAcct) as any;
+            const bestMatch = findMatchStmt.get(fAmount, targetDate, prevDate, nextDate, targetAccountType, targetAccountType, stmtAcct) as any;
 
             if (bestMatch) {
                 const userInitials = (bestMatch.user_label || '').trim().toUpperCase();

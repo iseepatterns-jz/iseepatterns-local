@@ -131,6 +131,22 @@ export default function TransactionReviewPage() {
         }
     };
 
+    const approveAllMatched = async () => {
+        const matchedPending = transactions.filter(t => 
+            t.verification_status === "MATCHED" && t.review_status !== "REVIEWED"
+        );
+        
+        if (matchedPending.length === 0) {
+            alert("No new matches to approve.");
+            return;
+        }
+
+        if (!confirm(`Approve all ${matchedPending.length} automatically matched records?`)) return;
+
+        const ids = matchedPending.map(t => t.id);
+        await handleUpdate(ids, { review_status: "REVIEWED" });
+    };
+
     const finalizeVerification = async () => {
         if (!confirm("Finalize forensic verification? This will update the master CSV with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.")) return;
         
@@ -234,11 +250,24 @@ export default function TransactionReviewPage() {
                         style={{ 
                             display: "flex", alignItems: "center", gap: "0.5rem", padding: "6px 16px",
                             borderRadius: 8, fontSize: "0.8125rem", fontWeight: 600,
-                            color: "var(--accent-cyan)", cursor: matching ? "default" : "pointer",
-                            opacity: matching ? 0.7 : 1
+                            color: "var(--accent-cyan)", cursor: (matching || saving) ? "default" : "pointer",
+                            opacity: (matching || saving) ? 0.7 : 1
                         }}>
                         {matching ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle size={14} />}
-                        {matching ? "Matching..." : "Automatch Forensic Records"}
+                        {matching ? "Matching..." : "Automatch"}
+                    </button>
+
+                    <button onClick={approveAllMatched} disabled={saving || matching}
+                        className="glass-panel"
+                        style={{ 
+                            display: "flex", alignItems: "center", gap: "0.5rem", padding: "6px 16px",
+                            borderRadius: 8, fontSize: "0.8125rem", fontWeight: 600,
+                            color: "var(--accent-emerald)", cursor: (saving || matching) ? "default" : "pointer",
+                            opacity: (saving || matching) ? 0.7 : 1,
+                            border: "1px solid rgba(16, 185, 129, 0.3)"
+                        }}>
+                        <CheckCircle size={14} />
+                        Approve Matches
                     </button>
 
                     <button onClick={finalizeVerification} disabled={saving || matching}
