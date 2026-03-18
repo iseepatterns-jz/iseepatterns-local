@@ -8,10 +8,12 @@ A local AI-powered legal and financial forensic assistant with **hybrid search**
   - **Strategize**: Case Corner & Legal Library.
   - **Present**: Briefing Room.
 - **Consolidated Dashboard Hubs**: Unified entry points for "Discovery Hub" (Emails/Texts/Transcripts) and "Strategy Hub" (Claims/Legal).
-- **Unified Financial Hub**: Consolidation of ~24k RBC and Printavo records with **forensic review enhancements**:
+- [x] **Unified Financial Hub**: Consolidation of ~24k RBC and Printavo records with **forensic governance enhancements**:
+  - **SQLite System of Record**: Moved 22,000+ Master records into `master_transactions` for indexed, high-performance matching.
+  - **Audit Logging & Chain of Custody**: Mandatory `master_audit_log` tracks every manual adjustment or forensic verification.
   - **Account & Player Pre-filling**: Automatically maps bank account numbers and Rosetta users (JZ, LG, PH) to transactions.
   - **Evidence Tracing (DOC Column)**: Direct clickable links to invoices and receipts from the master sheet.
-  - **Forensic Finalization**: Non-destructive updates to the master CSV with source PDF metadata, page numbers, and match hashes.
+  - **Forensic Finalization**: Atomic "Dual-Write" model updates the DB and auto-exports a synced Master CSV for the accountant.
 - **Evidence Hub (Backend)**: Master SQLite database linking emails, iMessages, and legal documents.
 - **Hybrid Search**: BM25 keyword matching + vector similarity (RRF) over normalized “evidence cards.”
 - **Cross-Encoder Reranking**: FlashRank reranker to eliminate false-positive chunks.

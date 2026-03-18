@@ -132,71 +132,143 @@ export async function POST(req: NextRequest) {
             });
         }
 
-        // 2. Load Master CSV
-        const masterPath = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv";
-        const content = fs.readFileSync(masterPath, "utf-8");
-        const { headers, records } = parseCSV(content);
+        // 2. Perform Atomic Database Update & Audit Log
+        const updateMasterStmt = db.prepare(`
+            UPDATE master_transactions 
+            SET verification_status = 'FORENSICALLY_VERIFIED',
+                forensic_file = ?,
+                forensic_page = ?,
+                forensic_hash = ?,
+                verified_at = datetime('now'),
+                updated_at = datetime('now')
+            WHERE id = ?
+        `);
 
-        // 3. Create backup BEFORE modifying
-        const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-        const backupPath = masterPath.replace(".csv", `.BACKUP-${timestamp}.csv`);
-        fs.writeFileSync(backupPath, content);
+        const auditStmt = db.prepare(`
+            INSERT INTO master_audit_log (master_id, action, changed_fields, reason, agent_id)
+            VALUES (?, 'VERIFY', ?, 'Forensic matching finalized from statement', 'antigravity-system')
+        `);
 
-        // 4. Ensure forensic columns exist in headers
-        const forensicHeaders = [
-            "Verification",
-            "Forensic_Statement_File",
-            "Forensic_Page",
-            "Forensic_Hash",
-            "Forensic_Verified_Date"
-        ];
-        for (const fh of forensicHeaders) {
-            if (!headers.includes(fh)) {
-                headers.push(fh);
-            }
-        }
-
-        // 5. Update ONLY matched rows — leave everything else untouched
-        let verifiedCount = 0;
-
-        records.forEach((record, index) => {
-            if (matchMap.has(index)) {
-                const meta = matchMap.get(index);
-
-                // Generate forensic hash: SHA-256 of (master_index + amount + date + description)
-                const hashInput = `${index}|${meta.amount}|${meta.date}|${meta.description}|${meta.statementFile}|${meta.pageNumber}`;
-                const forensicHash = crypto.createHash("sha256").update(hashInput).digest("hex").slice(0, 16);
-
-                record["Verification"] = "FORENSICALLY_VERIFIED";
-                record["Forensic_Statement_File"] = meta.statementFile;
-                record["Forensic_Page"] = String(meta.pageNumber);
-                record["Forensic_Hash"] = forensicHash;
-                record["Forensic_Verified_Date"] = new Date().toISOString();
-
-                verifiedCount++;
-            }
-            // Unmatched rows are left COMPLETELY untouched
-        });
-
-        // 6. Write ALL records back (verified + unverified together)
-        fs.writeFileSync(masterPath, stringifyCSV(headers, records));
-
-        // 7. Update workbench.db status for finalized transactions
-        const updateStmt = db.prepare(`
+        const updateTxnStmt = db.prepare(`
             UPDATE statement_transactions 
             SET verification_status = 'FINALIZED' 
             WHERE id = ?
         `);
-        for (const m of matches) {
-            updateStmt.run(m.id);
-        }
+
+        const updateSessionStmt = db.prepare(`
+            UPDATE import_sessions 
+            SET status = 'COMPLETE', updated_at = datetime('now')
+            WHERE id = ?
+        `);
+
+        let verifiedCount = 0;
+        const finalizedResults: any[] = [];
+
+        // Transactional update for data integrity
+        const finalizeTxn = db.transaction((matches, sessionId) => {
+            for (const m of matches) {
+                // Generate forensic hash: SHA-256 of (master_id + amount + date + description)
+                const hashInput = `${m.master_id}|${m.amount}|${m.date}|${m.description_raw}|${m.source_filename}|${m.page_number}`;
+                const forensicHash = crypto.createHash("sha256").update(hashInput).digest("hex").slice(0, 16);
+
+                // 1. Update Master Table
+                updateMasterStmt.run(m.source_filename, m.page_number, forensicHash, m.master_id);
+
+                // 2. Log the Audit Event
+                const changes = JSON.stringify({
+                    verification_status: { old: 'UNVERIFIED', new: 'FORENSICALLY_VERIFIED' },
+                    forensic_hash: forensicHash
+                });
+                auditStmt.run(m.master_id, changes);
+
+                // 3. Update Forensic Session Table
+                updateTxnStmt.run(m.id);
+
+                verifiedCount++;
+                finalizedResults.push({ id: m.id, masterId: m.master_id, hash: forensicHash });
+            }
+            updateSessionStmt.run(sessionId);
+        });
+
+        finalizeTxn(matches, sessionInt);
+
+        // 3. Export to CSV (Synchronize Accountant View)
+        const masterPath = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv";
+        
+        // Backup before export
+        const csvContentOld = fs.readFileSync(masterPath, "utf-8");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+        const backupPath = masterPath.replace(".csv", `.BACKUP-${timestamp}.csv`);
+        fs.writeFileSync(backupPath, csvContentOld);
+
+        // Fetch ALL records from DB in alphabetical order of original columns (or as ingested)
+        // Note: For simplicity and column order preservation, the keys in our export 
+        // should match exactly what's expected by the accountant.
+        const allMasterRecords = db.prepare("SELECT * FROM master_transactions").all() as any[];
+        
+        // Map DB columns BACK to CSV headers
+        const exportHeaders = [
+            "Year", "Date", "Amount", "amount_positive", "Description", "Transaction Type",
+            "Account", "Account Type", "Bank", "User", "Responsible", "Category",
+            "Class", "Type", "Type2", "Department", "Link", "Company",
+            "Industry", "Invoice #", "Invoice URL", "Client", "Notes", "Url",
+            "Order ID", "PO Number", "Personal", "Payment Instrument Type", "Payment Identifier",
+            "Amazon-Internal Product Category", "ASIN", "Title", "UNSPSC", "Segment", "Family", "Commodity",
+            "Verification", "Forensic_Statement_File", "Forensic_Page", "Forensic_Hash", "Forensic_Verified_Date"
+        ];
+
+        const exportRecords = allMasterRecords.map(r => ({
+            "Year": r.year,
+            "Date": r.date,
+            "Amount": r.amount,
+            "amount_positive": r.amount_positive,
+            "Description": r.description,
+            "Transaction Type": r.transaction_type,
+            "Account": r.account,
+            "Account Type": r.account_type,
+            "Bank": r.bank,
+            "User": r.user_label,
+            "Responsible": r.responsible,
+            "Category": r.category,
+            "Class": r.class,
+            "Type": r.entry_type,
+            "Type2": r.entry_type2,
+            "Department": r.department,
+            "Link": r.link,
+            "Company": r.company,
+            "Industry": r.industry,
+            "Invoice #": r.invoice_num,
+            "Invoice URL": r.invoice_url,
+            "Client": r.client,
+            "Notes": r.notes,
+            "Url": r.url,
+            "Order ID": r.order_id,
+            "PO Number": r.po_number,
+            "Personal": r.is_personal,
+            "Payment Instrument Type": r.payment_instrument,
+            "Payment Identifier": r.payment_identifier,
+            "Amazon-Internal Product Category": r.amazon_product_cat,
+            "ASIN": r.asin,
+            "Title": r.title,
+            "UNSPSC": r.unspsc,
+            "Segment": r.segment,
+            "Family": r.family,
+            "Commodity": r.commodity,
+            "Verification": r.verification_status,
+            "Forensic_Statement_File": r.forensic_file,
+            "Forensic_Page": r.forensic_page,
+            "Forensic_Hash": r.forensic_hash,
+            "Forensic_Verified_Date": r.verified_at
+        }));
+
+        fs.writeFileSync(masterPath, stringifyCSV(exportHeaders, exportRecords));
 
         return NextResponse.json({
             success: true,
             verified_count: verifiedCount,
-            total_records: records.length,
+            total_records: exportRecords.length,
             backup_file: path.basename(backupPath),
-            message: `${verifiedCount} transactions verified and written to master CSV. Backup created.`
+            message: `${verifiedCount} transactions finalized in DB and synced to Master CSV. Audit logs recorded.`
         });
 
     } catch (error) {
