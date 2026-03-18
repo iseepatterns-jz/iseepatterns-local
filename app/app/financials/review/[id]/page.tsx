@@ -50,6 +50,25 @@ export default function TransactionReviewPage() {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const [filter, setFilter] = useState("ALL");
     const [error, setError] = useState<string | null>(null);
+    const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
+    const [confirmDialog, setConfirmDialog] = useState<{ 
+        isOpen: boolean; 
+        title: string; 
+        message: string; 
+        onConfirm: () => void;
+        confirmText?: string;
+        confirmColor?: string;
+    }>({
+        isOpen: false,
+        title: "",
+        message: "",
+        onConfirm: () => {}
+    });
+
+    const showToast = (message: string, type: "success" | "error" | "info" = "success") => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 4000);
+    };
 
     // Draggable Column State
     const [columnWidths, setColumnWidths] = useState<{ [key: string]: number }>({
@@ -170,9 +189,9 @@ export default function TransactionReviewPage() {
             const result = await res.json();
             if (result.success) {
                 await fetchTransactions(); // Refresh
-                alert(`Automatch complete: ${result.matched_count} potential matches identified.`);
+                showToast(`Automatch complete: ${result.matched_count} potential matches identified.`, "success");
             } else {
-                alert(result.error || "Automatch failed");
+                showToast(result.error || "Automatch failed", "error");
             }
         } catch (e) {
             console.error("Automatch failed:", e);
@@ -187,38 +206,54 @@ export default function TransactionReviewPage() {
         );
         
         if (matchedPending.length === 0) {
-            alert("No new matches to approve.");
+            showToast("No new matches to approve.", "info");
             return;
         }
 
-        if (!confirm(`Approve all ${matchedPending.length} automatically matched records?`)) return;
-
-        const ids = matchedPending.map(t => t.id);
-        await handleUpdate(ids, { review_status: "REVIEWED" });
+        setConfirmDialog({
+            isOpen: true,
+            title: "Approve Matches",
+            message: `Approve all ${matchedPending.length} automatically matched records?`,
+            confirmText: "Approve All",
+            confirmColor: "var(--accent-emerald)",
+            onConfirm: async () => {
+                const ids = matchedPending.map(t => t.id);
+                await handleUpdate(ids, { review_status: "REVIEWED" });
+                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+            }
+        });
     };
 
     const finalizeVerification = async () => {
-        if (!confirm("Finalize forensic verification? This will update the Master Sheet with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.")) return;
-        
-        setSaving(true);
-        try {
-            const res = await fetch("/api/financials/finalize-verification", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ sessionId: parseInt(sessionId as string) }),
-            });
-            const result = await res.json();
-            if (result.success) {
-                alert("Verification finalized! Master Sheet has been updated.");
-                router.push('/financials/import');
-            } else {
-                alert(result.error || "Finalization failed");
+        setConfirmDialog({
+            isOpen: true,
+            title: "Finalize Forensic Verification",
+            message: "This will update the Master Sheet with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.",
+            confirmText: "Finalize Now",
+            confirmColor: "var(--accent-emerald)",
+            onConfirm: async () => {
+                setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+                setSaving(true);
+                try {
+                    const res = await fetch("/api/financials/finalize-verification", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ sessionId: parseInt(sessionId as string) }),
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        showToast("Verification finalized! Master Sheet has been updated.", "success");
+                        router.push('/financials/import');
+                    } else {
+                        showToast(result.error || "Finalization failed", "error");
+                    }
+                } catch (e) {
+                    console.error("Finalize error:", e);
+                } finally {
+                    setSaving(false);
+                }
             }
-        } catch (e) {
-            console.error("Finalize error:", e);
-        } finally {
-            setSaving(false);
-        }
+        });
     };
 
     const toggleSelection = (id: number) => {
@@ -530,6 +565,93 @@ export default function TransactionReviewPage() {
                     </span>
                 </div>
             </div>
+
+            {/* Custom Toast Notification */}
+            {toast && (
+                <div style={{
+                    position: "fixed", bottom: "2rem", right: "2rem", zIndex: 1000,
+                    padding: "1rem 1.5rem", borderRadius: "12px",
+                    background: toast.type === "error" ? "rgba(239, 68, 68, 0.95)" : (toast.type === "success" ? "rgba(16, 185, 129, 0.95)" : "rgba(6, 182, 212, 0.95)"),
+                    color: toast.type === "error" ? "#fff" : "#000",
+                    fontWeight: 600, fontSize: "0.875rem",
+                    boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.4)",
+                    backdropFilter: "blur(10px)", border: "1px solid rgba(255, 255, 255, 0.1)",
+                    display: "flex", alignItems: "center", gap: "0.75rem",
+                    animation: "slideIn 0.3s ease-out forwards",
+                }}>
+                    {toast.type === "success" && <CheckCircle size={18} />}
+                    {toast.type === "error" && <AlertTriangle size={18} />}
+                    {toast.type === "info" && <Shield size={18} />}
+                    {toast.message}
+                </div>
+            )}
+            {/* Custom Modal Confirmation */}
+            {confirmDialog.isOpen && (
+                <div style={{
+                    position: "fixed", top: 0, left: 0, right: 0, bottom: 0, 
+                    zIndex: 2000, display: "flex", alignItems: "center", justifyContent: "center",
+                    background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)",
+                    animation: "fadeIn 0.2s ease-out"
+                }}>
+                    <div className="glass-panel" style={{
+                        width: "100%", maxWidth: "450px", padding: "2rem",
+                        borderRadius: "16px", background: "var(--bg-panel)",
+                        border: "1px solid var(--border-glass)",
+                        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+                        animation: "modalZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
+                    }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                            <div style={{ 
+                                background: "rgba(6, 182, 212, 0.1)", padding: "10px", borderRadius: "12px",
+                                color: "var(--accent-cyan)"
+                            }}>
+                                <AlertTriangle size={24} />
+                            </div>
+                            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0 }}>{confirmDialog.title}</h2>
+                        </div>
+                        
+                        <p style={{ color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "2rem", fontSize: "0.9375rem" }}>
+                            {confirmDialog.message}
+                        </p>
+
+                        <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                            <button 
+                                onClick={() => setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+                                style={{ 
+                                    background: "transparent", color: "var(--text-muted)", border: "none",
+                                    padding: "8px 16px", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer"
+                                }}>
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={confirmDialog.onConfirm}
+                                style={{ 
+                                    background: confirmDialog.confirmColor || "var(--accent-cyan)", 
+                                    color: "#000", border: "none", borderRadius: "8px",
+                                    padding: "8px 24px", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer",
+                                    boxShadow: `0 4px 12px ${confirmDialog.confirmColor ? "rgba(0,0,0,0.2)" : "rgba(6,182,212,0.3)"}`
+                                }}>
+                                {confirmDialog.confirmText || "Confirm"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <style jsx global>{`
+                @keyframes slideIn {
+                    from { transform: translateY(100%); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes modalZoom {
+                    from { transform: scale(0.95); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
+                }
+            `}</style>
         </div>
     );
 }

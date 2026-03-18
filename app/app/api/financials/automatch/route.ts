@@ -110,6 +110,7 @@ export async function POST(req: NextRequest) {
         // 2. Perform High-Precision Lookups
         const matches: any[] = [];
         let matchCount = 0;
+        const usedMasterIds = new Set<number>();
 
         const findMatchStmt = db.prepare(`
             SELECT *, id as master_id_val 
@@ -118,16 +119,15 @@ export async function POST(req: NextRequest) {
             AND (
                 date = ? OR date = ? OR date = ?
             )
-            AND (account_type = ? OR ? IS NULL)
-            ORDER BY (CASE WHEN account = ? THEN 1 ELSE 0 END) DESC
-            LIMIT 5
+            LIMIT 20
         `);
 
         for (const ft of forensicTxns as any[]) {
             const fAmount = Math.abs(ft.amount);
-            const fDescShort = (ft.description_raw || "").slice(0, 15);
+            const fDescRaw = (ft.description_raw || "").toLowerCase();
+            const fDescShort = fDescRaw.slice(0, 15);
             
-            // Normalize Date: If forensic is "01/12" and statement is Feb 2016, year is 2016.
+            // Normalize Date: month/day/year
             const dateParts = ft.date.split('/');
             const fM = parseInt(dateParts[0]);
             const fD = parseInt(dateParts[1]);
@@ -139,7 +139,6 @@ export async function POST(req: NextRequest) {
                 fYear = stmtYear + 1;
             }
             
-            // Build ±1 day window
             const dateObj = new Date(fYear, fM - 1, fD);
             const prevDateObj = new Date(fYear, fM - 1, fD - 1);
             const nextDateObj = new Date(fYear, fM - 1, fD + 1);
@@ -150,43 +149,62 @@ export async function POST(req: NextRequest) {
             const prevDate = formatDate(prevDateObj);
             const nextDate = formatDate(nextDateObj);
             
-            // 3. Get all potential candidates (up to 5)
-            const candidates = findMatchStmt.all(fAmount, targetDate, prevDate, nextDate, targetAccountType, targetAccountType, stmtAcct) as any[];
+            const candidates = findMatchStmt.all(fAmount, targetDate, prevDate, nextDate) as any[];
 
             let bestCandidate = null;
-            let score = 0;
-            let reason = "";
+            let maxScore = -1;
+            let finalReason = "";
 
             for (const candidate of candidates) {
-                // Determine the "True" description. 2016 migration often put the amount in 'description' and merchant in 'company'.
+                // COLLISION PREVENTION: Skip if already used in this session batch
+                if (usedMasterIds.has(candidate.master_id_val)) continue;
+
                 const isNumericDesc = /^-?\d+(\.\d+)?$/.test(candidate.description || "");
-                const effectiveDesc = (isNumericDesc && candidate.company) ? candidate.company : (candidate.description || "");
+                const candidateDesc = (isNumericDesc && candidate.company) ? candidate.company : (candidate.description || "");
+                const candidateDescLower = candidateDesc.toLowerCase();
                 
-                const descMatch = effectiveDesc.toLowerCase().includes(fDescShort.toLowerCase());
-                const overlap = hasDescriptionOverlap(ft.description_raw, effectiveDesc);
-                const amountDelta = Math.abs(fAmount - Math.abs(candidate.amount));
+                const isPerfectDesc = candidateDescLower.includes(fDescRaw) || fDescRaw.includes(candidateDescLower);
+                const isPrefixMatch = candidateDescLower.startsWith(fDescShort) || fDescRaw.startsWith(candidateDescLower.slice(0, 15));
+                const hasOverlap = hasDescriptionOverlap(ft.description_raw, candidateDesc);
+                
+                // Scoring
+                let score = 60; // Base for Amt + Date (window)
+                let reasons = ["Amt+Date"];
 
-                // FUZZY GUARD: If there is ZERO meaningful keyword overlap, skip this candidate.
-                if (!overlap && !descMatch) {
-                    console.log(`[Paralegal] Skipping candidate due to zero keyword overlap: ${ft.description_raw} vs ${effectiveDesc}`);
-                    continue;
+                // Exact Date Bonus (+15): Prioritize the exact day over +/- 1 day
+                if (candidate.date === targetDate) {
+                    score += 15;
+                    reasons.push("ExactDate");
                 }
 
-                // If we reach here, we have a valid fuzzy match
-                bestCandidate = candidate;
-
-                score = 95 + (descMatch ? 5 : 0);
-                reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
-                
-                if (candidate.account !== stmtAcct) {
-                    reason += ` (Cross-Acct: ${candidate.account})`;
+                if (candidate.account_type === targetAccountType) {
+                    score += 15;
+                    reasons.push("Type");
                 }
                 
-                // If it's a perfect description match, we can stop searching.
-                if (descMatch) break;
+                if (stmtAcct && candidate.account === stmtAcct) {
+                    score += 25;
+                    reasons.push("AcctDigits");
+                }
+
+                if (isPerfectDesc) {
+                    score += 15;
+                    reasons.push("DescMatch");
+                } else if (isPrefixMatch || hasOverlap) {
+                    score += 5;
+                    reasons.push("DescFuzzy");
+                }
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestCandidate = candidate;
+                    finalReason = `[Paralegal] ${reasons.join('+')} Match (Score: ${score})`;
+                }
             }
 
-            if (bestCandidate) {
+            if (bestCandidate && maxScore >= 60) {
+                // Mark as used immediately to prevent double-booking
+                usedMasterIds.add(bestCandidate.master_id_val);
                 const userInitials = (bestCandidate.user_label || '').trim().toUpperCase();
                 let playerId = null;
                 if (userInitials === 'JZ') playerId = 28;
@@ -218,8 +236,8 @@ export async function POST(req: NextRequest) {
                     bestCandidate.account || '',
                     bestCandidate.category || '',
                     bestCandidate.description || '',
-                    score,
-                    reason,
+                    maxScore,
+                    finalReason,
                     bestCandidate.account || null,
                     playerId || null,
                     evidenceUrl || null,
@@ -227,7 +245,7 @@ export async function POST(req: NextRequest) {
                 );
                 
                 matchCount++;
-                matches.push({ forensicId: ft.id, masterId: bestCandidate.master_id_val, reason });
+                matches.push({ forensicId: ft.id, masterId: bestCandidate.master_id_val, reason: finalReason });
             }
         }
 
