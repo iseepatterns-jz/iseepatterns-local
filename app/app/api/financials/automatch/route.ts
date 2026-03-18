@@ -29,6 +29,27 @@ function ensureSchema(db: any) {
 }
 
 /**
+ * Checks if two descriptions share at least one meaningful keyword.
+ * Meaningful = 3+ chars, excluding common noise.
+ */
+function hasDescriptionOverlap(d1: string, d2: string): boolean {
+    const noise = new Set(['the', 'inc', 'chi', 'llc', 'com', 'store', 'corp', 'pay', 'payment', 'transfer', 'service', 'services']);
+    const normalize = (s: string) => (s || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .split(/\s+/)
+        .filter(w => w.length >= 3 && !noise.has(w));
+    
+    const w1 = new Set(normalize(d1));
+    const w2 = new Set(normalize(d2));
+    
+    if (w1.size === 0 || w2.size === 0) return true; // Fallback if one is too short/generic
+
+    const intersect = [...w1].filter(w => w2.has(w));
+    return intersect.length > 0;
+}
+
+/**
  * POST /api/financials/automatch
  * Parameters: session_id
  * Performs matching between forensics and the master CSV.
@@ -128,6 +149,23 @@ export async function POST(req: NextRequest) {
                 
                 // Determine match reason
                 const descMatch = bestMatch.description.toLowerCase().includes(fDescShort.toLowerCase());
+                const overlap = hasDescriptionOverlap(ft.description_raw, bestMatch.description);
+
+                // REJECT: If amount has a delta and description has ZERO overlap, it's a false positive.
+                const amountDelta = Math.abs(fAmount - Math.abs(bestMatch.amount));
+                if (amountDelta > 0 && !overlap && !descMatch) {
+                    console.log(`[Paralegal] Rejected False Positive: ${ft.description_raw} ($${fAmount}) vs ${bestMatch.description} ($${bestMatch.amount})`);
+                    continue; 
+                }
+
+                // WARNING: Even if amount is EXACT, if there is ZERO description overlap, we score it much lower or skip.
+                // In forensics, we'd rather be safe.
+                if (amountDelta === 0 && !overlap && !descMatch) {
+                   // Keep it but mark as low confidence? Or skip? Let's skip to be safe.
+                   console.log(`[Paralegal] Rejected Exact Amount mismatch: ${ft.description_raw} vs ${bestMatch.description}`);
+                   continue;
+                }
+
                 const reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
 
                 const updateMatchStmt = db.prepare(`

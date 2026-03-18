@@ -7,7 +7,7 @@ import {
     ChevronRight, ExternalLink, Loader2, Users, Tag
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 interface Transaction {
     id: number;
@@ -39,6 +39,7 @@ interface Player {
 
 export default function TransactionReviewPage() {
     const params = useParams();
+    const router = useRouter();
     const sessionId = params.id;
     
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -160,7 +161,7 @@ export default function TransactionReviewPage() {
             const result = await res.json();
             if (result.success) {
                 alert("Verification finalized! Master Sheet has been updated.");
-                fetchTransactions();
+                router.push('/financials/import');
             } else {
                 alert(result.error || "Finalization failed");
             }
