@@ -1,0 +1,5 @@
+{
+  "name": "lawmodel1-workspace",
+  "private": true,
+  "description": "Workspace boundary — prevents Turbopack from resolving modules above this directory"
+}

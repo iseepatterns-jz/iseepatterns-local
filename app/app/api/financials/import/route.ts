@@ -26,14 +26,14 @@ export async function POST(req: NextRequest) {
             const idStr = formData.get("id");
             const id = idStr ? parseInt(idStr.toString(), 10) : null;
             writeDebug(`[POST-DELETE] Request to purge session ID: ${id}`);
-            
+
             if (!id || isNaN(id)) {
                 writeDebug(`[POST-DELETE] Error: Invalid ID received (${idStr})`);
                 return NextResponse.json({ error: "Valid ID required" }, { status: 400 });
             }
-            
+
             const db = getWorkbenchDb();
-            
+
             // 1. Get storage path before deleting records
             const fileInfo = db.prepare(`
                 SELECT f.storage_path, f.id as file_id
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
             db.transaction(() => {
                 const txDel = db.prepare("DELETE FROM statement_transactions WHERE import_session_id = ?").run(id);
                 const sessDel = db.prepare("DELETE FROM import_sessions WHERE id = ?").run(id);
-                
+
                 writeDebug(`[POST-DELETE] DB: Deleted ${txDel.changes} transactions and ${sessDel.changes} session records for ID ${id}.`);
 
                 // 2. Check if this was the last session using that file
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
                 if (otherSessions.length === 0) {
                     writeDebug(`[POST-DELETE] File ${fileInfo.file_id} is no longer referenced. Deleting file records.`);
                     db.prepare("DELETE FROM statement_files WHERE id = ?").run(fileInfo.file_id);
-                    
+
                     // 3. Delete physical file
                     if (fs.existsSync(fileInfo.storage_path)) {
                         try {
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
         const UPLOADS_DIR = path.join(process.cwd(), "data", "UPLOADS");
         if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-        
+
         const storagePath = path.join(UPLOADS_DIR, `${hash}.pdf`);
         if (!fs.existsSync(storagePath)) fs.writeFileSync(storagePath, buffer);
 
@@ -112,12 +112,12 @@ export async function POST(req: NextRequest) {
         let transactionCount = 0;
         try {
             writeDebug(`Starting parse for ${file.name} (Hash: ${hash.slice(0, 8)})`);
-            
+
             let PDFParse: any;
             try {
                 const pdfParseModule = await import("pdf-parse");
                 PDFParse = (pdfParseModule as any).PDFParse || (pdfParseModule as any).default?.PDFParse || (pdfParseModule as any).default;
-                
+
                 if (PDFParse.setWorker) {
                     const workerPath = path.join(process.cwd(), "node_modules", "pdfjs-dist", "legacy", "build", "pdf.worker.mjs");
                     if (fs.existsSync(workerPath)) {
@@ -129,16 +129,16 @@ export async function POST(req: NextRequest) {
                 const pdfParseModule = require("pdf-parse");
                 PDFParse = pdfParseModule.PDFParse || pdfParseModule.default?.PDFParse || pdfParseModule;
             }
-            
+
             if (!PDFParse) throw new Error("Could not load PDFParse");
 
             const parser = new PDFParse({ data: buffer });
             const result = await parser.getText();
             const text = result.text;
-            
+
             const lines = text.split('\n');
             const transactions: any[] = [];
-            
+
             // Chase 2016 Regex
             const chaseTxRegex = /(\d{1,2}\/\d{1,2})\s+(.*?)\s+(-?[\d,]+\.\d{2})(?:\s|$)/;
             let pageNum = 1;
@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
             const errMsg = (e as Error).message;
             writeDebug(`PARSING ERROR: ${errMsg}`);
             db.prepare("UPDATE import_sessions SET status = 'FAILED', error_message = ? WHERE id = ?")
-              .run(`${errMsg}\n${(e as Error).stack?.slice(0, 500)}`, session.id);
+                .run(`${errMsg}\n${(e as Error).stack?.slice(0, 500)}`, session.id);
         }
 
         return NextResponse.json({ success: true, session_id: session.id, count: transactionCount });
@@ -219,14 +219,14 @@ export async function DELETE(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
         writeDebug(`[API-DELETE] Received delete request for session ID: ${id}`);
-        
+
         if (!id) {
             writeDebug("[API-DELETE] Error: ID missing");
             return NextResponse.json({ error: "ID required" }, { status: 400 });
         }
 
         const db = getWorkbenchDb();
-        
+
         // Verify existence first for logging
         const session = db.prepare("SELECT id FROM import_sessions WHERE id = ?").get(id);
         if (!session) {
@@ -239,7 +239,7 @@ export async function DELETE(req: NextRequest) {
             const sessCount = db.prepare("DELETE FROM import_sessions WHERE id = ?").run(id);
             writeDebug(`[API-DELETE] Successfully purged session ${id}. Deleted ${txCount.changes} transactions and ${sessCount.changes} session records.`);
         })();
-        
+
         return NextResponse.json({ success: true });
     } catch (error) {
         const msg = (error as Error).message;

@@ -34,7 +34,9 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.llms import Ollama
 
-from brain_cli import snapshot_brain  # add db back to import, reuse helpers
+import sys
+sys.path.insert(0, str(Path(__file__).parent / "_archive"))
+from brain_cli import snapshot_brain  # moved to _archive/ during cleanup
 
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 

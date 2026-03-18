@@ -6,8 +6,7 @@ import fs from "fs";
 export const dynamic = "force-dynamic";
 
 function ensureSchemas(db: ReturnType<typeof getWorkbenchDb>) {
-    const PROJECT_ROOT = process.env.VAULT_ROOT ||
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data";
+    const PROJECT_ROOT = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1";
     for (const schema of ["financials.sql", "tax_returns.sql"]) {
         const p = path.join(PROJECT_ROOT, "schemas", schema);
         if (fs.existsSync(p)) {
@@ -34,17 +33,23 @@ export async function GET(req: NextRequest) {
 
         if (view === "summary") {
             // Aggregate stats
-            const txnCount = db.prepare("SELECT COUNT(*) as c FROM transactions").get() as { c: number } | null;
-            const acctCount = db.prepare("SELECT COUNT(*) as c FROM accounts").get() as { c: number } | null;
-            const taxCount = db.prepare("SELECT COUNT(*) as c FROM tax_returns").get() as { c: number } | null;
-
             let totalDebits = 0, totalCredits = 0;
+            let txnCount = 0, acctCount = 0, taxCount = 0;
             try {
+                const txn = db.prepare("SELECT COUNT(*) as c FROM transactions").get() as { c: number } | null;
+                const acct = db.prepare("SELECT COUNT(*) as c FROM accounts").get() as { c: number } | null;
+                const tax = db.prepare("SELECT COUNT(*) as c FROM tax_returns").get() as { c: number } | null;
+                txnCount = txn?.c || 0;
+                acctCount = acct?.c || 0;
+                taxCount = tax?.c || 0;
+
                 const debits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE amount < 0").get() as { total: number };
                 const credits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE amount > 0").get() as { total: number };
                 totalDebits = debits.total;
                 totalCredits = credits.total;
-            } catch { /* tables may be empty */ }
+            } catch (e) { 
+                console.warn("Summary data fetch error (likely missing tables):", e);
+            }
 
             // Tax years available
             let taxYears: number[] = [];
@@ -55,9 +60,9 @@ export async function GET(req: NextRequest) {
 
             return NextResponse.json({
                 view: "summary",
-                transactions: txnCount?.c || 0,
-                accounts: acctCount?.c || 0,
-                taxReturns: taxCount?.c || 0,
+                transactions: txnCount,
+                accounts: acctCount,
+                taxReturns: taxCount,
                 totalDebits,
                 totalCredits,
                 taxYears,
