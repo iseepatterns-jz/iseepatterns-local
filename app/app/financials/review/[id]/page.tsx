@@ -148,7 +148,7 @@ export default function TransactionReviewPage() {
     };
 
     const finalizeVerification = async () => {
-        if (!confirm("Finalize forensic verification? This will update the master CSV with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.")) return;
+        if (!confirm("Finalize forensic verification? This will update the Master Sheet with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.")) return;
         
         setSaving(true);
         try {
@@ -159,7 +159,7 @@ export default function TransactionReviewPage() {
             });
             const result = await res.json();
             if (result.success) {
-                alert("Verification finalized! Master CSV has been updated.");
+                alert("Verification finalized! Master Sheet has been updated.");
                 fetchTransactions();
             } else {
                 alert(result.error || "Finalization failed");
