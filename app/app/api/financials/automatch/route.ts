@@ -52,16 +52,16 @@ export async function POST(req: NextRequest) {
         }
 
         // 2. Perform Indexed SQL Lookups
-        // We match by Amount (within 1 cent) and then score by Date and Description using SQL
+        // We match by absolute Amount (within 1 cent) and then score by Date and Description
         const matches: any[] = [];
         let matchCount = 0;
 
         const findMatchStmt = db.prepare(`
             SELECT *, id as master_id_val 
             FROM master_transactions 
-            WHERE abs(amount - ?) <= 0.01
+            WHERE abs(abs(amount) - abs(?)) <= 0.01
             ORDER BY 
-                (CASE WHEN date = ? THEN 1 ELSE 0 END) DESC,
+                (CASE WHEN date LIKE ? || '/%' OR date = ? THEN 1 ELSE 0 END) DESC,
                 (CASE WHEN instr(lower(description), lower(?)) > 0 OR instr(lower(?), lower(description)) > 0 THEN 1 ELSE 0 END) DESC
             LIMIT 1
         `);
@@ -69,8 +69,9 @@ export async function POST(req: NextRequest) {
         for (const ft of forensicTxns as any[]) {
             const fAmount = Math.abs(ft.amount);
             const fDescShort = (ft.description_raw || "").slice(0, 15);
+            const fDate = ft.date; // e.g., "12/10"
             
-            const bestMatch = findMatchStmt.get(fAmount, ft.date, fDescShort, fDescShort) as any;
+            const bestMatch = findMatchStmt.get(fAmount, fDate, fDate, fDescShort, fDescShort) as any;
 
             if (bestMatch) {
                 const userInitials = (bestMatch.user_label || '').trim().toUpperCase();
@@ -80,16 +81,23 @@ export async function POST(req: NextRequest) {
                 else if (userInitials === 'PH') playerId = 45;
 
                 const evidenceUrl = (bestMatch.link || bestMatch.invoice_url || '').trim();
+                
+                // Determine match reason
+                const dateMatch = (bestMatch.date === fDate || bestMatch.date.startsWith(fDate + '/'));
+                const descMatch = bestMatch.description.toLowerCase().includes(fDescShort.toLowerCase());
+                const reason = `Amt Match${dateMatch ? ' + Date' : ''}${descMatch ? ' + Desc' : ''}`;
 
                 const updateMatchStmt = db.prepare(`
                     UPDATE statement_transactions 
                     SET master_id = ?, verification_status = 'MATCHED',
                         rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
-                        match_score = 90, -- SQLite distance makes this high confidence
+                        match_score = ?, match_reason = ?,
                         final_account_id = ?, player_id = ?,
                         evidence_url = ?, nc_flag = 0
                     WHERE id = ?
                 `);
+
+                const score = 50 + (dateMatch ? 30 : 0) + (descMatch ? 15 : 0);
 
                 updateMatchStmt.run(
                     bestMatch.master_id_val,
@@ -97,13 +105,15 @@ export async function POST(req: NextRequest) {
                     bestMatch.account_type || bestMatch.account || '',
                     bestMatch.category || '',
                     bestMatch.company || bestMatch.description || '',
+                    score,
+                    reason,
                     bestMatch.account || ft.final_account_id || '', 
                     playerId || ft.player_id,
                     evidenceUrl || null,
                     ft.id
                 );
                 matchCount++;
-                matches.push({ forensicId: ft.id, masterId: bestMatch.master_id_val });
+                matches.push({ forensicId: ft.id, masterId: bestMatch.master_id_val, reason });
             }
         }
 

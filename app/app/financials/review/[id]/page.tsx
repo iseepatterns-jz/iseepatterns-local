@@ -29,6 +29,7 @@ interface Transaction {
     rosetta_category: string | null;
     rosetta_company: string | null;
     match_score: number | null;
+    match_reason: string | null;
 }
 
 interface Player {
@@ -279,6 +280,7 @@ export default function TransactionReviewPage() {
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>PAGE</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 200 }}>ROSETTA MATCH</th>
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>SCORE</th>
+                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 120 }}>REASON</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 80 }}>ACCOUNT</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 160 }}>PLAYER (ROSETTA)</th>
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 50 }}>DOC</th>
@@ -346,6 +348,12 @@ export default function TransactionReviewPage() {
                                         ) : (
                                             <span style={{ color: "var(--text-muted)", fontSize: "0.65rem" }}>—</span>
                                         )}
+                                    </td>
+                                    {/* Match Reason */}
+                                    <td style={{ padding: "10px" }}>
+                                        <div style={{ fontSize: "0.7rem", color: "var(--text-secondary)", fontWeight: 500 }}>
+                                            {t.match_reason || (t.verification_status === "MATCHED" ? "Legacy Match" : "—")}
+                                        </div>
                                     </td>
                                     <td style={{ padding: "10px" }}>
                                         <input 
