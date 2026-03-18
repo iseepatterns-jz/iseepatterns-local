@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
             }
 
             if (bestCandidate) {
-                const userInitials = (bestCandidate.user || '').trim().toUpperCase();
+                const userInitials = (bestCandidate.user_label || '').trim().toUpperCase();
                 let playerId = null;
                 if (userInitials === 'JZ') playerId = 28;
                 else if (userInitials === 'LG') playerId = 25;
@@ -210,7 +210,7 @@ export async function POST(req: NextRequest) {
 
                 updateMatchStmt.run(
                     bestCandidate.master_id_val,
-                    bestCandidate.user || '',
+                    bestCandidate.user_label || '',
                     bestCandidate.account || '',
                     bestCandidate.category || '',
                     bestCandidate.description || '',
