@@ -41,18 +41,33 @@ export async function POST(req: NextRequest) {
         const db = getWorkbenchDb();
         ensureSchema(db);
 
-        // 1. Load Forensic Transactions
+        // 1. Get Session context (Filename/Date Range)
+        const sessionInfo = db.prepare(`
+            SELECT s.id, f.original_filename, f.period_start, f.period_end
+            FROM import_sessions s
+            JOIN statement_files f ON s.statement_file_id = f.id
+            WHERE s.id = ?
+        `).get(sessionId) as any;
+
+        if (!sessionInfo) return NextResponse.json({ error: 'Session not found' }, { status: 404 });
+
+        // Parse filename for Year, Month, and Account (e.g., 2016-02-10-statements-1249.pdf)
+        const filename = sessionInfo.original_filename;
+        const dateMatch = filename.match(/(\d{4})[-_]?(\d{2})[-_]?(\d{2})/);
+        const acctMatch = filename.match(/(\d{4})\.pdf$/i) || filename.match(/-(\d{4})-/);
+
+        const stmtYear = dateMatch ? parseInt(dateMatch[1]) : 2023; // Fallback
+        const stmtMonth = dateMatch ? parseInt(dateMatch[2]) : 1;
+        const stmtAcct = acctMatch ? acctMatch[1] : null;
+
+        console.log(`[Paralegal Automatch] Session ${sessionId} | Filename: ${filename} | Parsed: Y:${stmtYear} M:${stmtMonth} Acct:${stmtAcct}`);
+
         const forensicTxns = db.prepare(`
             SELECT * FROM statement_transactions 
-            WHERE import_session_id = ?
+            WHERE import_session_id = ? AND verification_status = 'PENDING'
         `).all(sessionId);
 
-        if (forensicTxns.length === 0) {
-            return NextResponse.json({ error: "No transactions found for this session" }, { status: 404 });
-        }
-
-        // 2. Perform Indexed SQL Lookups
-        // We match by absolute Amount (within 1 cent) and then score by Date and Description
+        // 2. Perform High-Precision Lookups
         const matches: any[] = [];
         let matchCount = 0;
 
@@ -60,18 +75,41 @@ export async function POST(req: NextRequest) {
             SELECT *, id as master_id_val 
             FROM master_transactions 
             WHERE abs(abs(amount) - abs(?)) <= 0.01
-            ORDER BY 
-                (CASE WHEN date LIKE ? || '/%' OR date = ? THEN 1 ELSE 0 END) DESC,
-                (CASE WHEN instr(lower(description), lower(?)) > 0 OR instr(lower(?), lower(description)) > 0 THEN 1 ELSE 0 END) DESC
+            AND (
+                date = ? OR date = ? OR date = ?
+            )
+            ORDER BY (CASE WHEN account = ? THEN 1 ELSE 0 END) DESC
             LIMIT 1
         `);
 
         for (const ft of forensicTxns as any[]) {
             const fAmount = Math.abs(ft.amount);
             const fDescShort = (ft.description_raw || "").slice(0, 15);
-            const fDate = ft.date; // e.g., "12/10"
             
-            const bestMatch = findMatchStmt.get(fAmount, fDate, fDate, fDescShort, fDescShort) as any;
+            // Normalize Date: If forensic is "01/12" and statement is Feb 2016, year is 2016.
+            const dateParts = ft.date.split('/');
+            const fM = parseInt(dateParts[0]);
+            const fD = parseInt(dateParts[1]);
+            let fYear = stmtYear;
+            
+            if (fM > stmtMonth && stmtMonth < 6) { 
+                fYear = stmtYear - 1;
+            } else if (fM < stmtMonth && stmtMonth === 12 && fM === 1) {
+                fYear = stmtYear + 1;
+            }
+            
+            // Build ±1 day window
+            const dateObj = new Date(fYear, fM - 1, fD);
+            const prevDateObj = new Date(fYear, fM - 1, fD - 1);
+            const nextDateObj = new Date(fYear, fM - 1, fD + 1);
+
+            const formatDate = (d: Date) => `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+            
+            const targetDate = formatDate(dateObj);
+            const prevDate = formatDate(prevDateObj);
+            const nextDate = formatDate(nextDateObj);
+            
+            const bestMatch = findMatchStmt.get(fAmount, targetDate, prevDate, nextDate, stmtAcct) as any;
 
             if (bestMatch) {
                 const userInitials = (bestMatch.user_label || '').trim().toUpperCase();
@@ -83,9 +121,8 @@ export async function POST(req: NextRequest) {
                 const evidenceUrl = (bestMatch.link || bestMatch.invoice_url || '').trim();
                 
                 // Determine match reason
-                const dateMatch = (bestMatch.date === fDate || bestMatch.date.startsWith(fDate + '/'));
                 const descMatch = bestMatch.description.toLowerCase().includes(fDescShort.toLowerCase());
-                const reason = `Amt Match${dateMatch ? ' + Date' : ''}${descMatch ? ' + Desc' : ''}`;
+                const reason = `[Paralegal] Acct+Date+Amt Match${descMatch ? ' + Desc' : ''}`;
 
                 const updateMatchStmt = db.prepare(`
                     UPDATE statement_transactions 
@@ -97,7 +134,7 @@ export async function POST(req: NextRequest) {
                     WHERE id = ?
                 `);
 
-                const score = 50 + (dateMatch ? 30 : 0) + (descMatch ? 15 : 0);
+                const score = 95 + (descMatch ? 5 : 0);
 
                 updateMatchStmt.run(
                     bestMatch.master_id_val,
