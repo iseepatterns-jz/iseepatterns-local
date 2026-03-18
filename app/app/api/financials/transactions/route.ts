@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
             SELECT *
             FROM statement_transactions
             WHERE import_session_id = ?
-            ORDER BY date ASC, id ASC
+            ORDER BY id ASC
         `).all(sessionId);
 
         return NextResponse.json(transactions);

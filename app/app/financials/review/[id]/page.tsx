@@ -21,6 +21,8 @@ interface Transaction {
     notes: string | null;
     review_status: string;
     verification_status: string | null;
+    nc_flag: number | null;
+    evidence_url: string | null;
     master_id: number | null;
     rosetta_user: string | null;
     rosetta_account: string | null;
@@ -129,7 +131,7 @@ export default function TransactionReviewPage() {
     };
 
     const finalizeVerification = async () => {
-        if (!confirm("Finalize forensic verification? This will update the master CSV with forensic metadata and move any unverified records to a separate list.")) return;
+        if (!confirm("Finalize forensic verification? This will update the master CSV with forensic metadata (source files, pages, and match hashes) for all approved matches and create a timestamped backup. Unmatched records will remain in the master sheet untouched.")) return;
         
         setSaving(true);
         try {
@@ -165,10 +167,27 @@ export default function TransactionReviewPage() {
     };
 
     const filteredTransactions = useMemo(() => {
-        if (filter === "PENDING") return transactions.filter(t => t.review_status === "PENDING_REVIEW");
-        if (filter === "REVIEWED") return transactions.filter(t => t.review_status === "REVIEWED");
-        return transactions;
+        let base = transactions;
+        if (filter === "PENDING") base = transactions.filter(t => t.review_status === "PENDING_REVIEW");
+        if (filter === "REVIEWED") base = transactions.filter(t => t.review_status === "REVIEWED");
+        return base;
     }, [transactions, filter]);
+
+    const displayPlayers = useMemo(() => {
+        const allowed = ["JZ", "LG", "PH"];
+        return players.filter(p => {
+            if (p.id === 28) return true; // JZ
+            if (p.id === 25) return true; // LG
+            if (p.id === 45) return true; // PH
+            return false;
+        }).map(p => {
+            let initials = "";
+            if (p.id === 28) initials = "JZ";
+            if (p.id === 25) initials = "LG";
+            if (p.id === 45) initials = "PH";
+            return { ...p, initials };
+        });
+    }, [players]);
 
     if (loading) return (
         <div style={{ padding: "10rem", textAlign: "center", color: "var(--text-muted)" }}>
@@ -260,7 +279,9 @@ export default function TransactionReviewPage() {
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>PAGE</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 200 }}>ROSETTA MATCH</th>
                                 <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 60 }}>SCORE</th>
+                                <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 80 }}>ACCOUNT</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 160 }}>PLAYER (ROSETTA)</th>
+                                <th style={{ textAlign: "center", padding: "12px", color: "var(--text-muted)", width: 50 }}>DOC</th>
                                 <th style={{ textAlign: "left", padding: "12px", color: "var(--text-muted)", width: 100 }}>STATUS</th>
                             </tr>
                         </thead>
@@ -327,14 +348,41 @@ export default function TransactionReviewPage() {
                                         )}
                                     </td>
                                     <td style={{ padding: "10px" }}>
-                                        <select value={t.player_id || ""} onChange={(e) => handleUpdate([t.id], { player_id: parseInt(e.target.value) })}
+                                        <input 
+                                            type="text" 
+                                            value={t.final_account_id || ""} 
+                                            placeholder="XXXX"
+                                            maxLength={4}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setTransactions(prev => prev.map(item => item.id === t.id ? { ...item, final_account_id: val } : item));
+                                            }}
+                                            onBlur={(e) => handleUpdate([t.id], { final_account_id: e.target.value })}
+                                            style={{ 
+                                                width: "80px", background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)", 
+                                                borderRadius: 4, padding: "4px 8px", color: "var(--text-primary)", fontSize: "0.8125rem",
+                                                fontFamily: "var(--font-mono)", textAlign: "center"
+                                            }} 
+                                        />
+                                    </td>
+                                    <td style={{ padding: "10px" }}>
+                                        <select value={t.player_id || ""} onChange={(e) => handleUpdate([t.id], { player_id: e.target.value ? parseInt(e.target.value) : null })}
                                             style={{ 
                                                 width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)", 
                                                 borderRadius: 4, padding: "4px", color: "var(--text-primary)", fontSize: "0.8125rem"
                                             }}>
                                             <option value="">(Unmapped)</option>
-                                            {players.map(p => <option key={p.id} value={p.id}>{p.display_name}</option>)}
+                                            {displayPlayers.map(p => <option key={p.id} value={p.id}>{p.initials} - {p.display_name.split(' ')[0]}</option>)}
                                         </select>
+                                    </td>
+                                    <td style={{ padding: "10px", textAlign: "center" }}>
+                                        {t.evidence_url ? (
+                                            <a href={t.evidence_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-cyan)" }}>
+                                                <ExternalLink size={16} />
+                                            </a>
+                                        ) : (
+                                            <span style={{ color: "var(--text-muted)", opacity: 0.3 }}><ExternalLink size={16} /></span>
+                                        )}
                                     </td>
                                     <td style={{ padding: "10px" }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>

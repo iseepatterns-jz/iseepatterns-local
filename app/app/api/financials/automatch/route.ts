@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
             UPDATE statement_transactions 
             SET master_id = ?, verification_status = 'MATCHED',
                 rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
-                match_score = ?
+                match_score = ?, final_account_id = ?, player_id = ?
             WHERE id = ?
         `);
 
@@ -160,13 +160,34 @@ export async function POST(req: NextRequest) {
 
             if (bestMatch && bestMatch.score >= 80) {
                 const mr = bestMatch.record;
-                updateStmt.run(
+                const userInitials = (mr['User'] || '').trim().toUpperCase();
+                let playerId = null;
+                if (userInitials === 'JZ') playerId = 28;
+                else if (userInitials === 'LG') playerId = 25;
+                else if (userInitials === 'PH') playerId = 45;
+
+                // Forensic tracing: Evidence links
+                const evidenceUrl = (mr['Link'] || mr['Invoice URL'] || '').trim();
+
+                const updateMatchStmt = db.prepare(`
+                    UPDATE statement_transactions 
+                    SET master_id = ?, verification_status = 'MATCHED',
+                        rosetta_user = ?, rosetta_account = ?, rosetta_category = ?, rosetta_company = ?,
+                        match_score = ?, final_account_id = ?, player_id = ?,
+                        evidence_url = ?, nc_flag = 0
+                    WHERE id = ?
+                `);
+
+                updateMatchStmt.run(
                     bestMatch.index,
                     mr['User'] || '',
                     mr['Account Type'] || mr['Account'] || '',
                     mr['Category'] || '',
                     mr['Company'] || mr['Description'] || '',
                     bestMatch.score,
+                    mr['Account'] || '', 
+                    playerId,
+                    evidenceUrl || null,
                     ft.id
                 );
                 matchCount++;
