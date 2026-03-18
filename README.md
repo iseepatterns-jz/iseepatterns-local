@@ -70,6 +70,7 @@ lawmodel1/
 │   └── ...
 ├── data/                                  # Current "Source of Truth" Data
 │   ├── MBOX_LOCKER/                       # 8GB mbox_metadata.db (402k+ emails)
+│   ├── FORENSIC_VERIFICATION_LOCKER/        # Archived reconciliation audit results
 │   ├── evidence_hub.db                    # Canonical evidence store (643k+ records)
 │   ├── players.db                         # Person Intelligence (44 profiles)
 │   ├── chat_master.db                     # Consolidated iMessages (186k+)

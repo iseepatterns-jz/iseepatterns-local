@@ -48,7 +48,9 @@ chroma_db/
 bm25_index.pkl
 bm25_index_ts.json
 
-data/
+data/**/*
+!data/FORENSIC_VERIFICATION_LOCKER/
+!data/FORENSIC_VERIFICATION_LOCKER/**
 exports/
 logs/
 tmp/

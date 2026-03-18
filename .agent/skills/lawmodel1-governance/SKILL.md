@@ -26,6 +26,7 @@ This document defines the core rules, architectural patterns, and quality standa
 │   └── types/              # TypeScript type definitions
 ├── data/                   # SOURCE OF TRUTH — all evidence data
 │   ├── *_LOCKER/           # Organized evidence lockers (15+)
+│   ├── FORENSIC_VERIFICATION_LOCKER/ # Archived reconciliation audit results
 │   ├── evidence_cards/     # Generated evidence card JSONs
 │   ├── memos/              # Investigation memos
 │   ├── transcripts/        # Call/meeting transcripts
@@ -53,6 +54,7 @@ This document defines the core rules, architectural patterns, and quality standa
 | Standalone CLI tool | `tools/` | Self-contained tool with its own argument parsing |
 | SQL schema definition | `schemas/` | ANY new table in ANY database |
 | Evidence source files | `data/*_LOCKER/` | Raw evidence organized by type |
+| Forensic Audit Results| `data/FORENSIC_VERIFICATION_LOCKER/` | Verified reconciliation reports and manifests |
 | Generated outputs | `exports/` | Dossiers, attorney packages, letters |
 | API routes | `app/app/api/` | Next.js API handlers |
 | UI pages | `app/app/[page]/` | Next.js page components (Organized by Workflow) |
