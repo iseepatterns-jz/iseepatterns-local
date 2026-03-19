@@ -33,7 +33,10 @@ function ensureSchema(db: any) {
  * Meaningful = 3+ chars, excluding common noise.
  */
 function hasDescriptionOverlap(d1: string, d2: string): boolean {
-    const noise = new Set(['the', 'inc', 'chi', 'llc', 'com', 'store', 'corp', 'pay', 'payment', 'transfer', 'service', 'services']);
+    const noise = new Set([
+        'the', 'inc', 'chi', 'llc', 'com', 'store', 'corp', 'pay', 'payment', 'transfer', 'service', 'services',
+        'chicago', 'il', 'chigaco', 'ny', 'nyc', 'sf', 'la', 'us', 'usa', 'terminal', 'pos', 'purchase', 'debit', 'credit', 'point', 'sale', 'auth', 'authorized', 'transaction'
+    ]);
     const normalize = (s: string) => (s || "")
         .toLowerCase()
         .replace(/[^a-z0-9\s]/g, ' ')
@@ -43,7 +46,7 @@ function hasDescriptionOverlap(d1: string, d2: string): boolean {
     const w1 = new Set(normalize(d1));
     const w2 = new Set(normalize(d2));
     
-    if (w1.size === 0 || w2.size === 0) return true; // Fallback if one is too short/generic
+    if (w1.size === 0 || w2.size === 0) return false; // Now requires at least one non-noise word
 
     const intersect = [...w1].filter(w => w2.has(w));
     return intersect.length > 0;
@@ -167,32 +170,36 @@ export async function POST(req: NextRequest) {
                 const isPrefixMatch = candidateDescLower.startsWith(fDescShort) || fDescRaw.startsWith(candidateDescLower.slice(0, 15));
                 const hasOverlap = hasDescriptionOverlap(ft.description_raw, candidateDesc);
                 
-                // Scoring
-                let score = 60; // Base for Amt + Date (window)
+                // Scoring logic - More conservative to prevent false positives
+                let score = 40; // Base for Amt + Date (window)
                 let reasons = ["Amt+Date"];
 
-                // Exact Date Bonus (+15): Prioritize the exact day over +/- 1 day
+                // Exact Date Bonus (+10): Prioritize the exact day over +/- 1 day
                 if (candidate.date === targetDate) {
-                    score += 15;
+                    score += 10;
                     reasons.push("ExactDate");
                 }
 
                 if (candidate.account_type === targetAccountType) {
-                    score += 15;
+                    score += 10;
                     reasons.push("Type");
                 }
                 
                 if (stmtAcct && candidate.account === stmtAcct) {
-                    score += 25;
+                    score += 20;
                     reasons.push("AcctDigits");
                 }
 
                 if (isPerfectDesc) {
-                    score += 15;
+                    score += 20;
                     reasons.push("DescMatch");
                 } else if (isPrefixMatch || hasOverlap) {
-                    score += 5;
+                    score += 10;
                     reasons.push("DescFuzzy");
+                } else {
+                    // SEVERE PENALTY for disjoint descriptions
+                    score -= 50;
+                    reasons.push("DescMismatch");
                 }
 
                 if (score > maxScore) {
