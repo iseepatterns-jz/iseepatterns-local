@@ -1004,13 +1004,14 @@ export default function EvidenceHubPage() {
                     display: flex; flex-direction: column; gap: 3px;
                     padding: 16px 12px; min-height: 100%;
                     background: #0b0b0b;
+                    max-width: 680px; margin: 0 auto;
                 }
                 .imsg-time-sep {
                     text-align: center; font-size: 11px; color: #6b7280;
                     padding: 10px 0 4px; font-weight: 500;
                 }
                 .imsg-row {
-                    display: flex; max-width: 80%; margin-bottom: 1px;
+                    display: flex; max-width: 70%; margin-bottom: 2px;
                     cursor: pointer; transition: opacity 0.1s;
                 }
                 .imsg-row:hover { opacity: 0.85; }
@@ -1040,6 +1041,13 @@ export default function EvidenceHubPage() {
                     text-align: center; opacity: 0; transition: opacity 0.15s;
                 }
                 .imsg-row:hover .imsg-time-hover { opacity: 1; }
+                .imsg-meta {
+                    font-size: 9px; color: #4b5563; padding: 2px 14px 0;
+                    font-family: 'SF Mono', 'Fira Code', monospace;
+                    letter-spacing: 0.02em;
+                }
+                .imsg-row.me .imsg-meta { text-align: right; }
+                .imsg-row.them .imsg-meta { text-align: left; }
                 .imsg-row.selected .imsg-bubble {
                     outline: 2px solid #22d3ee; outline-offset: 2px;
                 }
@@ -1374,12 +1382,15 @@ export default function EvidenceHubPage() {
                                                 className={`imsg-row ${isMe ? "me" : "them"} ${selectedId === item.id ? "selected" : ""}`}
                                                 onClick={() => fetchDetail(item.id, "imessage")}
                                             >
-                                                <div>
+                                            <div>
                                                     <div className="imsg-sender">{isMe ? "JZ" : resolveHandle(item.handle_id || "?")}</div>
                                                     <div className="imsg-bubble">
                                                         {item.preview || <span className="imsg-empty-body">[attachment]</span>}
                                                     </div>
-                                                    <div className="imsg-time-hover">{timeLabel}</div>
+                                                    <div className="imsg-meta">
+                                                        {timeLabel} · {isMe ? "+17736109104" : (item.handle_id || "Unknown")}
+                                                    </div>
+                                                    <div className="imsg-time-hover">{dateLabel}</div>
                                                 </div>
                                             </div>
                                         </React.Fragment>
