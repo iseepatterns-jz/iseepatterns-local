@@ -179,31 +179,30 @@ export async function GET(request: NextRequest) {
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
-            // Participant filter — pipe-separated groups use AND logic (INTERSECT)
-            // e.g. "jz_id1,jz_id2|lg_id1,lg_id2" means chats where BOTH JZ AND LG are members
+            // Contact filter — restrict to chats where ONLY the selected contact(s) are handles
+            // This excludes group chats that include third parties
             if (participant) {
                 const groups = participant.split("|").map(g => g.split(",").map((s: string) => s.trim()).filter(Boolean)).filter(g => g.length > 0);
-                if (groups.length === 1) {
-                    // Single player — OR across that player's identifiers
-                    const ids = groups[0];
-                    const placeholders = ids.map(() => "h.id LIKE ?").join(" OR ");
-                    chatWhere += ` AND cmj.chat_id IN (
-                        SELECT chj.chat_id FROM chat_handle_join chj
-                        JOIN handle h ON h.ROWID = chj.handle_id
-                        WHERE ${placeholders}
-                    )`;
-                    ids.forEach(id => chatParams.push(`%${id}%`));
-                } else if (groups.length > 1) {
-                    // Multiple players — INTERSECT: chat must have at least one handle from EACH group
-                    const subqueries = groups.map(ids => {
-                        const placeholders = ids.map(() => "h.id LIKE ?").join(" OR ");
-                        ids.forEach(id => chatParams.push(`%${id}%`));
-                        return `SELECT chj.chat_id FROM chat_handle_join chj
-                                JOIN handle h ON h.ROWID = chj.handle_id
-                                WHERE ${placeholders}`;
-                    });
-                    chatWhere += ` AND cmj.chat_id IN (${subqueries.join(" INTERSECT ")})`;
-                }
+                // Collect ALL identifiers across all selected contacts
+                const allIds = groups.flat();
+                const matchPlaceholders = allIds.map(() => "h.id LIKE ?").join(" OR ");
+                const excludePlaceholders = allIds.map(() => "h.id LIKE ?").join(" OR ");
+
+                // Chat must have at least one matching handle
+                chatWhere += ` AND cmj.chat_id IN (
+                    SELECT chj.chat_id FROM chat_handle_join chj
+                    JOIN handle h ON h.ROWID = chj.handle_id
+                    WHERE ${matchPlaceholders}
+                )`;
+                allIds.forEach(id => chatParams.push(`%${id}%`));
+
+                // Chat must NOT have any handles that AREN'T the selected contact(s)
+                chatWhere += ` AND cmj.chat_id NOT IN (
+                    SELECT chj.chat_id FROM chat_handle_join chj
+                    JOIN handle h ON h.ROWID = chj.handle_id
+                    WHERE NOT (${excludePlaceholders})
+                )`;
+                allIds.forEach(id => chatParams.push(`%${id}%`));
             }
 
             // Date filters using Apple Cocoa timestamp conversion
