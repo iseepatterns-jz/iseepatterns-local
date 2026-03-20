@@ -31,6 +31,18 @@ export default function StatementImportPage() {
     const [refreshing, setRefreshing] = useState(false);
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
 
+    const [confirmDialog, setConfirmDialog] = useState<{
+        open: boolean;
+        id: number | null;
+        title: string;
+        message: string;
+    }>({
+        open: false,
+        id: null,
+        title: "",
+        message: "",
+    });
+
     const showToast = (msg: string, type: "success" | "error" = "success") => {
         setToast({ msg, type });
         setTimeout(() => setToast(null), 4000);
@@ -52,7 +64,7 @@ export default function StatementImportPage() {
     };
 
     const deleteSession = async (id: number) => {
-        if (!confirm("Are you sure you want to purge this session and all its transactions? This cannot be undone.")) return;
+        setConfirmDialog(prev => ({ ...prev, open: false }));
         
         console.log(`[DELETE-v2] Starting purge for session: ${id}`);
         setDeletingId(id);
@@ -89,6 +101,15 @@ export default function StatementImportPage() {
         } finally {
             setDeletingId(null);
         }
+    };
+
+    const openDeleteConfirm = (session: ImportSession) => {
+        setConfirmDialog({
+            open: true,
+            id: session.id,
+            title: "Purge Import Session",
+            message: `Are you sure you want to purge session #${session.id} (${session.original_filename}) and all its transactions? This action is permanent and cannot be undone.`
+        });
     };
 
     useEffect(() => { fetchSessions(); }, []);
@@ -327,39 +348,90 @@ export default function StatementImportPage() {
                                     }}>
                                         Review <ArrowRight size={12} />
                                     </Link>
-                                    <form 
-                                        action={`/api/financials/import/delete`} 
-                                        method="GET"
-                                        style={{ display: "inline" }}
-                                        onSubmit={(e) => {
-                                            if (!confirm("Are you sure you want to purge this session and all its transactions? This cannot be undone.")) {
-                                                e.preventDefault();
-                                            }
+                                    <button 
+                                        type="button"
+                                        onClick={() => openDeleteConfirm(s)}
+                                        style={{ 
+                                            background: "none", border: "none", 
+                                            color: "var(--text-muted)", 
+                                            cursor: "pointer", 
+                                            transition: "color 0.2s", padding: "4px",
+                                            display: "inline-flex", alignItems: "center"
                                         }}
+                                        onMouseEnter={e => e.currentTarget.style.color = "var(--accent-red)"}
+                                        onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
+                                        title="Purge Session"
                                     >
-                                        <input type="hidden" name="id" value={s.id} />
-                                        <button 
-                                            type="submit"
-                                            style={{ 
-                                                background: "none", border: "none", 
-                                                color: "var(--text-muted)", 
-                                                cursor: "pointer", 
-                                                transition: "color 0.2s", padding: "4px",
-                                                display: "inline-flex", alignItems: "center"
-                                            }}
-                                            onMouseEnter={e => e.currentTarget.style.color = "var(--accent-red)"}
-                                            onMouseLeave={e => e.currentTarget.style.color = "var(--text-muted)"}
-                                            title="Purge Session"
-                                        >
-                                            <Trash2 size={14} />
-                                        </button>
-                                    </form>
+                                        <Trash2 size={14} />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {/* ═══ Confirmation Dialog ═══ */}
+            {confirmDialog.open && (
+                <div style={{ 
+                    position: "fixed", top: 0, left: 0, width: "100%", height: "100%", 
+                    display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 
+                }}>
+                    <div 
+                        style={{ 
+                            position: "absolute", top: 0, left: 0, width: "100%", height: "100%", 
+                            background: "rgba(0, 0, 0, 0.6)", backdropFilter: "blur(4px)",
+                            animation: "fadeIn 0.2s ease-out"
+                        }}
+                        onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
+                    />
+                    <div style={{ 
+                        position: "relative", width: "100%", maxWidth: "420px",
+                        background: "var(--bg-elevated)", border: "1px solid rgba(255, 255, 255, 0.1)",
+                        borderRadius: "16px", padding: "2rem",
+                        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+                        animation: "modalZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
+                    }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
+                            <div style={{ 
+                                background: "rgba(239, 68, 68, 0.1)", padding: "10px", borderRadius: "12px",
+                                color: "var(--accent-red)"
+                            }}>
+                                <Trash2 size={24} />
+                            </div>
+                            <h2 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0 }}>{confirmDialog.title}</h2>
+                        </div>
+                        
+                        <p style={{ color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "2rem", fontSize: "0.9375rem" }}>
+                            {confirmDialog.message}
+                        </p>
+
+                        <div style={{ display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+                            <button 
+                                onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))}
+                                style={{ 
+                                    background: "transparent", color: "var(--text-muted)", border: "none",
+                                    padding: "8px 16px", fontSize: "0.875rem", fontWeight: 600, cursor: "pointer"
+                                }}>
+                                Cancel
+                            </button>
+                            <button 
+                                disabled={deletingId !== null}
+                                onClick={() => confirmDialog.id && deleteSession(confirmDialog.id)}
+                                style={{ 
+                                    background: "var(--accent-red)", 
+                                    color: "#fff", border: "none", borderRadius: "8px",
+                                    padding: "8px 24px", fontSize: "0.875rem", fontWeight: 700, cursor: "pointer",
+                                    display: "flex", alignItems: "center", gap: "0.5rem",
+                                    boxShadow: "0 4px 12px rgba(239, 68, 68, 0.3)"
+                                }}>
+                                {deletingId !== null ? <Loader2 className="animate-spin" size={16} /> : <Trash2 size={16} />}
+                                Confirm Purge
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Toast System */}
             {toast && (
@@ -395,6 +467,14 @@ export default function StatementImportPage() {
                 @keyframes slideInRight {
                     from { transform: translateX(100%); opacity: 0; }
                     to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes modalZoom {
+                    from { transform: scale(0.95); opacity: 0; }
+                    to { transform: scale(1); opacity: 1; }
                 }
                 .animate-spin {
                     animation: spin 1s linear infinite;

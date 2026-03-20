@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
             const transactions: any[] = [];
 
             // Chase 2016 Regex
-            const chaseTxRegex = /(\d{1,2}\/\d{1,2})\s+(.*?)\s+(-?[\d,]+\.\d{2})(?:\s|$)/;
+            const chaseTxRegex = /(\d{1,2}\/\d{1,2})\s+(.*?)\s+(-?[\d,]*\.\d{2})(?:\s|$)/;
             let pageNum = 1;
 
             for (const line of lines) {

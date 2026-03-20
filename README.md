@@ -75,8 +75,16 @@ lawmodel1/
 │   ├── players.db                         # Person Intelligence (44 profiles)
 │   ├── chat_master.db                     # Consolidated iMessages (186k+)
 │   └── *_LOCKER/                          # 20+ organized evidence lockers
-├── chatdb_storage/                        # iMessage forensic storage
-│   └── m1studio_2025-05-31.../db/decoded/ # Official 18k LG/JZ thread
+├── chatdb_storage/                        # iMessage forensic storage (raw — NEVER MODIFY)
+│   ├── imac_2025-06-01.../                # iMac backup (603k msgs, 57 GB attachments)
+│   │   ├── chat.db                        # Original raw DB
+│   │   ├── Attachments/                   # 33k files (photos, videos, docs)
+│   │   └── CloudKitMetaData/, StickerCache/
+│   ├── m1studio_2025-05-31.../            # M1 Studio backup (501k msgs, 72 GB attachments)
+│   │   ├── db/decoded/...db               # Decoded DB (has decodedBody column)
+│   │   ├── Attachments/                   # 41k files
+│   │   └── CloudKitMetaData/, StickerCache/, NickNameCache/, Caches/
+│   └── consolidated_investigation.db      # Merged investigation DB
 ├── ingest/                                # Forensic Ingestion Layer
 ├── docs/                                  # Documentation & evidence flow diagram
 ├── ...

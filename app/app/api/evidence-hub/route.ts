@@ -135,33 +135,63 @@ export async function GET(request: NextRequest) {
 
         // ── Filtered list / LG focal search ──
         if (sourceType === "imessage" || (q && q.toLowerCase().includes("guariglia"))) {
-            // Lucas Guariglia (8478280944) and Joseph Zangrilli (7736109104)
-            // chat_id 2288, 2289 are confirmed to be their threads
+            // Query chat_master.db with dynamic filters
+            let chatWhere = "WHERE 1=1";
+            const chatParams: (string | number)[] = [];
+
+            // Participant filter — find matching handle and restrict to their chats
+            if (participant) {
+                chatWhere += ` AND cmj.chat_id IN (
+                    SELECT chj.chat_id FROM chat_handle_join chj
+                    JOIN handle h ON h.ROWID = chj.handle_id
+                    WHERE h.id LIKE ?
+                )`;
+                chatParams.push(`%${participant}%`);
+            }
+
+            // Date filters using Apple Cocoa timestamp conversion
+            if (dateFrom) {
+                chatWhere += ` AND datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') >= ?`;
+                chatParams.push(dateFrom);
+            }
+            if (dateTo) {
+                // Add 1 day to make the "To" date inclusive (end of day)
+                chatWhere += ` AND datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') < date(?, '+1 day')`;
+                chatParams.push(dateTo);
+            }
+
+            // Text search
+            if (q) {
+                chatWhere += " AND m.text LIKE ?";
+                chatParams.push(`%${q}%`);
+            }
+
             const rows = chatDb.prepare(`
                 SELECT 
                     m.ROWID as id,
                     m.guid as canonical_id,
                     'imessage' as source_type,
-                    'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli' ELSE 'Lucas Guariglia' END as title,
+                    'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
+                        ELSE COALESCE(h.id, 'Unknown') END as title,
                     substr(m.text, 1, 100) as summary,
                     m.text as preview,
                     datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
                     '["chat", "key_players"]' as tags
                 FROM message m
                 JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
-                WHERE cmj.chat_id IN (2288, 2289)
-                AND (m.text LIKE ? OR 1=1) -- Filter if q provided
+                LEFT JOIN handle h ON h.ROWID = m.handle_id
+                ${chatWhere}
                 ORDER BY m.date DESC
                 LIMIT ? OFFSET ?
-            `).all(`%${q}%`, limit, offset);
+            `).all(...chatParams, limit, offset);
 
             const countRow = chatDb.prepare(`
                 SELECT COUNT(*) as total
                 FROM message m
                 JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
-                WHERE cmj.chat_id IN (2288, 2289)
-                AND (m.text LIKE ? OR 1=1)
-            `).get(`%${q}%`) as CountRow;
+                LEFT JOIN handle h ON h.ROWID = m.handle_id
+                ${chatWhere}
+            `).get(...chatParams) as CountRow;
 
             return NextResponse.json({
                 results: rows,

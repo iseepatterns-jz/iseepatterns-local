@@ -698,6 +698,30 @@ def main():
     if section is None or section == "binder":
         generate_binder_index(dry_run=dry_run)
 
+    # RSMF Export Integration
+    if section is None or section == "rsmf":
+        log("Generating Enriched RSMF discovery packages...")
+        if not dry_run:
+            try:
+                import subprocess
+                # 1. Harvest intelligence tags
+                log("  → Harvesting intelligence tags (Admissions, Flights, Legal)...")
+                subprocess.run([sys.executable, str(BASE_DIR / "scripts" / "harvest_intelligence_tags.py")], check=True)
+                tags_file = DATA_DIR / "intelligence_tags.json"
+                
+                # 2. Generate RSMF with tags
+                log("  → Building RSMF packages with intelligence metadata...")
+                cmd = [sys.executable, str(BASE_DIR / "scripts" / "generate_rsmf_export.py")]
+                if tags_file.exists():
+                    cmd.extend(["--tags-file", str(tags_file)])
+                
+                subprocess.run(cmd, check=True)
+                log("  ✓ RSMF packages generated with legal intelligence tags.")
+            except Exception as e:
+                log(f"  ⚠ Error generating RSMF: {e}")
+        else:
+            log("  [DRY RUN] Would generate enriched RSMF packages.")
+
     log("=== Done ===")
 
 

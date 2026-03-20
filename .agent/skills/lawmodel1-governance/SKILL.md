@@ -33,7 +33,22 @@ This document defines the core rules, architectural patterns, and quality standa
 │   ├── evidence_hub.db     # Canonical evidence store
 │   ├── players.db          # Person intelligence
 │   └── chat_master.db      # Consolidated iMessages
-├── chatdb_storage/         # iMessage forensic storage (raw)
+├── chatdb_storage/         # iMessage forensic storage (raw — NEVER MODIFY)
+│   ├── imac_2025-06-01_.../           # iMac backup extract
+│   │   ├── 2025-06-01_original_file_from_imac/chat.db  # Raw DB (603k msgs)
+│   │   ├── Attachments/               # 57 GB, 33k files (photos/videos/docs)
+│   │   ├── CloudKitMetaData/          # iCloud sync metadata
+│   │   └── StickerCache/              # Sticker assets
+│   ├── m1studio_2025-05-31_.../       # M1 Studio backup extract
+│   │   ├── db/decoded/...db           # Decoded DB (501k msgs, has decodedBody)
+│   │   ├── db/2025-05-31_original_.../chat.db  # Original raw DB
+│   │   ├── Attachments/               # 72 GB, 41k files
+│   │   ├── CloudKitMetaData/          # iCloud sync metadata
+│   │   ├── StickerCache/              # Sticker assets
+│   │   ├── Caches/                    # Message caches
+│   │   ├── NickNameCache/             # Contact display names
+│   │   └── CollaborationNoticeCache/  # Collaboration notices
+│   └── consolidated_investigation_m1_imac.db  # Merged investigation DB
 ├── chroma_db/              # Vector embeddings (ChromaDB)
 ├── docs/                   # Documentation and handoffs
 ├── exports/                # Generated outputs (dossiers, letters, packages)
@@ -55,6 +70,7 @@ This document defines the core rules, architectural patterns, and quality standa
 | SQL schema definition | `schemas/` | ANY new table in ANY database |
 | Evidence source files | `data/*_LOCKER/` | Raw evidence organized by type |
 | Forensic Audit Results| `data/FORENSIC_VERIFICATION_LOCKER/` | Verified reconciliation reports and manifests |
+| iMessage raw DBs & attachments | `chatdb_storage/` | Original forensic extracts — NEVER modify |
 | Generated outputs | `exports/` | Dossiers, attorney packages, letters |
 | API routes | `app/app/api/` | Next.js API handlers |
 | UI pages | `app/app/[page]/` | Next.js page components (Organized by Workflow) |

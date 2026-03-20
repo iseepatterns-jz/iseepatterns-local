@@ -13,7 +13,23 @@
       "inputs": {
         "raw_files": [
           "data/chat_master.db",
-          "data/jz_lg_imessage_logs_all_numbered.csv"
+          "data/jz_lg_imessage_logs_all_numbered.csv",
+          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/2025-05-31_original_file_from_m1studio/chat.db",
+          "chatdb_storage/consolidated_investigation_m1_imac.db"
+        ],
+        "attachment_dirs": [
+          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/Attachments",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/Attachments"
+        ],
+        "metadata_dirs": [
+          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/CloudKitMetaData",
+          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/StickerCache",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/CloudKitMetaData",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/StickerCache",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/NickNameCache",
+          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/Caches"
         ],
         "file_types": [".db", ".csv"]
       },
@@ -33,7 +49,8 @@
         "utility": [
           "scripts/consolidate_forensic_chats.py",
           "scripts/extract_imessage_admissions.py",
-          "scripts/extract_gaslighting_patterns.py"
+          "scripts/extract_gaslighting_patterns.py",
+          "scripts/resolve_attachment_paths.py"
         ]
       },
       "canonical_id_format": "message_guid (e.g., p:0/... or UUID)",
