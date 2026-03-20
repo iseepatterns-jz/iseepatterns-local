@@ -49,6 +49,46 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
             }
 
+            // iMessage detail — fetch from chat_master.db
+            if (sourceType === "imessage") {
+                const msg = chatDb.prepare(`
+                    SELECT
+                        m.ROWID as id,
+                        m.guid as canonical_id,
+                        'imessage' as source_type,
+                        'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
+                            ELSE COALESCE(h.id, 'Unknown') END as title,
+                        m.text as body_snippet,
+                        m.text as summary,
+                        datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
+                        '["chat", "key_players"]' as tags,
+                        m.is_from_me,
+                        h.id as handle_id_str,
+                        m.service as extra
+                    FROM message m
+                    LEFT JOIN handle h ON h.ROWID = m.handle_id
+                    WHERE m.ROWID = ?
+                `).get(idNum) as any;
+
+                if (!msg) {
+                    return NextResponse.json({ error: "iMessage not found" }, { status: 404 });
+                }
+
+                const participants = [
+                    { identifier: "+17736109104", normalized_identifier: "Joseph Zangrilli", role: msg.is_from_me ? "sender" : "recipient" },
+                ];
+                if (msg.handle_id_str) {
+                    participants.push({ identifier: msg.handle_id_str, normalized_identifier: msg.handle_id_str, role: msg.is_from_me ? "recipient" : "sender" });
+                }
+
+                return NextResponse.json({
+                    evidence: msg,
+                    participants,
+                    provenance: [{ origin_system: "chat_master.db", source_file: "data/chat_master.db", source_rowid: idNum, created_at: msg.start_timestamp }]
+                });
+            }
+
+            // Default detail — fetch from evidence_hub.db
             const evidence = db.prepare(`
                 SELECT e.*, GROUP_CONCAT(DISTINCT eo.origin_system || ':' || eo.source_file) as origins
                 FROM evidence e

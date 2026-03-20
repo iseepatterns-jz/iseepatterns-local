@@ -187,13 +187,15 @@ export default function EvidenceHubPage() {
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
     /* ─── fetch detail ─── */
-    const fetchDetail = async (id: number) => {
+    const fetchDetail = async (id: number, itemSourceType?: string) => {
         setSelectedId(id);
         setDetailLoading(true);
         setDetailTab("body");
         setHighlightPopup(null);
         try {
-            const res = await fetch(`/api/evidence-hub?mode=detail&id=${id}`);
+            const params = new URLSearchParams({ mode: "detail", id: String(id) });
+            if (itemSourceType) params.set("source_type", itemSourceType);
+            const res = await fetch(`/api/evidence-hub?${params}`);
             const data = await res.json();
             setDetail(data);
             // Fetch annotations and CoC in parallel
@@ -819,7 +821,7 @@ export default function EvidenceHubPage() {
                                 <div
                                     key={item.id}
                                     className={`eh-list-item ${selectedId === item.id ? "selected" : ""}`}
-                                    onClick={() => fetchDetail(item.id)}
+                                    onClick={() => fetchDetail(item.id, item.source_type)}
                                 >
                                     <span
                                         className="source-badge"
