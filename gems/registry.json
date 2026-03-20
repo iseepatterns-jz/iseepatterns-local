@@ -65,7 +65,7 @@
         "databases": {
           "mbox_metadata.db": {
             "location": "data/MBOX_LOCKER/mbox_metadata.db",
-            "tables": ["messages", "labels"],
+            "tables": ["emails", "labels", "chain_of_custody", "drive_links"],
             "access": "read-only"
           }
         }

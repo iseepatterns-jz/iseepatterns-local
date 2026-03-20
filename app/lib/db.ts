@@ -73,7 +73,7 @@ export function getCommDbWritable(): Database.Database {
     return _commDbRW;
 }
 
-// All tables (including chain_of_custody) live in mbox_index.db
+// All tables (including chain_of_custody) live in mbox_metadata.db
 export function getCommonDb(): Database.Database {
     return getCommDb();
 }

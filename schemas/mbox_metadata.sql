@@ -1,6 +1,16 @@
--- MBOX Metadata Index
--- Full index of all Gmail MBOX exports (metadata from CSV + bodies from zips)
 -- Chain of custody: locker_source → zip file → mbox file → message
+-- Ingested artifacts are tracked in chain_of_custody
+
+CREATE TABLE IF NOT EXISTS chain_of_custody (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_path     TEXT,
+    source_type     TEXT,
+    sha256          TEXT,
+    size_bytes      INTEGER,
+    case_id         TEXT,
+    notes           TEXT,
+    ingested_at     TEXT DEFAULT (datetime('now'))
+);
 
 PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;

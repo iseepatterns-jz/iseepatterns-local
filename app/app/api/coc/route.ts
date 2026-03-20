@@ -1,3 +1,4 @@
+// PERSISTENCE TEST 2026-03-20
 import { NextResponse } from "next/server";
 import { getCommDb } from "@/lib/db";
 
@@ -6,12 +7,9 @@ export const dynamic = "force-dynamic";
 export async function GET() {
     try {
         const db = getCommDb();
-        console.log("CoC API: got db connection");
+        console.log("CoC API: got db connection (CONSOLIDATED)");
 
-        // Attach mbox_index.db to the connection so we can query chain_of_custody
-        const INDEX_DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db";
-        db.exec(`ATTACH DATABASE '${INDEX_DB_PATH}' AS index_db`);
-
+        // The chain_of_custody table now lives directly in mbox_metadata.db
         let records: unknown[] = [];
         try {
             const stmt = db.prepare(`
@@ -24,7 +22,7 @@ export async function GET() {
           case_id,
           notes,
           ingested_at
-        FROM index_db.chain_of_custody
+        FROM chain_of_custody
         ORDER BY id ASC
       `);
             records = stmt.all();
