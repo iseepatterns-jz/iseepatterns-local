@@ -279,7 +279,7 @@ export default function EvidenceHubPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     conversation_id: convId,
-                    participant: participantFilter.length ? participantFilter.flatMap(id => PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []).join(",") : undefined,
+                    participant: participantFilter.length ? participantFilter.map(id => (PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []).join(",")).join("|") : undefined,
                     date_from: dateFrom || undefined,
                     date_to: dateTo || undefined,
                     q: query || undefined,
@@ -343,8 +343,9 @@ export default function EvidenceHubPage() {
             if (sourceFilter) params.set("source_type", sourceFilter);
             if (tagFilter) params.set("tag", tagFilter);
             if (participantFilter.length) {
-                const allIds = participantFilter.flatMap(id => PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []);
-                params.set("participant", allIds.join(","));
+                // Send as pipe-separated groups: each player's identifiers are comma-sep, players separated by |
+                const groups = participantFilter.map(id => (PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []).join(","));
+                params.set("participant", groups.join("|"));
             }
             if (dateFrom) params.set("date_from", dateFrom);
             if (dateTo) params.set("date_to", dateTo);

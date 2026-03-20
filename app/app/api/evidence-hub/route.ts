@@ -179,17 +179,13 @@ export async function GET(request: NextRequest) {
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
-            // Participant filter — find matching handle(s) and restrict to their chats
+            // Participant filter — pipe-separated groups use AND logic (INTERSECT)
+            // e.g. "jz_id1,jz_id2|lg_id1,lg_id2" means chats where BOTH JZ AND LG are members
             if (participant) {
-                const ids = participant.split(",").map((s: string) => s.trim()).filter(Boolean);
-                if (ids.length === 1) {
-                    chatWhere += ` AND cmj.chat_id IN (
-                        SELECT chj.chat_id FROM chat_handle_join chj
-                        JOIN handle h ON h.ROWID = chj.handle_id
-                        WHERE h.id LIKE ?
-                    )`;
-                    chatParams.push(`%${ids[0]}%`);
-                } else if (ids.length > 1) {
+                const groups = participant.split("|").map(g => g.split(",").map((s: string) => s.trim()).filter(Boolean)).filter(g => g.length > 0);
+                if (groups.length === 1) {
+                    // Single player — OR across that player's identifiers
+                    const ids = groups[0];
                     const placeholders = ids.map(() => "h.id LIKE ?").join(" OR ");
                     chatWhere += ` AND cmj.chat_id IN (
                         SELECT chj.chat_id FROM chat_handle_join chj
@@ -197,6 +193,16 @@ export async function GET(request: NextRequest) {
                         WHERE ${placeholders}
                     )`;
                     ids.forEach(id => chatParams.push(`%${id}%`));
+                } else if (groups.length > 1) {
+                    // Multiple players — INTERSECT: chat must have at least one handle from EACH group
+                    const subqueries = groups.map(ids => {
+                        const placeholders = ids.map(() => "h.id LIKE ?").join(" OR ");
+                        ids.forEach(id => chatParams.push(`%${id}%`));
+                        return `SELECT chj.chat_id FROM chat_handle_join chj
+                                JOIN handle h ON h.ROWID = chj.handle_id
+                                WHERE ${placeholders}`;
+                    });
+                    chatWhere += ` AND cmj.chat_id IN (${subqueries.join(" INTERSECT ")})`;
                 }
             }
 
@@ -276,15 +282,9 @@ export async function GET(request: NextRequest) {
             params.push(dateTo);
         }
         if (participant) {
-            const ids = participant.split(",").map((s: string) => s.trim()).filter(Boolean);
-            if (ids.length === 1) {
-                where += ` AND e.id IN (
-                    SELECT ep.evidence_id FROM evidence_participants ep
-                    JOIN participants p ON p.id = ep.participant_id
-                    WHERE p.normalized_identifier LIKE ?
-                )`;
-                params.push(`%${ids[0]}%`);
-            } else if (ids.length > 1) {
+            const groups = participant.split("|").map(g => g.split(",").map((s: string) => s.trim()).filter(Boolean)).filter(g => g.length > 0);
+            if (groups.length === 1) {
+                const ids = groups[0];
                 const placeholders = ids.map(() => "p.normalized_identifier LIKE ?").join(" OR ");
                 where += ` AND e.id IN (
                     SELECT ep.evidence_id FROM evidence_participants ep
@@ -292,6 +292,15 @@ export async function GET(request: NextRequest) {
                     WHERE ${placeholders}
                 )`;
                 ids.forEach(id => params.push(`%${id}%`));
+            } else if (groups.length > 1) {
+                const subqueries = groups.map(ids => {
+                    const placeholders = ids.map(() => "p.normalized_identifier LIKE ?").join(" OR ");
+                    ids.forEach(id => params.push(`%${id}%`));
+                    return `SELECT ep.evidence_id FROM evidence_participants ep
+                            JOIN participants p ON p.id = ep.participant_id
+                            WHERE ${placeholders}`;
+                });
+                where += ` AND e.id IN (${subqueries.join(" INTERSECT ")})`;
             }
         }
         if (q) {
