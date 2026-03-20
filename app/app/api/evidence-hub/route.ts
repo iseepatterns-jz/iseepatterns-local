@@ -212,8 +212,10 @@ export async function GET(request: NextRequest) {
                     m.ROWID as id,
                     m.guid as canonical_id,
                     'imessage' as source_type,
-                    'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
-                        ELSE COALESCE(h.id, 'Unknown') END as title,
+                    CASE WHEN m.is_from_me = 1
+                        THEN 'JZ → ' || COALESCE(h.id, 'Unknown')
+                        ELSE COALESCE(h.id, 'Unknown') || ' → JZ'
+                    END as title,
                     substr(COALESCE(m.text, m.decodedBody), 1, 100) as summary,
                     COALESCE(m.text, m.decodedBody) as preview,
                     datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,

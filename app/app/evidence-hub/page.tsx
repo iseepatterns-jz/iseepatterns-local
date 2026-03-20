@@ -140,6 +140,15 @@ const PLAYER_PROFILES = [
     },
 ];
 
+/* ─── Resolve handle to player name ─── */
+const resolveHandle = (handle: string): string => {
+    if (!handle || handle === 'Unknown') return handle;
+    for (const p of PLAYER_PROFILES) {
+        if (p.identifiers.some(id => handle.includes(id) || id.includes(handle))) return p.name;
+    }
+    return handle; // return raw handle if no match
+};
+
 /* ─── component ─── */
 export default function EvidenceHubPage() {
     const [query, setQuery] = useState("");
@@ -1366,7 +1375,7 @@ export default function EvidenceHubPage() {
                                                 onClick={() => fetchDetail(item.id, "imessage")}
                                             >
                                                 <div>
-                                                    <div className="imsg-sender">{isMe ? "JZ" : (item.handle_id || "?")}</div>
+                                                    <div className="imsg-sender">{isMe ? "JZ" : resolveHandle(item.handle_id || "?")}</div>
                                                     <div className="imsg-bubble">
                                                         {item.preview || <span className="imsg-empty-body">[attachment]</span>}
                                                     </div>
@@ -1398,7 +1407,7 @@ export default function EvidenceHubPage() {
                                         {item.source_type}
                                     </span>
                                     <div className="content">
-                                        <div className="title-line">{item.title || item.canonical_id}</div>
+                                        <div className="title-line">{(item.title || item.canonical_id).replace(/\+?\d{10,}|[\w.+-]+@[\w.-]+/g, (m: string) => resolveHandle(m))}</div>
                                         <div className="preview-text">{item.preview || item.summary || "—"}</div>
                                         <div className="meta">
                                             <Clock size={10} />
