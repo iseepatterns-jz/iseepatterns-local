@@ -147,6 +147,7 @@ export default function EvidenceHubPage() {
     const [tagFilter, setTagFilter] = useState("");
     const [participantFilter, setParticipantFilter] = useState<string[]>([]);
     const [participantDropdownOpen, setParticipantDropdownOpen] = useState(false);
+    const participantRef = useRef<HTMLDivElement>(null);
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
     const [page, setPage] = useState(1);
@@ -334,6 +335,18 @@ export default function EvidenceHubPage() {
     useEffect(() => {
         if (activeConversation) loadConversation(activeConversation);
     }, [activeConversation, loadConversation]);
+
+    // Click-outside to close participant dropdown
+    useEffect(() => {
+        if (!participantDropdownOpen) return;
+        const handler = (e: MouseEvent) => {
+            if (participantRef.current && !participantRef.current.contains(e.target as Node)) {
+                setParticipantDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, [participantDropdownOpen]);
 
     const fetchResults = useCallback(async () => {
         setLoading(true);
@@ -1186,14 +1199,14 @@ export default function EvidenceHubPage() {
                             style={{ width: 120 }}
                         />
                     </label>
-                    <div style={{ position: "relative" }}>
-                        <label>Participants:</label>
+                    <div ref={participantRef} style={{ position: "relative" }}>
+                        <label>Contact:</label>
                         <div
                             className="participant-select"
                             onClick={() => setParticipantDropdownOpen(!participantDropdownOpen)}
                         >
                             {participantFilter.length === 0 ? (
-                                <span style={{ color: "#6b7280", fontSize: 12 }}>Select players…</span>
+                                <span style={{ color: "#6b7280", fontSize: 12 }}>Filter by contact…</span>
                             ) : (
                                 participantFilter.map(id => {
                                     const p = PLAYER_PROFILES.find(pp => pp.id === id);
@@ -1209,7 +1222,7 @@ export default function EvidenceHubPage() {
                         </div>
                         {participantDropdownOpen && (
                             <div className="participant-dropdown">
-                                {PLAYER_PROFILES.map(p => {
+                                {PLAYER_PROFILES.filter(p => p.id !== "jz").map(p => {
                                     const selected = participantFilter.includes(p.id);
                                     return (
                                         <div
