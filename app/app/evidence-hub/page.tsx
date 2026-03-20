@@ -1351,7 +1351,7 @@ export default function EvidenceHubPage() {
                         <div className="imsg-thread">
                             {(() => {
                                 let lastDate = "";
-                                return results.map((item: any) => {
+                                return results.map((item: any, i: number) => {
                                     const ts = item.start_timestamp;
                                     const dateLabel = ts ? new Date(ts).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
                                     const timeLabel = ts ? new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
@@ -1359,7 +1359,7 @@ export default function EvidenceHubPage() {
                                     if (showDateSep) lastDate = dateLabel;
                                     const isMe = item.is_from_me === 1;
                                     return (
-                                        <React.Fragment key={item.id}>
+                                        <React.Fragment key={item.canonical_id || `${item.id}-${i}`}>
                                             {showDateSep && <div className="imsg-time-sep">{dateLabel}</div>}
                                             <div
                                                 className={`imsg-row ${isMe ? "me" : "them"} ${selectedId === item.id ? "selected" : ""}`}
@@ -1383,7 +1383,7 @@ export default function EvidenceHubPage() {
                             const tags = parseTags(item.tags);
                             return (
                                 <div
-                                    key={item.id}
+                                    key={item.canonical_id || item.id}
                                     className={`eh-list-item ${selectedId === item.id ? "selected" : ""}`}
                                     onClick={() => fetchDetail(item.id, item.source_type)}
                                 >

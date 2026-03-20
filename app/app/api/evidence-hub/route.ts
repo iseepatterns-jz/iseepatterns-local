@@ -224,16 +224,20 @@ export async function GET(request: NextRequest) {
                 JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
                 LEFT JOIN handle h ON h.ROWID = m.handle_id
                 ${chatWhere}
+                GROUP BY m.ROWID
                 ORDER BY m.date DESC
                 LIMIT ? OFFSET ?
             `).all(...chatParams, limit, offset);
 
             const countRow = chatDb.prepare(`
-                SELECT COUNT(*) as total
-                FROM message m
-                JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
-                LEFT JOIN handle h ON h.ROWID = m.handle_id
-                ${chatWhere}
+                SELECT COUNT(*) as total FROM (
+                    SELECT m.ROWID
+                    FROM message m
+                    JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
+                    LEFT JOIN handle h ON h.ROWID = m.handle_id
+                    ${chatWhere}
+                    GROUP BY m.ROWID
+                )
             `).get(...chatParams) as CountRow;
 
             return NextResponse.json({
