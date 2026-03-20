@@ -216,7 +216,9 @@ export async function GET(request: NextRequest) {
                     substr(COALESCE(m.text, m.decodedBody), 1, 100) as summary,
                     COALESCE(m.text, m.decodedBody) as preview,
                     datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
-                    '["chat", "key_players"]' as tags
+                    '["chat", "key_players"]' as tags,
+                    m.is_from_me,
+                    COALESCE(h.id, 'Unknown') as handle_id
                 FROM message m
                 JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
                 LEFT JOIN handle h ON h.ROWID = m.handle_id

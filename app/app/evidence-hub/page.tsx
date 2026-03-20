@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
     Search, Filter, ChevronLeft, ChevronRight, Mail, MessageSquare, Shield,
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
-    Archive, HardDrive, ChevronDown, MessageCircle, Bookmark, GripVertical
+    Archive, HardDrive, ChevronDown, MessageCircle, Bookmark, GripVertical,
+    Smartphone
 } from "lucide-react";
 
 /* ─── types ─── */
@@ -159,6 +160,9 @@ export default function EvidenceHubPage() {
     const [aiResponse, setAiResponse] = useState<string | null>(null);
     const [aiLoading, setAiLoading] = useState(false);
     const bodyRef = useRef<HTMLDivElement>(null);
+
+    // ── iMessage View toggle ──
+    const [iMessageView, setIMessageView] = useState(false);
 
     // ── Resizable detail panel ──
     const [detailWidth, setDetailWidth] = useState(420);
@@ -940,6 +944,52 @@ export default function EvidenceHubPage() {
                 }
                 .eh-conv-msg:hover .msg-remove { opacity: 1; }
                 .eh-conv-msg .msg-remove:hover { color: #ef4444; }
+
+                /* ── iMessage Bubble View ── */
+                .imsg-thread {
+                    display: flex; flex-direction: column; gap: 3px;
+                    padding: 16px 12px; min-height: 100%;
+                    background: #0b0b0b;
+                }
+                .imsg-time-sep {
+                    text-align: center; font-size: 11px; color: #6b7280;
+                    padding: 10px 0 4px; font-weight: 500;
+                }
+                .imsg-row {
+                    display: flex; max-width: 80%; margin-bottom: 1px;
+                    cursor: pointer; transition: opacity 0.1s;
+                }
+                .imsg-row:hover { opacity: 0.85; }
+                .imsg-row.me { align-self: flex-end; }
+                .imsg-row.them { align-self: flex-start; }
+                .imsg-bubble {
+                    padding: 8px 14px; border-radius: 18px;
+                    font-size: 15px; line-height: 1.35; word-break: break-word;
+                    position: relative; letter-spacing: -0.01em;
+                }
+                .imsg-row.me .imsg-bubble {
+                    background: #0b84fe; color: #fff;
+                    border-bottom-right-radius: 4px;
+                }
+                .imsg-row.them .imsg-bubble {
+                    background: #2c2c2e; color: #fff;
+                    border-bottom-left-radius: 4px;
+                }
+                .imsg-sender {
+                    font-size: 10px; color: #6b7280; padding: 6px 14px 2px;
+                    font-weight: 500;
+                }
+                .imsg-row.me .imsg-sender { text-align: right; }
+                .imsg-row.them .imsg-sender { text-align: left; }
+                .imsg-time-hover {
+                    font-size: 9px; color: #4b5563; padding-top: 1px;
+                    text-align: center; opacity: 0; transition: opacity 0.15s;
+                }
+                .imsg-row:hover .imsg-time-hover { opacity: 1; }
+                .imsg-row.selected .imsg-bubble {
+                    outline: 2px solid #22d3ee; outline-offset: 2px;
+                }
+                .imsg-empty-body { color: #4b5563; font-style: italic; }
             `}</style>
 
             {/* ─── Header ─── */}
@@ -961,6 +1011,14 @@ export default function EvidenceHubPage() {
                 </button>
                 <button className={`eh-btn ${showStats ? "active" : ""}`} onClick={fetchStats}>
                     <BarChart2 size={14} /> Stats
+                </button>
+                <button
+                    className={`eh-btn ${iMessageView ? "active" : ""}`}
+                    onClick={() => setIMessageView(!iMessageView)}
+                    style={iMessageView ? { background: "rgba(52, 211, 153, 0.15)", borderColor: "rgba(52, 211, 153, 0.4)" } : {}}
+                    title="Toggle iMessage chat view"
+                >
+                    <Smartphone size={14} /> iMessage
                 </button>
                 <div className="eh-header-meta">
                     <span className="count">{total.toLocaleString()} results</span>
@@ -1166,6 +1224,38 @@ export default function EvidenceHubPage() {
                         <div className="eh-empty">
                             <Search size={40} />
                             <p>No evidence found. Try adjusting your search or filters.</p>
+                        </div>
+                    ) : iMessageView && searchMode === "official_chatdb" ? (
+                        /* ── iMessage Bubble View ── */
+                        <div className="imsg-thread">
+                            {(() => {
+                                let lastDate = "";
+                                return results.map((item: any) => {
+                                    const ts = item.start_timestamp;
+                                    const dateLabel = ts ? new Date(ts).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
+                                    const timeLabel = ts ? new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+                                    const showDateSep = dateLabel !== lastDate;
+                                    if (showDateSep) lastDate = dateLabel;
+                                    const isMe = item.is_from_me === 1;
+                                    return (
+                                        <React.Fragment key={item.id}>
+                                            {showDateSep && <div className="imsg-time-sep">{dateLabel}</div>}
+                                            <div
+                                                className={`imsg-row ${isMe ? "me" : "them"} ${selectedId === item.id ? "selected" : ""}`}
+                                                onClick={() => fetchDetail(item.id, "imessage")}
+                                            >
+                                                <div>
+                                                    <div className="imsg-sender">{isMe ? "JZ" : (item.handle_id || "?")}</div>
+                                                    <div className="imsg-bubble">
+                                                        {item.preview || <span className="imsg-empty-body">[attachment]</span>}
+                                                    </div>
+                                                    <div className="imsg-time-hover">{timeLabel}</div>
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                    );
+                                });
+                            })()}
                         </div>
                     ) : (
                         results.map((item) => {
