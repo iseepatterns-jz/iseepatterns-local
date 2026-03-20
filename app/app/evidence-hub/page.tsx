@@ -126,12 +126,27 @@ const parseTags = (tags: string): string[] => {
     catch { return []; }
 };
 
+/* ─── Player Profiles ─── */
+const PLAYER_PROFILES = [
+    {
+        id: "jz", name: "JZ", fullName: "Joseph Zangrilli",
+        color: "#0b84fe",
+        identifiers: ["+17736109104", "joe@rowboatcreative.com", "jfzangrilli@gmail.com"]
+    },
+    {
+        id: "lg", name: "LG", fullName: "Lucas Guariglia",
+        color: "#f59e0b",
+        identifiers: ["+18478280944", "lucas@rowboatcreative.com", "lucasideas@gmail.com", "lucas@allworldagency.com", "lucas@allworldmerch.com", "luke@joefreshgoods.com"]
+    },
+];
+
 /* ─── component ─── */
 export default function EvidenceHubPage() {
     const [query, setQuery] = useState("");
     const [sourceFilter, setSourceFilter] = useState("");
     const [tagFilter, setTagFilter] = useState("");
-    const [participantFilter, setParticipantFilter] = useState("");
+    const [participantFilter, setParticipantFilter] = useState<string[]>([]);
+    const [participantDropdownOpen, setParticipantDropdownOpen] = useState(false);
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
     const [page, setPage] = useState(1);
@@ -254,7 +269,7 @@ export default function EvidenceHubPage() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     conversation_id: convId,
-                    participant: participantFilter || undefined,
+                    participant: participantFilter.length ? participantFilter.flatMap(id => PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []).join(",") : undefined,
                     date_from: dateFrom || undefined,
                     date_to: dateTo || undefined,
                     q: query || undefined,
@@ -263,7 +278,7 @@ export default function EvidenceHubPage() {
             await fetchConversations();
             if (activeConversation === convId) loadConversation(convId);
         } catch (e) { console.error("bulk add err:", e); }
-    }, [fetchConversations, activeConversation, participantFilter, dateFrom, dateTo, query]);
+    }, [fetchConversations, activeConversation, participantFilter.join(), dateFrom, dateTo, query]);
 
     const loadConversation = useCallback(async (id: number) => {
         setConvLoading(true);
@@ -314,7 +329,10 @@ export default function EvidenceHubPage() {
             if (query) params.set("q", query);
             if (sourceFilter) params.set("source_type", sourceFilter);
             if (tagFilter) params.set("tag", tagFilter);
-            if (participantFilter) params.set("participant", participantFilter);
+            if (participantFilter.length) {
+                const allIds = participantFilter.flatMap(id => PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []);
+                params.set("participant", allIds.join(","));
+            }
             if (dateFrom) params.set("date_from", dateFrom);
             if (dateTo) params.set("date_to", dateTo);
             const res = await fetch(`/api/evidence-hub?${params}`);
@@ -328,7 +346,7 @@ export default function EvidenceHubPage() {
         } finally {
             setLoading(false);
         }
-    }, [query, sourceFilter, tagFilter, participantFilter, dateFrom, dateTo, page]);
+    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page]);
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
@@ -480,11 +498,11 @@ export default function EvidenceHubPage() {
 
     const clearFilters = () => {
         setQuery(""); setSourceFilter(""); setTagFilter("");
-        setParticipantFilter(""); setDateFrom(""); setDateTo("");
+        setParticipantFilter([]); setDateFrom(""); setDateTo("");
         setPage(1);
     };
 
-    const hasFilters = query || sourceFilter || tagFilter || participantFilter || dateFrom || dateTo;
+    const hasFilters = query || sourceFilter || tagFilter || participantFilter.length > 0 || dateFrom || dateTo;
 
     return (
         <div className="evidence-hub-page">
@@ -990,6 +1008,42 @@ export default function EvidenceHubPage() {
                     outline: 2px solid #22d3ee; outline-offset: 2px;
                 }
                 .imsg-empty-body { color: #4b5563; font-style: italic; }
+
+                /* ── Participant Multi-Select ── */
+                .participant-select {
+                    display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+                    min-width: 180px; min-height: 30px; padding: 4px 8px;
+                    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+                    border-radius: 6px; cursor: pointer; font-size: 12px;
+                }
+                .participant-select:hover { border-color: rgba(139,92,246,0.4); }
+                .participant-chip {
+                    display: inline-flex; align-items: center; gap: 4px;
+                    padding: 2px 8px; border-radius: 12px; font-size: 11px;
+                    font-weight: 600; border: 1px solid;
+                }
+                .participant-chip button {
+                    background: none; border: none; color: inherit; cursor: pointer;
+                    font-size: 14px; padding: 0; line-height: 1; opacity: 0.7;
+                }
+                .participant-chip button:hover { opacity: 1; }
+                .participant-dropdown {
+                    position: absolute; top: 100%; left: 0; right: 0;
+                    background: #1e293b; border: 1px solid rgba(255,255,255,0.15);
+                    border-radius: 8px; padding: 4px; z-index: 100;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.5); min-width: 260px;
+                    margin-top: 4px;
+                }
+                .participant-option {
+                    display: flex; align-items: center; gap: 8px;
+                    padding: 8px 10px; border-radius: 6px; cursor: pointer;
+                    transition: background 0.1s;
+                }
+                .participant-option:hover { background: rgba(255,255,255,0.08); }
+                .participant-option.selected { background: rgba(52,211,153,0.1); }
+                .participant-dot {
+                    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+                }
             `}</style>
 
             {/* ─── Header ─── */}
@@ -1078,7 +1132,7 @@ export default function EvidenceHubPage() {
                     </button>
                 )}
                 {/* Bulk add button — shown when filtering + conversations exist */}
-                {conversations.length > 0 && (sourceFilter || participantFilter || dateFrom || dateTo || query) && !activeConversation && (
+                {conversations.length > 0 && (sourceFilter || participantFilter.length > 0 || dateFrom || dateTo || query) && !activeConversation && (
                     <div style={{ position: "relative", marginLeft: "auto" }}>
                         <button
                             className="eh-btn"
@@ -1118,12 +1172,52 @@ export default function EvidenceHubPage() {
                             style={{ width: 120 }}
                         />
                     </label>
-                    <label>Participant:
-                        <input type="text" placeholder="email or phone"
-                            value={participantFilter} onChange={(e) => { setParticipantFilter(e.target.value); setPage(1); }}
-                            style={{ width: 160 }}
-                        />
-                    </label>
+                    <div style={{ position: "relative" }}>
+                        <label>Participants:</label>
+                        <div
+                            className="participant-select"
+                            onClick={() => setParticipantDropdownOpen(!participantDropdownOpen)}
+                        >
+                            {participantFilter.length === 0 ? (
+                                <span style={{ color: "#6b7280", fontSize: 12 }}>Select players…</span>
+                            ) : (
+                                participantFilter.map(id => {
+                                    const p = PLAYER_PROFILES.find(pp => pp.id === id);
+                                    return p ? (
+                                        <span key={id} className="participant-chip" style={{ background: `${p.color}30`, borderColor: `${p.color}60`, color: p.color }}>
+                                            {p.name}
+                                            <button onClick={(e) => { e.stopPropagation(); setParticipantFilter(prev => prev.filter(x => x !== id)); setPage(1); }}>×</button>
+                                        </span>
+                                    ) : null;
+                                })
+                            )}
+                            <ChevronDown size={12} style={{ marginLeft: "auto", opacity: 0.5 }} />
+                        </div>
+                        {participantDropdownOpen && (
+                            <div className="participant-dropdown">
+                                {PLAYER_PROFILES.map(p => {
+                                    const selected = participantFilter.includes(p.id);
+                                    return (
+                                        <div
+                                            key={p.id}
+                                            className={`participant-option ${selected ? "selected" : ""}`}
+                                            onClick={() => {
+                                                setParticipantFilter(prev => selected ? prev.filter(x => x !== p.id) : [...prev, p.id]);
+                                                setPage(1);
+                                            }}
+                                        >
+                                            <span className="participant-dot" style={{ background: p.color }} />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontWeight: 600, fontSize: 13 }}>{p.name} <span style={{ fontWeight: 400, color: "#9ca3af", fontSize: 11 }}>({p.fullName})</span></div>
+                                                <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>{p.identifiers.slice(0, 3).join(", ")}{p.identifiers.length > 3 ? ` +${p.identifiers.length - 3}` : ""}</div>
+                                            </div>
+                                            {selected && <span style={{ color: "#34d399" }}>✓</span>}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
                     <label>From:
                         <input type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} />
                     </label>
@@ -1511,7 +1605,11 @@ export default function EvidenceHubPage() {
                                                         <li key={i}>
                                                             <span
                                                                 style={{ cursor: "pointer", textDecoration: "underline", textDecorationColor: "#475569" }}
-                                                                onClick={() => { setParticipantFilter(p.normalized_identifier); setPage(1); setShowFilters(true); }}
+                                                                onClick={() => {
+                                                                    const match = PLAYER_PROFILES.find(pp => pp.identifiers.some(ident => (p.normalized_identifier || p.identifier).includes(ident) || ident.includes(p.normalized_identifier || p.identifier)));
+                                                                    if (match) { setParticipantFilter(prev => prev.includes(match.id) ? prev : [...prev, match.id]); }
+                                                                    setPage(1); setShowFilters(true);
+                                                                }}
                                                             >
                                                                 {p.normalized_identifier || p.identifier}
                                                             </span>

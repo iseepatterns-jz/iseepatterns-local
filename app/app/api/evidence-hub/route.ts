@@ -179,14 +179,25 @@ export async function GET(request: NextRequest) {
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
-            // Participant filter — find matching handle and restrict to their chats
+            // Participant filter — find matching handle(s) and restrict to their chats
             if (participant) {
-                chatWhere += ` AND cmj.chat_id IN (
-                    SELECT chj.chat_id FROM chat_handle_join chj
-                    JOIN handle h ON h.ROWID = chj.handle_id
-                    WHERE h.id LIKE ?
-                )`;
-                chatParams.push(`%${participant}%`);
+                const ids = participant.split(",").map((s: string) => s.trim()).filter(Boolean);
+                if (ids.length === 1) {
+                    chatWhere += ` AND cmj.chat_id IN (
+                        SELECT chj.chat_id FROM chat_handle_join chj
+                        JOIN handle h ON h.ROWID = chj.handle_id
+                        WHERE h.id LIKE ?
+                    )`;
+                    chatParams.push(`%${ids[0]}%`);
+                } else if (ids.length > 1) {
+                    const placeholders = ids.map(() => "h.id LIKE ?").join(" OR ");
+                    chatWhere += ` AND cmj.chat_id IN (
+                        SELECT chj.chat_id FROM chat_handle_join chj
+                        JOIN handle h ON h.ROWID = chj.handle_id
+                        WHERE ${placeholders}
+                    )`;
+                    ids.forEach(id => chatParams.push(`%${id}%`));
+                }
             }
 
             // Date filters using Apple Cocoa timestamp conversion
@@ -265,12 +276,23 @@ export async function GET(request: NextRequest) {
             params.push(dateTo);
         }
         if (participant) {
-            where += ` AND e.id IN (
-                SELECT ep.evidence_id FROM evidence_participants ep
-                JOIN participants p ON p.id = ep.participant_id
-                WHERE p.normalized_identifier LIKE ?
-            )`;
-            params.push(`%${participant}%`);
+            const ids = participant.split(",").map((s: string) => s.trim()).filter(Boolean);
+            if (ids.length === 1) {
+                where += ` AND e.id IN (
+                    SELECT ep.evidence_id FROM evidence_participants ep
+                    JOIN participants p ON p.id = ep.participant_id
+                    WHERE p.normalized_identifier LIKE ?
+                )`;
+                params.push(`%${ids[0]}%`);
+            } else if (ids.length > 1) {
+                const placeholders = ids.map(() => "p.normalized_identifier LIKE ?").join(" OR ");
+                where += ` AND e.id IN (
+                    SELECT ep.evidence_id FROM evidence_participants ep
+                    JOIN participants p ON p.id = ep.participant_id
+                    WHERE ${placeholders}
+                )`;
+                ids.forEach(id => params.push(`%${id}%`));
+            }
         }
         if (q) {
             where += " AND (e.title LIKE ? OR e.summary LIKE ? OR e.body_snippet LIKE ?)";
