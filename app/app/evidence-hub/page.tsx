@@ -179,6 +179,14 @@ export default function EvidenceHubPage() {
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
 
+    // ── Toast notifications ──
+    const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null);
+    const [pendingDeleteConv, setPendingDeleteConv] = useState<number | null>(null);
+    const showToast = useCallback((msg: string, error = false) => {
+        setToast({ msg, error });
+        setTimeout(() => setToast(null), 3500);
+    }, []);
+
     // ── Resizable detail panel ──
     const [detailWidth, setDetailWidth] = useState(420);
     const [isDragging, setIsDragging] = useState(false);
@@ -246,8 +254,9 @@ export default function EvidenceHubPage() {
                 await fetchConversations();
                 setNewConvName("");
                 setShowCreateConv(false);
+                showToast(`✅ Playlist "${name.trim()}" created`);
             }
-        } catch (e) { console.error("create conv err:", e); }
+        } catch (e) { console.error("create conv err:", e); showToast("❌ Failed to create playlist", true); }
     }, [fetchConversations]);
 
     const addToConversation = useCallback(async (convId: number, rowids: number[]) => {
@@ -259,7 +268,8 @@ export default function EvidenceHubPage() {
             });
             await fetchConversations();
             if (activeConversation === convId) loadConversation(convId);
-        } catch (e) { console.error("add to conv err:", e); }
+            showToast(`✅ Added to playlist`);
+        } catch (e) { console.error("add to conv err:", e); showToast("❌ Failed to add", true); }
     }, [fetchConversations, activeConversation]);
 
     const bulkAddToConversation = useCallback(async (convId: number) => {
@@ -277,7 +287,8 @@ export default function EvidenceHubPage() {
             });
             await fetchConversations();
             if (activeConversation === convId) loadConversation(convId);
-        } catch (e) { console.error("bulk add err:", e); }
+            showToast(`✅ Bulk-added messages to playlist`);
+        } catch (e) { console.error("bulk add err:", e); showToast("❌ Bulk add failed", true); }
     }, [fetchConversations, activeConversation, participantFilter.join(), dateFrom, dateTo, query]);
 
     const loadConversation = useCallback(async (id: number) => {
@@ -299,11 +310,11 @@ export default function EvidenceHubPage() {
             });
             await fetchConversations();
             if (activeConversation === convId) loadConversation(convId);
-        } catch (e) { console.error("remove from conv err:", e); }
+            showToast(`✅ Removed from playlist`);
+        } catch (e) { console.error("remove from conv err:", e); showToast("❌ Failed to remove", true); }
     }, [fetchConversations, activeConversation, loadConversation]);
 
-    const deleteConversation = useCallback(async (id: number) => {
-        if (!confirm("Delete this conversation playlist?")) return;
+    const confirmDeleteConversation = useCallback(async (id: number) => {
         try {
             await fetch(`/api/conversations?id=${id}`, { method: "DELETE" });
             if (activeConversation === id) {
@@ -311,8 +322,10 @@ export default function EvidenceHubPage() {
                 setConvMessages([]);
             }
             await fetchConversations();
-        } catch (e) { console.error("delete conv err:", e); }
-    }, [fetchConversations, activeConversation]);
+            showToast(`🗑️ Playlist deleted`);
+        } catch (e) { console.error("delete conv err:", e); showToast("❌ Delete failed", true); }
+        setPendingDeleteConv(null);
+    }, [fetchConversations, activeConversation, showToast]);
 
     // Load conversations on mount
     useEffect(() => { fetchConversations(); }, [fetchConversations]);
@@ -1106,7 +1119,7 @@ export default function EvidenceHubPage() {
                         {activeConversation === c.id && (
                             <button
                                 style={{ background: "none", border: "none", cursor: "pointer", padding: 0, marginLeft: 2 }}
-                                onClick={(e) => { e.stopPropagation(); deleteConversation(c.id); }}
+                                onClick={(e) => { e.stopPropagation(); setPendingDeleteConv(c.id); }}
                                 title="Delete playlist"
                             >
                                 <Trash2 size={10} color="#ef4444" />
@@ -1789,6 +1802,56 @@ export default function EvidenceHubPage() {
                     </button>
                 </div>
             </div>
+
+            {/* ═══ Toast Popup ═══ */}
+            {toast && (
+                <div style={{
+                    position: "fixed", top: 24, right: 24, zIndex: 9999,
+                    padding: "10px 18px", borderRadius: 8,
+                    background: toast.error ? "#ef4444" : "#10b981",
+                    color: "#fff", fontSize: "0.8125rem", fontWeight: 600,
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                    animation: "fadeIn .2s",
+                }}>
+                    {toast.msg}
+                </div>
+            )}
+
+            {/* ═══ Delete Confirmation Modal ═══ */}
+            {pendingDeleteConv !== null && (
+                <div style={{
+                    position: "fixed", inset: 0, zIndex: 9998,
+                    background: "rgba(0,0,0,0.5)", display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                }} onClick={() => setPendingDeleteConv(null)}>
+                    <div style={{
+                        background: "#1e293b", borderRadius: 12, padding: "24px 28px",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 8px 32px rgba(0,0,0,0.5)", maxWidth: 360,
+                    }} onClick={e => e.stopPropagation()}>
+                        <div style={{ fontSize: "0.9375rem", fontWeight: 700, marginBottom: 8, color: "#fff" }}>
+                            Delete Playlist?
+                        </div>
+                        <p style={{ fontSize: "0.8125rem", color: "#94a3b8", margin: "0 0 18px", lineHeight: 1.5 }}>
+                            This will permanently delete the playlist and all its message assignments. The original messages remain untouched.
+                        </p>
+                        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                            <button onClick={() => setPendingDeleteConv(null)}
+                                style={{
+                                    background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
+                                    color: "#fff", borderRadius: 6, padding: "6px 16px",
+                                    fontSize: "0.8rem", fontWeight: 600, cursor: "pointer",
+                                }}>Cancel</button>
+                            <button onClick={() => pendingDeleteConv !== null && confirmDeleteConversation(pendingDeleteConv)}
+                                style={{
+                                    background: "#ef4444", border: "none",
+                                    color: "#fff", borderRadius: 6, padding: "6px 16px",
+                                    fontSize: "0.8rem", fontWeight: 700, cursor: "pointer",
+                                }}>Delete</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
