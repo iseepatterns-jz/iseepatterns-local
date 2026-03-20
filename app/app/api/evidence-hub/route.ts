@@ -179,29 +179,14 @@ export async function GET(request: NextRequest) {
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
-            // Contact filter — restrict to chats where ONLY the selected contact(s) are handles
-            // This excludes group chats that include third parties
+            // Contact filter — filter by the message's own handle_id directly
+            // In iMessage, m.handle_id always points to the other person in the conversation
+            // This is far more reliable than filtering by chat_handle_join
             if (participant) {
                 const groups = participant.split("|").map(g => g.split(",").map((s: string) => s.trim()).filter(Boolean)).filter(g => g.length > 0);
-                // Collect ALL identifiers across all selected contacts
                 const allIds = groups.flat();
-                const matchPlaceholders = allIds.map(() => "h.id LIKE ?").join(" OR ");
-                const excludePlaceholders = allIds.map(() => "h.id LIKE ?").join(" OR ");
-
-                // Chat must have at least one matching handle
-                chatWhere += ` AND cmj.chat_id IN (
-                    SELECT chj.chat_id FROM chat_handle_join chj
-                    JOIN handle h ON h.ROWID = chj.handle_id
-                    WHERE ${matchPlaceholders}
-                )`;
-                allIds.forEach(id => chatParams.push(`%${id}%`));
-
-                // Chat must NOT have any handles that AREN'T the selected contact(s)
-                chatWhere += ` AND cmj.chat_id NOT IN (
-                    SELECT chj.chat_id FROM chat_handle_join chj
-                    JOIN handle h ON h.ROWID = chj.handle_id
-                    WHERE NOT (${excludePlaceholders})
-                )`;
+                const placeholders = allIds.map(() => "h.id LIKE ?").join(" OR ");
+                chatWhere += ` AND (${placeholders})`;
                 allIds.forEach(id => chatParams.push(`%${id}%`));
             }
 
