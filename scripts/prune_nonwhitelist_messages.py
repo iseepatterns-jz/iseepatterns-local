@@ -18,8 +18,11 @@ PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 CHAT_MASTER  = PROJECT_ROOT / "data" / "chat_master.db"
 
 WHITELIST_HANDLES = {
-    # Joseph Zangrilli (Owner)
-    "+17736109104", "joe@rowboatcreative.com",
+    # NOTE: JZ's own identifiers (+17736109104, joe@rowboatcreative.com) are
+    # intentionally EXCLUDED — they appear in every chat, so including them
+    # would whitelist ALL conversations.  The whitelist defines which OTHER
+    # parties are relevant to the dispute.
+    #
     # Lucas Guariglia
     "+18478280944", "lucas@rowboatcreative.com",
     # Suzanne Guariglia
