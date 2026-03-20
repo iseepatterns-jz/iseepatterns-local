@@ -1371,7 +1371,7 @@ export default function EvidenceHubPage() {
                                 return results.map((item: any, i: number) => {
                                     const ts = item.start_timestamp;
                                     const dateLabel = ts ? new Date(ts).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
-                                    const timeLabel = ts ? new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+                                    const timeLabel = ts ? new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" }) : "";
                                     const showDateSep = dateLabel !== lastDate;
                                     if (showDateSep) lastDate = dateLabel;
                                     const isMe = item.is_from_me === 1;
