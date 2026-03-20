@@ -198,9 +198,15 @@ export default function EvidenceHubPage() {
             const res = await fetch(`/api/evidence-hub?${params}`);
             const data = await res.json();
             setDetail(data);
-            // Fetch annotations and CoC in parallel
-            fetchAnnotations(id);
-            fetchCoC(id);
+            // For iMessage items, provenance comes with detail response;
+            // separate fetch would hit evidence_hub.db with wrong ROWID
+            if (itemSourceType === "imessage") {
+                setCocData(null);
+                setAnnotations([]);
+            } else {
+                fetchAnnotations(id);
+                fetchCoC(id);
+            }
         } catch (err) {
             console.error("detail error:", err);
         } finally {

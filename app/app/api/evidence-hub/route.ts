@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
                         'imessage' as source_type,
                         'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
                             ELSE COALESCE(h.id, 'Unknown') END as title,
-                        m.text as body_snippet,
-                        m.text as summary,
+                        COALESCE(m.text, m.decodedBody) as body_snippet,
+                        COALESCE(m.text, m.decodedBody) as summary,
                         datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
                         '["chat", "key_players"]' as tags,
                         m.is_from_me,
@@ -202,7 +202,7 @@ export async function GET(request: NextRequest) {
 
             // Text search
             if (q) {
-                chatWhere += " AND m.text LIKE ?";
+                chatWhere += " AND COALESCE(m.text, m.decodedBody) LIKE ?";
                 chatParams.push(`%${q}%`);
             }
 
@@ -213,8 +213,8 @@ export async function GET(request: NextRequest) {
                     'imessage' as source_type,
                     'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
                         ELSE COALESCE(h.id, 'Unknown') END as title,
-                    substr(m.text, 1, 100) as summary,
-                    m.text as preview,
+                    substr(COALESCE(m.text, m.decodedBody), 1, 100) as summary,
+                    COALESCE(m.text, m.decodedBody) as preview,
                     datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
                     '["chat", "key_players"]' as tags
                 FROM message m
