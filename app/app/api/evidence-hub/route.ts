@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         const mode = url.searchParams.get("mode") || "list"; // list | stats | detail
         const evidenceId = url.searchParams.get("id") || "";
         const offset = (page - 1) * limit;
+        const sortDir = (url.searchParams.get("sort_dir") || "desc").toLowerCase() === "asc" ? "ASC" : "DESC";
 
         const db = getEvidenceHubDb();
         const chatDb = getImessageDb();
@@ -227,7 +228,7 @@ export async function GET(request: NextRequest) {
                 LEFT JOIN handle h ON h.ROWID = m.handle_id
                 ${chatWhere}
                 GROUP BY m.ROWID
-                ORDER BY m.date DESC
+                ORDER BY m.date ${sortDir}
                 LIMIT ? OFFSET ?
             `).all(...chatParams, limit, offset);
 

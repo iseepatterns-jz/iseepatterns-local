@@ -188,6 +188,7 @@ export default function EvidenceHubPage() {
 
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
+    const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
     // ── Toast notifications ──
     const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null);
@@ -371,6 +372,7 @@ export default function EvidenceHubPage() {
             }
             if (dateFrom) params.set("date_from", dateFrom);
             if (dateTo) params.set("date_to", dateTo);
+            params.set("sort_dir", sortDir);
             const res = await fetch(`/api/evidence-hub?${params}`);
             const data = await res.json();
             setResults(data.results || []);
@@ -382,7 +384,7 @@ export default function EvidenceHubPage() {
         } finally {
             setLoading(false);
         }
-    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page]);
+    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir]);
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
@@ -1117,6 +1119,14 @@ export default function EvidenceHubPage() {
                     title="Toggle iMessage chat view"
                 >
                     <Smartphone size={14} /> iMessage
+                </button>
+                <button
+                    className="eh-btn"
+                    onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
+                    title={sortDir === "asc" ? "Showing oldest first" : "Showing newest first"}
+                    style={{ minWidth: 80 }}
+                >
+                    {sortDir === "asc" ? "↑ Oldest" : "↓ Newest"}
                 </button>
                 <div className="eh-header-meta">
                     <span className="count">{total.toLocaleString()} results</span>
