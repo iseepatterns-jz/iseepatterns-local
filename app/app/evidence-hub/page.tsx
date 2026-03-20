@@ -195,6 +195,114 @@ export default function EvidenceHubPage() {
             document.body.style.cursor = "";
         };
     }, [isDragging]);
+
+    // ── Conversation Playlists ──
+    interface Conversation { id: number; name: string; description: string | null; color: string; message_count: number; created_at: string; updated_at: string }
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [activeConversation, setActiveConversation] = useState<number | null>(null);
+    const [convMessages, setConvMessages] = useState<any[]>([]);
+    const [showConvPicker, setShowConvPicker] = useState(false);
+    const [showCreateConv, setShowCreateConv] = useState(false);
+    const [newConvName, setNewConvName] = useState("");
+    const [convLoading, setConvLoading] = useState(false);
+
+    const fetchConversations = useCallback(async () => {
+        try {
+            const res = await fetch("/api/conversations");
+            const data = await res.json();
+            setConversations(data.conversations || []);
+        } catch (e) { console.error("fetch conversations err:", e); }
+    }, []);
+
+    const createConversation = useCallback(async (name: string) => {
+        if (!name.trim()) return;
+        try {
+            const res = await fetch("/api/conversations?action=create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name.trim() }),
+            });
+            const data = await res.json();
+            if (data.id) {
+                await fetchConversations();
+                setNewConvName("");
+                setShowCreateConv(false);
+            }
+        } catch (e) { console.error("create conv err:", e); }
+    }, [fetchConversations]);
+
+    const addToConversation = useCallback(async (convId: number, rowids: number[]) => {
+        try {
+            await fetch("/api/conversations?action=add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ conversation_id: convId, message_rowids: rowids }),
+            });
+            await fetchConversations();
+            if (activeConversation === convId) loadConversation(convId);
+        } catch (e) { console.error("add to conv err:", e); }
+    }, [fetchConversations, activeConversation]);
+
+    const bulkAddToConversation = useCallback(async (convId: number) => {
+        try {
+            await fetch("/api/conversations?action=bulk", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    conversation_id: convId,
+                    participant: participantFilter || undefined,
+                    date_from: dateFrom || undefined,
+                    date_to: dateTo || undefined,
+                    q: query || undefined,
+                }),
+            });
+            await fetchConversations();
+            if (activeConversation === convId) loadConversation(convId);
+        } catch (e) { console.error("bulk add err:", e); }
+    }, [fetchConversations, activeConversation, participantFilter, dateFrom, dateTo, query]);
+
+    const loadConversation = useCallback(async (id: number) => {
+        setConvLoading(true);
+        try {
+            const res = await fetch(`/api/conversations?id=${id}`);
+            const data = await res.json();
+            setConvMessages(data.messages || []);
+        } catch (e) { console.error("load conv err:", e); }
+        setConvLoading(false);
+    }, []);
+
+    const removeFromConversation = useCallback(async (convId: number, rowids: number[]) => {
+        try {
+            await fetch("/api/conversations?action=remove", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ conversation_id: convId, message_rowids: rowids }),
+            });
+            await fetchConversations();
+            if (activeConversation === convId) loadConversation(convId);
+        } catch (e) { console.error("remove from conv err:", e); }
+    }, [fetchConversations, activeConversation, loadConversation]);
+
+    const deleteConversation = useCallback(async (id: number) => {
+        if (!confirm("Delete this conversation playlist?")) return;
+        try {
+            await fetch(`/api/conversations?id=${id}`, { method: "DELETE" });
+            if (activeConversation === id) {
+                setActiveConversation(null);
+                setConvMessages([]);
+            }
+            await fetchConversations();
+        } catch (e) { console.error("delete conv err:", e); }
+    }, [fetchConversations, activeConversation]);
+
+    // Load conversations on mount
+    useEffect(() => { fetchConversations(); }, [fetchConversations]);
+
+    // Load conversation messages when active changes
+    useEffect(() => {
+        if (activeConversation) loadConversation(activeConversation);
+    }, [activeConversation, loadConversation]);
+
     const fetchResults = useCallback(async () => {
         setLoading(true);
         try {
@@ -764,6 +872,74 @@ export default function EvidenceHubPage() {
                     cursor: text; user-select: text;
                 }
                 .eh-detail-body-selectable::selection { background: rgba(251, 191, 36, 0.3); }
+
+                /* ── Conversation Playlists ── */
+                .eh-conv-bar {
+                    display: flex; align-items: center; gap: 8px; padding: 8px 20px;
+                    background: rgba(15, 23, 42, 0.4); border-bottom: 1px solid rgba(71, 85, 105, 0.2);
+                    flex-wrap: wrap;
+                }
+                .eh-conv-bar .conv-label {
+                    font-size: 11px; color: #64748b; text-transform: uppercase;
+                    letter-spacing: 0.05em; font-weight: 600; display: flex; align-items: center; gap: 4px;
+                }
+                .eh-conv-bar .conv-pill {
+                    display: inline-flex; align-items: center; gap: 6px;
+                    padding: 4px 10px; border-radius: 16px; font-size: 12px;
+                    cursor: pointer; transition: all 0.15s; border: 1px solid rgba(71, 85, 105, 0.3);
+                    background: rgba(30, 41, 59, 0.5); color: #cbd5e1;
+                }
+                .eh-conv-bar .conv-pill:hover { background: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.3); }
+                .eh-conv-bar .conv-pill.active { background: rgba(96, 165, 250, 0.15); border-color: #60a5fa; color: #60a5fa; }
+                .eh-conv-bar .conv-pill .conv-count {
+                    font-size: 10px; background: rgba(96, 165, 250, 0.2); color: #60a5fa;
+                    padding: 1px 6px; border-radius: 8px;
+                }
+                .eh-conv-bar .conv-pill .conv-dot {
+                    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+                }
+                .eh-conv-bar .conv-create-form {
+                    display: flex; gap: 4px; align-items: center;
+                }
+                .eh-conv-bar .conv-create-form input {
+                    background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(71, 85, 105, 0.3);
+                    border-radius: 6px; padding: 4px 8px; font-size: 12px; color: #e2e8f0;
+                    outline: none; width: 160px;
+                }
+                .eh-conv-bar .conv-create-form input:focus { border-color: #60a5fa; }
+
+                .eh-conv-dropdown {
+                    position: absolute; top: 100%; right: 0; z-index: 50;
+                    background: #1e293b; border: 1px solid rgba(71, 85, 105, 0.4);
+                    border-radius: 8px; padding: 4px; min-width: 200px;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                }
+                .eh-conv-dropdown button {
+                    display: flex; align-items: center; gap: 8px; width: 100%;
+                    padding: 8px 10px; border: none; background: none;
+                    color: #cbd5e1; font-size: 12px; cursor: pointer; border-radius: 6px;
+                    text-align: left;
+                }
+                .eh-conv-dropdown button:hover { background: rgba(96, 165, 250, 0.1); color: #60a5fa; }
+
+                /* ── Conversation view in list area ── */
+                .eh-conv-view { padding: 12px 20px; }
+                .eh-conv-msg {
+                    padding: 10px 14px; margin-bottom: 6px;
+                    border-radius: 8px; background: rgba(30, 41, 59, 0.5);
+                    border: 1px solid rgba(71, 85, 105, 0.2); font-size: 13px;
+                    display: flex; gap: 10px;
+                }
+                .eh-conv-msg .msg-meta { color: #64748b; font-size: 11px; white-space: nowrap; }
+                .eh-conv-msg .msg-body { color: #e2e8f0; flex: 1; line-height: 1.5; }
+                .eh-conv-msg .msg-from-me { text-align: right; }
+                .eh-conv-msg.from-me { background: rgba(96, 165, 250, 0.08); border-color: rgba(96, 165, 250, 0.2); }
+                .eh-conv-msg .msg-remove {
+                    background: none; border: none; color: #475569; cursor: pointer;
+                    padding: 2px; opacity: 0; transition: opacity 0.15s;
+                }
+                .eh-conv-msg:hover .msg-remove { opacity: 1; }
+                .eh-conv-msg .msg-remove:hover { color: #ef4444; }
             `}</style>
 
             {/* ─── Header ─── */}
@@ -796,6 +972,76 @@ export default function EvidenceHubPage() {
                     )}
                 </div>
             </header>
+
+            {/* ─── Conversation Playlist Bar ─── */}
+            <div className="eh-conv-bar">
+                <span className="conv-label"><Bookmark size={12} /> Playlists</span>
+                <span
+                    className={`conv-pill ${!activeConversation ? "active" : ""}`}
+                    onClick={() => { setActiveConversation(null); setConvMessages([]); }}
+                >
+                    All Messages
+                </span>
+                {conversations.map(c => (
+                    <span
+                        key={c.id}
+                        className={`conv-pill ${activeConversation === c.id ? "active" : ""}`}
+                        onClick={() => setActiveConversation(c.id)}
+                    >
+                        <span className="conv-dot" style={{ background: c.color }} />
+                        {c.name}
+                        <span className="conv-count">{c.message_count}</span>
+                        {activeConversation === c.id && (
+                            <button
+                                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, marginLeft: 2 }}
+                                onClick={(e) => { e.stopPropagation(); deleteConversation(c.id); }}
+                                title="Delete playlist"
+                            >
+                                <Trash2 size={10} color="#ef4444" />
+                            </button>
+                        )}
+                    </span>
+                ))}
+                {showCreateConv ? (
+                    <div className="conv-create-form">
+                        <input
+                            autoFocus
+                            placeholder="Playlist name…"
+                            value={newConvName}
+                            onChange={e => setNewConvName(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter") createConversation(newConvName); if (e.key === "Escape") setShowCreateConv(false); }}
+                        />
+                        <button className="eh-btn" onClick={() => createConversation(newConvName)} style={{ padding: "4px 8px" }}>✓</button>
+                        <button className="eh-btn" onClick={() => setShowCreateConv(false)} style={{ padding: "4px 8px" }}><X size={12} /></button>
+                    </div>
+                ) : (
+                    <button className="eh-btn" onClick={() => setShowCreateConv(true)} style={{ padding: "4px 8px" }}>
+                        <Plus size={12} /> New
+                    </button>
+                )}
+                {/* Bulk add button — shown when filtering + conversations exist */}
+                {conversations.length > 0 && (sourceFilter || participantFilter || dateFrom || dateTo || query) && !activeConversation && (
+                    <div style={{ position: "relative", marginLeft: "auto" }}>
+                        <button
+                            className="eh-btn"
+                            onClick={() => setShowConvPicker(!showConvPicker)}
+                            style={{ padding: "4px 10px" }}
+                        >
+                            <Plus size={12} /> Add {total} to playlist
+                        </button>
+                        {showConvPicker && (
+                            <div className="eh-conv-dropdown">
+                                {conversations.map(c => (
+                                    <button key={c.id} onClick={() => { bulkAddToConversation(c.id); setShowConvPicker(false); }}>
+                                        <span className="conv-dot" style={{ background: c.color, width: 8, height: 8, borderRadius: "50%", flexShrink: 0 }} />
+                                        {c.name}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
 
             {/* ─── Filters ─── */}
             {showFilters && (
@@ -881,7 +1127,40 @@ export default function EvidenceHubPage() {
             >
                 {/* ── List ── */}
                 <div className="eh-list">
-                    {loading ? (
+                    {/* Conversation view mode */}
+                    {activeConversation ? (
+                        convLoading ? (
+                            <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading playlist…</div>
+                        ) : convMessages.length === 0 ? (
+                            <div className="eh-empty">
+                                <Bookmark size={40} />
+                                <p>No messages in this playlist yet. Use filters to find messages, then add them.</p>
+                            </div>
+                        ) : (
+                            <div className="eh-conv-view">
+                                {convMessages.map((msg: any) => {
+                                    const dateObj = msg.raw_date ? new Date((msg.raw_date / 1e9 + 978307200) * 1000) : null;
+                                    const dateStr = dateObj ? dateObj.toLocaleString() : "";
+                                    return (
+                                        <div key={msg.rowid} className={`eh-conv-msg ${msg.is_from_me ? "from-me" : ""}`}>
+                                            <div className="msg-meta">
+                                                <div>{msg.is_from_me ? "JZ" : (msg.handle_id || "?")}</div>
+                                                <div>{dateStr}</div>
+                                            </div>
+                                            <div className="msg-body">{msg.body || "[no content]"}</div>
+                                            <button
+                                                className="msg-remove"
+                                                title="Remove from playlist"
+                                                onClick={() => removeFromConversation(activeConversation, [msg.rowid])}
+                                            >
+                                                <X size={12} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )
+                    ) : loading ? (
                         <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading…</div>
                     ) : results.length === 0 ? (
                         <div className="eh-empty">
@@ -960,6 +1239,32 @@ export default function EvidenceHubPage() {
                                         >
                                             <MessageCircle size={14} color="#a78bfa" /> <span style={{ color: "#a78bfa" }}>Ask AI</span>
                                         </button>
+                                        {/* Add to Playlist button */}
+                                        {conversations.length > 0 && detail.evidence.source_type === "imessage" && (
+                                            <div style={{ position: "relative" }}>
+                                                <button
+                                                    className="eh-btn"
+                                                    onClick={() => setShowConvPicker(prev => !prev)}
+                                                    title="Add to playlist"
+                                                    style={{ padding: "4px 8px", background: "rgba(52, 211, 153, 0.1)", borderColor: "rgba(52, 211, 153, 0.3)" }}
+                                                >
+                                                    <Plus size={14} color="#34d399" /> <span style={{ color: "#34d399" }}>Playlist</span>
+                                                </button>
+                                                {showConvPicker && (
+                                                    <div className="eh-conv-dropdown" style={{ top: "110%", left: 0 }}>
+                                                        {conversations.map(c => (
+                                                            <button key={c.id} onClick={() => {
+                                                                addToConversation(c.id, [detail.evidence.id]);
+                                                                setShowConvPicker(false);
+                                                            }}>
+                                                                <span style={{ width: 8, height: 8, borderRadius: "50%", background: c.color, flexShrink: 0 }} />
+                                                                {c.name} <span style={{ color: "#64748b", fontSize: 10 }}>({c.message_count})</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                     <button className="eh-btn" onClick={() => { setSelectedId(null); setDetail(null); setHighlightPopup(null); }} style={{ padding: "4px 8px" }}>
                                         <X size={14} />
