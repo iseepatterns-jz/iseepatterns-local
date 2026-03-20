@@ -4,7 +4,7 @@ import {
     Search, Filter, ChevronLeft, ChevronRight, Mail, MessageSquare, Shield,
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
-    Archive, HardDrive, ChevronDown, MessageCircle, Bookmark
+    Archive, HardDrive, ChevronDown, MessageCircle, Bookmark, GripVertical
 } from "lucide-react";
 
 /* ─── types ─── */
@@ -160,7 +160,41 @@ export default function EvidenceHubPage() {
     const [aiLoading, setAiLoading] = useState(false);
     const bodyRef = useRef<HTMLDivElement>(null);
 
-    /* ─── fetch list ─── */
+    // ── Resizable detail panel ──
+    const [detailWidth, setDetailWidth] = useState(420);
+    const [isDragging, setIsDragging] = useState(false);
+    const dragRef = useRef<{ startX: number; startWidth: number } | null>(null);
+
+    const handleResizeStart = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        dragRef.current = { startX: e.clientX, startWidth: detailWidth };
+        setIsDragging(true);
+    }, [detailWidth]);
+
+    useEffect(() => {
+        if (!isDragging) return;
+        const onMove = (e: MouseEvent) => {
+            if (!dragRef.current) return;
+            const delta = dragRef.current.startX - e.clientX;
+            const newWidth = Math.min(800, Math.max(300, dragRef.current.startWidth + delta));
+            setDetailWidth(newWidth);
+        };
+        const onUp = () => {
+            setIsDragging(false);
+            dragRef.current = null;
+        };
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+        // Prevent text selection during drag
+        document.body.style.userSelect = "none";
+        document.body.style.cursor = "col-resize";
+        return () => {
+            document.removeEventListener("mousemove", onMove);
+            document.removeEventListener("mouseup", onUp);
+            document.body.style.userSelect = "";
+            document.body.style.cursor = "";
+        };
+    }, [isDragging]);
     const fetchResults = useCallback(async () => {
         setLoading(true);
         try {
@@ -463,10 +497,41 @@ export default function EvidenceHubPage() {
                 .eh-main {
                     flex: 1;
                     display: grid;
-                    grid-template-columns: 1fr 420px;
                     overflow: hidden;
+                    position: relative;
                 }
                 .eh-main.no-detail { grid-template-columns: 1fr; }
+
+                /* ── Resize handle ── */
+                .eh-resize-handle {
+                    width: 6px;
+                    cursor: col-resize;
+                    background: transparent;
+                    position: relative;
+                    z-index: 10;
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background 0.15s;
+                }
+                .eh-resize-handle::after {
+                    content: '';
+                    width: 2px;
+                    height: 40px;
+                    background: rgba(71, 85, 105, 0.4);
+                    border-radius: 2px;
+                    transition: background 0.15s, height 0.15s;
+                }
+                .eh-resize-handle:hover::after,
+                .eh-resize-handle.dragging::after {
+                    background: #00ffff;
+                    height: 60px;
+                }
+                .eh-resize-handle:hover,
+                .eh-resize-handle.dragging {
+                    background: rgba(0, 255, 255, 0.05);
+                }
 
                 /* ── List panel ── */
                 .eh-list {
@@ -810,7 +875,10 @@ export default function EvidenceHubPage() {
             )}
 
             {/* ─── Main grid ─── */}
-            <div className={`eh-main ${selectedId ? "" : "no-detail"}`}>
+            <div
+                className={`eh-main ${selectedId ? "" : "no-detail"}`}
+                style={selectedId ? { gridTemplateColumns: `1fr auto ${detailWidth}px` } : undefined}
+            >
                 {/* ── List ── */}
                 <div className="eh-list">
                     {loading ? (
@@ -865,6 +933,14 @@ export default function EvidenceHubPage() {
                         })
                     )}
                 </div>
+
+                {/* ── Resize handle ── */}
+                {selectedId && (
+                    <div
+                        className={`eh-resize-handle ${isDragging ? "dragging" : ""}`}
+                        onMouseDown={handleResizeStart}
+                    />
+                )}
 
                 {/* ── Detail panel ── */}
                 {selectedId && (
