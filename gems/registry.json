@@ -126,9 +126,9 @@
       "outputs": {
         "databases": {
           "workbench.db": {
-            "location": "app/workbench.db (auto-created)",
-            "tables": ["accounts", "transactions"],
-            "schema": "schemas/financials.sql",
+            "location": "data/rowboat-creative/RC-2026/db/workbench.db",
+            "tables": ["master_transactions", "statement_transactions", "accounts", "import_sessions", "statement_files", "automatch_audit", "automatch_debug", "master_audit_log"],
+            "schema": "schemas/financial_import.sql",
             "access": "read-write"
           }
         }
@@ -177,7 +177,7 @@
       "outputs": {
         "databases": {
           "workbench.db": {
-            "location": "app/workbench.db",
+            "location": "data/rowboat-creative/RC-2026/db/workbench.db",
             "tables": ["tax_returns", "tax_k1_details"],
             "schema": "schemas/tax_returns.sql",
             "access": "read-write"
@@ -217,7 +217,7 @@
         "databases": {
           "evidence_hub.db": {
             "location": "data/evidence_hub.db",
-            "tables": ["nexus", "evidence_source", "provenance"],
+            "tables": ["evidence", "evidence_origins", "evidence_participants", "participants", "entities", "participant_entities", "evidence_fts"],
             "access": "read-only"
           }
         }
@@ -249,7 +249,7 @@
         "databases": [
           "data/evidence_hub.db",
           "data/players.db",
-          "app/workbench.db"
+          "data/rowboat-creative/RC-2026/db/workbench.db"
         ]
       },
       "outputs": {
@@ -284,7 +284,7 @@
         "databases": [
           "data/evidence_hub.db",
           "data/players.db",
-          "app/workbench.db"
+          "data/rowboat-creative/RC-2026/db/workbench.db"
         ],
         "directories": [
           "exports/attorney_package/"
@@ -328,7 +328,7 @@
     "data_locker": "data/",
     "artifact_outputs": "exports/",
     "governance_docs": "docs/",
-    "central_db": "app/workbench.db"
+    "central_db": "data/rowboat-creative/RC-2026/db/workbench.db"
   }
 }
 
