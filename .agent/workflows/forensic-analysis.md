@@ -104,4 +104,4 @@ See docs/forensic_integrity_audit.md
 Verify:
 1. **LOCKERS** — raw files ingested, metadata preserved
 2. **HUB** — canonical_id formats correct, participant linkages valid
-3. **BRAIN** — Rosetta Stone and walkthrough counts current
+3. **BRAIN** — Rosetta Stone `master_transactions` table and walkthrough counts current
