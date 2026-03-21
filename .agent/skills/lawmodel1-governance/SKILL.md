@@ -150,8 +150,8 @@ The interface must reflect the high stakes of forensic legal work.
 
 ## 11. The Rosetta Stone
 The master translation layer that links bank descriptions to internal player IDs.
-*   **Source of Truth**: `data/workbench.db` → `master_transactions` table.
-*   **Match Storage**: Automatch results (rosetta_user, rosetta_account, rosetta_category, rosetta_company, match score) are stored in `workbench.db` → `statement_transactions` table.
+*   **Source of Truth**: `data/rowboat-creative/RC-2026/db/workbench.db` → `master_transactions` table (22k rows). Accessed via `getWorkbenchDb()` in `app/lib/db.ts`.
+*   **Match Storage**: Automatch results (rosetta_user, rosetta_account, rosetta_category, rosetta_company, match score) are stored in `workbench.db` → `statement_transactions` table (6.5k rows).
 *   **CSV Exports**: CSVs are generated from the DB for accountant audit review — they are outputs, NOT the source of truth.
 *   **Legacy CSV**: `data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv` is retained as a backup reference.
 *   **Usage**: All financial normalization MUST check the Rosetta Stone `master_transactions` table for player attribution.

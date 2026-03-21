@@ -10,7 +10,7 @@ End-to-end procedure for processing financial transactions through the automatch
 
 - App running: `cd app && npm run dev`
 - FastAPI running: `python -m uvicorn api_server:app --host 0.0.0.0 --port 8000 --reload`
-- Rosetta Stone data loaded in `workbench.db` → `master_transactions` table
+- Rosetta Stone data in `data/rowboat-creative/RC-2026/db/workbench.db` → `master_transactions` table (22k rows)
 
 ## 1. Import Statements
 
