@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getCaseCornerDb, getCommDb } from "@/lib/db";
+import { getCaseCornerDb, getCommDb, getImessageDb } from "@/lib/db";
 import Database from "better-sqlite3";
 import path from "path";
 
@@ -13,7 +13,7 @@ function getPlayersDb(): Database.Database {
     const dbPath = process.env.VAULT_ROOT
         ? path.join(process.env.VAULT_ROOT, "db", "players.db")
         : path.join(
-            "/Volumes/batdrivetb5/ANTIGRAVITY_LOCKER/_2026-02-21_iseepatterns",
+            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
             "data",
             "players.db"
         );
@@ -156,11 +156,15 @@ export async function GET() {
         let cocCount = 0;
         try {
             const commDb = getCommDb();
-            emailCount = (commDb.prepare("SELECT COUNT(*) as c FROM messages").get() as { c: number })?.c || 0;
+            emailCount = (commDb.prepare("SELECT COUNT(*) as c FROM emails").get() as { c: number })?.c || 0;
+        } catch { /* ignore */ }
+        try {
+            const chatDb = getImessageDb();
+            messageCount = (chatDb.prepare("SELECT COUNT(*) as c FROM message").get() as { c: number })?.c || 0;
         } catch { /* ignore */ }
         try {
             const commDb = getCommDb();
-            messageCount = (commDb.prepare("SELECT COUNT(*) as c FROM imessages").get() as { c: number })?.c || 0;
+            cocCount = (commDb.prepare("SELECT COUNT(*) as c FROM chain_of_custody").get() as { c: number })?.c || 0;
         } catch { /* ignore */ }
 
         // ── Build enriched claims ──

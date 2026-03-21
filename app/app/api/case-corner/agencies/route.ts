@@ -9,11 +9,14 @@ export async function GET() {
         const db = getCaseCornerDb();
         const agencies = db.prepare("SELECT * FROM agency_submissions ORDER BY sort_order ASC").all();
 
-        // Attach linked claim counts
-        const linkCounts = db.prepare(
-            "SELECT submission_id, COUNT(*) as cnt FROM submission_claims GROUP BY submission_id"
-        ).all() as { submission_id: number; cnt: number }[];
-        const lcMap = new Map(linkCounts.map(r => [r.submission_id, r.cnt]));
+        // Attach linked claim counts (submission_claims may not exist yet)
+        let lcMap = new Map<number, number>();
+        try {
+            const linkCounts = db.prepare(
+                "SELECT submission_id, COUNT(*) as cnt FROM submission_claims GROUP BY submission_id"
+            ).all() as { submission_id: number; cnt: number }[];
+            lcMap = new Map(linkCounts.map(r => [r.submission_id, r.cnt]));
+        } catch { /* table may not exist */ }
 
         const enriched = (agencies as { id: number }[]).map(a => ({
             ...a,

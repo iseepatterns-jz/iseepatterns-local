@@ -36,15 +36,15 @@ export async function GET(req: NextRequest) {
             let totalDebits = 0, totalCredits = 0;
             let txnCount = 0, acctCount = 0, taxCount = 0;
             try {
-                const txn = db.prepare("SELECT COUNT(*) as c FROM transactions").get() as { c: number } | null;
+                const txn = db.prepare("SELECT COUNT(*) as c FROM master_transactions").get() as { c: number } | null;
                 const acct = db.prepare("SELECT COUNT(*) as c FROM accounts").get() as { c: number } | null;
                 const tax = db.prepare("SELECT COUNT(*) as c FROM tax_returns").get() as { c: number } | null;
                 txnCount = txn?.c || 0;
                 acctCount = acct?.c || 0;
                 taxCount = tax?.c || 0;
 
-                const debits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE amount < 0").get() as { total: number };
-                const credits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE amount > 0").get() as { total: number };
+                const debits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM master_transactions WHERE amount < 0").get() as { total: number };
+                const credits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM master_transactions WHERE amount > 0").get() as { total: number };
                 totalDebits = debits.total;
                 totalCredits = credits.total;
             } catch (e) { 
@@ -100,19 +100,21 @@ export async function GET(req: NextRequest) {
             let where = "WHERE 1=1";
             const params: (string | number)[] = [];
             if (q) {
-                where += " AND (description LIKE ? OR counterparty LIKE ? OR memo LIKE ?)";
-                params.push(`%${q}%`, `%${q}%`, `%${q}%`);
+                where += " AND (description LIKE ? OR account LIKE ? OR category LIKE ? OR notes LIKE ?)";
+                params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
             }
             if (year) {
-                where += " AND date LIKE ?";
-                params.push(`${year}%`);
+                where += " AND (date LIKE ? OR year = ?)";
+                params.push(`%${year}%`, parseInt(year, 10));
             }
 
             const rows = db.prepare(
-                `SELECT * FROM transactions ${where} ORDER BY date DESC LIMIT ? OFFSET ?`
+                `SELECT id, date, amount, description, transaction_type, account, account_type, bank,
+                        category, class, responsible, company, verification_status
+                 FROM master_transactions ${where} ORDER BY date DESC LIMIT ? OFFSET ?`
             ).all(...params, limit, offset);
 
-            const total = db.prepare(`SELECT COUNT(*) as c FROM transactions ${where}`).get(...params) as { c: number };
+            const total = db.prepare(`SELECT COUNT(*) as c FROM master_transactions ${where}`).get(...params) as { c: number };
 
             return NextResponse.json({
                 view: "transactions",
