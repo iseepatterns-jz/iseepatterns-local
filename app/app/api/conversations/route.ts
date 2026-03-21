@@ -134,8 +134,13 @@ export async function POST(request: NextRequest) {
             const params: any[] = [];
 
             if (participant) {
-                conditions.push("h.id LIKE ?");
-                params.push(`%${participant}%`);
+                // participant can be comma-separated list of identifiers
+                const ids = participant.split(",").map((s: string) => s.trim()).filter(Boolean);
+                if (ids.length) {
+                    const placeholders = ids.map(() => "?").join(",");
+                    conditions.push(`h.id IN (${placeholders})`);
+                    params.push(...ids);
+                }
             }
             if (date_from) {
                 // iMessage dates: Apple epoch  (seconds since 2001-01-01) * 1e9
