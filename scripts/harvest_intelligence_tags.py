@@ -15,8 +15,7 @@ from pathlib import Path
 # --- Configuration ---
 DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
 DBS = [
-    DATA_DIR / "chat_master.db",
-    Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db")
+    DATA_DIR / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db",
 ]
 
 # Intelligence Categories / Keywords
@@ -41,7 +40,7 @@ def harvest():
             continue
             
         for category, keywords in INTELLIGENCE_MAP.items():
-            like_clauses = " OR ".join([f"COALESCE(decodedBody, text) LIKE '%{k}%'" for k in keywords])
+            like_clauses = " OR ".join([f"text LIKE '%{k}%'" for k in keywords])
             query = f"SELECT guid FROM message WHERE {like_clauses}"
             
             try:

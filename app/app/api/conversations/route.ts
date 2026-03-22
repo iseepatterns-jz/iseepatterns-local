@@ -19,11 +19,11 @@ export async function GET(request: NextRequest) {
                 "SELECT message_rowid, sort_order, note, added_at FROM conversation_messages WHERE conversation_id = ? ORDER BY sort_order ASC, added_at ASC"
             ).all(Number(id)) as any[];
 
-            // Hydrate with actual message data from chat_master
+            // Hydrate with actual message data from chat_case_only.db
             const chatDb = getImessageDb();
             const messages = members.map((m: any) => {
                 const msg = chatDb.prepare(`
-                    SELECT m.ROWID, COALESCE(m.text, m.decodedBody) as body,
+                    SELECT m.ROWID, m.text as body,
                            m.date as raw_date, m.is_from_me,
                            COALESCE(h.id, '') as handle_id,
                            COALESCE(c.display_name, '') as chat_name
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
                 params.push(toTs);
             }
             if (q) {
-                conditions.push("COALESCE(m.text, m.decodedBody) LIKE ?");
+                conditions.push("m.text LIKE ?");
                 params.push(`%${q}%`);
             }
 

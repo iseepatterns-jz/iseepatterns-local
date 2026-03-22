@@ -12,33 +12,23 @@
       "description": "Historical iMessage archives from LG's backups and exports. Used to identify gaslighting patterns and timeline admissions.",
       "inputs": {
         "raw_files": [
-          "data/chat_master.db",
-          "data/jz_lg_imessage_logs_all_numbered.csv",
-          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/2025-05-31_original_file_from_m1studio/chat.db",
-          "chatdb_storage/consolidated_investigation_m1_imac.db"
+          "data/IMESSAGE_LOCKER/Messages/chat_case_only.db",
+          "data/IMESSAGE_LOCKER/Messages/chat.db",
+          "data/jz_lg_imessage_logs_all_numbered.csv"
         ],
         "attachment_dirs": [
-          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/Attachments",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/Attachments"
+          "data/IMESSAGE_LOCKER/Attachments"
         ],
-        "metadata_dirs": [
-          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/CloudKitMetaData",
-          "chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/StickerCache",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/CloudKitMetaData",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/StickerCache",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/NickNameCache",
-          "chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/Caches"
-        ],
+        "metadata_dirs": [],
         "file_types": [".db", ".csv"]
       },
       "outputs": {
         "databases": {
-          "chat_master.db": {
-            "location": "data/chat_master.db",
+          "chat_case_only.db": {
+            "location": "data/IMESSAGE_LOCKER/Messages/chat_case_only.db",
             "tables": ["message", "handle", "chat"],
-            "access": "read-only"
+            "access": "read-only",
+            "notes": "Pruned to 48 case-relevant handles. iMac Late 2013, Catalina 10.15.7. Use m.text directly — no decodedBody column."
           }
         }
       },

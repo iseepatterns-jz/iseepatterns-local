@@ -51,13 +51,13 @@ export async function GET(request: NextRequest) {
                             COALESCE(h.id, 'Unknown') as handle_id,
                             m.is_from_me,
                             ${APPLE_DATE_EXPR} as date_utc,
-                            COALESCE(m.text, m.decodedBody) as body,
+                            m.text as body,
                             m.service,
                             m.guid
                      FROM message m
                      LEFT JOIN handle h ON h.ROWID = m.handle_id
-                     WHERE COALESCE(m.text, m.decodedBody) IS NOT NULL
-                       AND COALESCE(m.text, m.decodedBody) != ''
+                     WHERE m.text IS NOT NULL
+                       AND m.text != ''
                        AND ${APPLE_DATE_EXPR} BETWEEN datetime(?, '-7 days') AND datetime(?, '+7 days')
                      ORDER BY ABS(julianday(${APPLE_DATE_EXPR}) - julianday(?))
                      LIMIT ?`
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         const params: (string | number)[] = [];
 
         if (q) {
-            whereClause += " AND COALESCE(m.text, m.decodedBody) LIKE ?";
+            whereClause += " AND m.text LIKE ?";
             params.push(`%${q}%`);
         }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
                         COALESCE(h.id, 'Unknown') as handle_id,
                         m.is_from_me,
                         ${APPLE_DATE_EXPR} as date_utc,
-                        COALESCE(m.text, m.decodedBody) as body,
+                        m.text as body,
                         m.service,
                         m.guid
                  FROM message m

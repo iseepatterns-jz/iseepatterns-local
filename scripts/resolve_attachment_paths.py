@@ -2,8 +2,8 @@
 """
 resolve_attachment_paths.py
 ───────────────────────────
-Links existing attachment records in chat_master.db to their physical files
-on disk inside chatdb_storage/.  No new messages are imported; only the
+Links existing attachment records in chat_case_only.db to their physical files
+on disk inside the IMESSAGE_LOCKER.  No new messages are imported; only the
 existing attachment table rows receive resolved_path + origin_source values.
 
 Path mapping:
@@ -17,11 +17,10 @@ import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
-CHAT_MASTER  = PROJECT_ROOT / "data" / "chat_master.db"
+CHAT_MASTER  = PROJECT_ROOT / "data" / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
 
 ATTACHMENT_ROOTS = {
-    "m1studio": PROJECT_ROOT / "chatdb_storage" / "m1studio_2025-05-31_chatdb_decodedBody_added" / "Attachments",
-    "imac":     PROJECT_ROOT / "chatdb_storage" / "imac_2025-06-01_chatdb_old_mac_os_no_decode_needed" / "Attachments",
+    "imac":     PROJECT_ROOT / "data" / "IMESSAGE_LOCKER" / "Attachments",
 }
 
 PREFIX = "~/Library/Messages/Attachments/"
@@ -56,7 +55,7 @@ def resolve(conn: sqlite3.Connection):
     total = len(rows)
     print(f"\n📎 Resolving {total} attachment records...")
 
-    stats = {"m1studio_only": 0, "imac_only": 0, "both": 0, "missing": 0, "no_prefix": 0}
+    stats = {"imac_found": 0, "missing": 0, "no_prefix": 0}
 
     for i, (rowid, filename) in enumerate(rows, 1):
         if not filename.startswith(PREFIX):
@@ -75,18 +74,9 @@ def resolve(conn: sqlite3.Connection):
             stats["missing"] += 1
             continue
 
-        if len(found_in) == 2:
-            stats["both"] += 1
-            origin = "both"
-            resolved = found_in["m1studio"]  # prefer m1studio when both exist
-        elif "m1studio" in found_in:
-            stats["m1studio_only"] += 1
-            origin = "m1studio"
-            resolved = found_in["m1studio"]
-        else:
-            stats["imac_only"] += 1
-            origin = "imac"
-            resolved = found_in["imac"]
+        stats["imac_found"] += 1
+        origin = "imac"
+        resolved = found_in["imac"]
 
         cur.execute(
             "UPDATE attachment SET resolved_path = ?, origin_source = ? WHERE ROWID = ?",
@@ -103,7 +93,7 @@ def resolve(conn: sqlite3.Connection):
 
 def main():
     if not CHAT_MASTER.exists():
-        print(f"❌ chat_master.db not found at {CHAT_MASTER}")
+        print(f"❌ chat_case_only.db not found at {CHAT_MASTER}")
         sys.exit(1)
 
     for name, root in ATTACHMENT_ROOTS.items():
@@ -134,9 +124,7 @@ def main():
     print("📊 RESULTS")
     print("=" * 60)
     print(f"  Total resolved:    {resolved_count}")
-    print(f"  M1Studio only:     {stats['m1studio_only']}")
-    print(f"  iMac only:         {stats['imac_only']}")
-    print(f"  Both sources:      {stats['both']}")
+    print(f"  iMac found:       {stats['imac_found']}")
     print(f"  Missing on disk:   {stats['missing']}")
     print(f"  No prefix match:   {stats['no_prefix']}")
     print()

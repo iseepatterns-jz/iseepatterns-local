@@ -19,7 +19,7 @@ from pathlib import Path
 # --- Configuration ---
 BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 DATA_DIR = BASE_DIR / "data"
-CHAT_MASTER_DB = DATA_DIR / "chat_master.db"
+CHAT_MASTER_DB = DATA_DIR / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
 PLAYERS_DB = DATA_DIR / "players.db"
 EXPORT_DIR = BASE_DIR / "exports" / "RSMF"
 
@@ -116,7 +116,7 @@ def process_chat(chat_id, messages, participant_map, handles, tags=None):
             "type": "message",
             "timestamp": convert_timestamp(msg['date']),
             "participant": p_info['id'],
-            "body": msg.get('body_content') or msg.get('text') or msg.get('decodedBody') or ""
+            "body": msg.get('body_content') or msg.get('text') or ""
         }
         
         if m_guid in tags:
@@ -169,7 +169,7 @@ def main():
     handles = {str(r['ROWID']): r['id'] for r in conn.execute("SELECT ROWID, id FROM handle").fetchall()}
     
     query = f"""
-    SELECT m.guid AS message_guid, COALESCE(m.decodedBody, m.text) AS body_content,
+    SELECT m.guid AS message_guid, m.text AS body_content,
            m.handle_id, m.date, m.associated_message_guid, m.associated_message_type,
            m.associated_message_emoji, c.guid AS chat_guid, c.ROWID AS chat_row_id,
            a.filename, a.guid AS attachment_guid

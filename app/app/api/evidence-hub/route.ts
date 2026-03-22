@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
             }
 
-            // iMessage detail — fetch from chat_master.db
+            // iMessage detail — fetch from chat_case_only.db (iMac Late 2013, Catalina)
             if (sourceType === "imessage") {
                 const msg = chatDb.prepare(`
                     SELECT
@@ -59,8 +59,8 @@ export async function GET(request: NextRequest) {
                         'imessage' as source_type,
                         'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
                             ELSE COALESCE(h.id, 'Unknown') END as title,
-                        COALESCE(m.text, m.decodedBody) as body_snippet,
-                        COALESCE(m.text, m.decodedBody) as summary,
+                        m.text as body_snippet,
+                        m.text as summary,
                         datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
                         '["chat", "key_players"]' as tags,
                         m.is_from_me,
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({
                     evidence: msg,
                     participants,
-                    provenance: [{ origin_system: "chat_master.db", source_file: "data/chat_master.db", source_rowid: idNum, created_at: msg.start_timestamp }]
+                    provenance: [{ origin_system: "CHAT_DB_IMAC_2013", source_file: "data/IMESSAGE_LOCKER/Messages/chat_case_only.db", source_rowid: idNum, created_at: msg.start_timestamp }]
                 });
             }
 
@@ -176,7 +176,7 @@ export async function GET(request: NextRequest) {
 
         // ── Filtered list / LG focal search ──
         if (sourceType === "imessage" || (q && q.toLowerCase().includes("guariglia"))) {
-            // Query chat_master.db with dynamic filters
+            // Query chat_case_only.db with dynamic filters
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
@@ -204,7 +204,7 @@ export async function GET(request: NextRequest) {
 
             // Text search
             if (q) {
-                chatWhere += " AND COALESCE(m.text, m.decodedBody) LIKE ?";
+                chatWhere += " AND m.text LIKE ?";
                 chatParams.push(`%${q}%`);
             }
 
@@ -217,8 +217,8 @@ export async function GET(request: NextRequest) {
                         THEN 'JZ → ' || COALESCE(h.id, 'Unknown')
                         ELSE COALESCE(h.id, 'Unknown') || ' → JZ'
                     END as title,
-                    substr(COALESCE(m.text, m.decodedBody), 1, 100) as summary,
-                    COALESCE(m.text, m.decodedBody) as preview,
+                    substr(m.text, 1, 100) as summary,
+                    m.text as preview,
                     datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
                     '["chat", "key_players"]' as tags,
                     m.is_from_me,

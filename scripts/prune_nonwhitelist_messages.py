@@ -2,7 +2,12 @@
 """
 prune_nonwhitelist_messages.py
 ──────────────────────────────
-Removes messages from chat_master.db where no participant is on the
+⚠️  DEPRECATED: Pruning is now handled by the shell script:
+    data/IMESSAGE_LOCKER/scripts/prune_chatdb_to_case_handles.sh
+    which creates chat_case_only.db from the original chat.db.
+
+This script is retained for reference only.
+Removes messages from chat_case_only.db where no participant is on the
 whitelist.  Creates a timestamped backup before any deletions.
 
 Uses the same WHITELIST_HANDLES as ingest/imessage_ingest.py.
@@ -15,7 +20,7 @@ from pathlib import Path
 from datetime import datetime
 
 PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
-CHAT_MASTER  = PROJECT_ROOT / "data" / "chat_master.db"
+CHAT_MASTER  = PROJECT_ROOT / "data" / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
 
 WHITELIST_HANDLES = {
     # NOTE: JZ's own identifiers (+17736109104, joe@rowboatcreative.com) are
@@ -116,7 +121,7 @@ WHITELIST_HANDLES = {
 
 def main():
     if not CHAT_MASTER.exists():
-        print(f"❌ chat_master.db not found at {CHAT_MASTER}")
+        print(f"❌ chat_case_only.db not found at {CHAT_MASTER}")
         sys.exit(1)
 
     # ── Step 1: Backup ──
