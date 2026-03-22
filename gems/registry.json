@@ -320,6 +320,49 @@
         ]
       },
       "db_accessor": "N/A (file-based output)"
+    },
+    {
+      "id": "gem-qb-forensic",
+      "name": "QuickBooks Forensic Database",
+      "status": "active",
+      "description": "QBO OAuth API backup (June 2025) — 41 tables, 520K+ rows including 19.8K purchases ($15.7M), 7.5K invoices, 753 transfers, 437 journal entries. Cross-referenced against workbench master_transactions: 4,082 matches ($4.89M), 15,741 QB-only ($10.82M).",
+      "inputs": {
+        "raw_files": ["data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER/qbo-acct/"],
+        "file_types": [".csv", ".xls", ".xlsx"]
+      },
+      "outputs": {
+        "databases": {
+          "qb_forensic.db": {
+            "location": "data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER/qb_forensic.db",
+            "tables": ["Purchase", "Invoice", "Payment", "Bill", "Deposit", "Transfer", "JournalEntry", "Vendor", "Customer", "Account", "Employee", "Estimate", "Attachable"],
+            "views": ["v_vendor_risk_matrix", "v_journal_entry_forensics", "v_transfer_tracing", "v_deposit_analysis", "v_account_summary", "v_customer_invoice_summary"],
+            "registers": ["reg_BankRegister_1452", "reg_CC_Register_1190_joes_card", "reg_CCRegister_lucas_card", "reg_CCRegister_patricks_card", "reg_Register_distributions", "reg_Register_undeposited_funds"],
+            "access": "read-only"
+          }
+        }
+      },
+      "forensic_findings": [
+        "distribution_disparity: JZ $170K (181 txns) vs LG $79.5K (23 txns)",
+        "lg_contractor_overpay: LG $1.62M vs JZ $596K (3x ratio)",
+        "ppp_loan_trace: $195,805 loan → payroll, balance now $0",
+        "deleted_accounts: $11.15M through 5 deleted accounts",
+        "undeposited_funds: $454K current, $4.97M total, zero reconciliation",
+        "backdated_journal_entries: 30 Dec 2020 entries created Jan-May 2022",
+        "due_from_manipulation: JZ $11K vs LG $1.6K, Due to LG -$25.9K",
+        "off_hours_journal_entries: 112/437 (25.6%) created after hours",
+        "high_risk_vendors: 1,412 scored >= 4 on risk matrix",
+        "single_use_vendors: 49 with >$1K, 502 no tax ID with >$500"
+      ],
+      "cross_reference": {
+        "workbench_match_rate": "20.6% (4,082 of 19,823 QB purchases match master_transactions by date+amount)",
+        "matched_total": "$4,891,583.90",
+        "qb_only_total": "$10,824,092.77",
+        "date_range_gap": "QB has 2013-2015 data not in workbench; workbench has more 2019-2023 bank entries not in QB"
+      },
+      "dependencies": ["gem-financial-txns"],
+      "api_routes": ["app/app/api/financials/ (view=qb_forensic)"],
+      "ui_pages": ["app/app/financials/"],
+      "db_accessor": "N/A (standalone read-only DB)"
     }
   ],
   "registry_version": "1.5.0",
