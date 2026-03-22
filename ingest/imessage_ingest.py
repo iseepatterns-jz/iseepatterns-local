@@ -18,7 +18,7 @@ WHITELIST_HANDLES = {
     "+17083075156",  # Pamela Visvardis
     "+17204540129",  # Thomas Nitschke
     "+18473801876",  # Michael Sanderson
-    "+13127254059",  # Ryan Hayes
+    "+13127254069",  # Ryan Hayes
     "+18478040165",  # Henry Badani
     "+18473870518",  # Steven Farag
     "+13124203036", "george.g@rudderservices.com", # George Grigorakos

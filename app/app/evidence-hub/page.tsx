@@ -5,7 +5,7 @@ import {
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
     Archive, HardDrive, ChevronDown, MessageCircle, Bookmark, GripVertical,
-    Smartphone
+    Smartphone, Mic, DollarSign, Scale, LayoutGrid
 } from "lucide-react";
 
 /* ─── types ─── */
@@ -189,6 +189,27 @@ export default function EvidenceHubPage() {
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
     const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+    // ── Category Tabs ──
+    type EvidenceTab = "all" | "imessage" | "email" | "transcripts" | "financial" | "court";
+    const [activeTab, setActiveTab] = useState<EvidenceTab>("imessage");
+    const EVIDENCE_TABS: { id: EvidenceTab; label: string; icon: React.ReactNode; sourceFilter: string; color: string }[] = [
+        { id: "all", label: "All", icon: <LayoutGrid size={15} />, sourceFilter: "", color: "#94a3b8" },
+        { id: "imessage", label: "iMessage", icon: <MessageSquare size={15} />, sourceFilter: "imessage", color: "#34d399" },
+        { id: "email", label: "Email", icon: <Mail size={15} />, sourceFilter: "email", color: "#60a5fa" },
+        { id: "transcripts", label: "Transcripts", icon: <Mic size={15} />, sourceFilter: "transcript", color: "#f472b6" },
+        { id: "financial", label: "Financial", icon: <DollarSign size={15} />, sourceFilter: "financial", color: "#fbbf24" },
+        { id: "court", label: "Court", icon: <Scale size={15} />, sourceFilter: "legal", color: "#a78bfa" },
+    ];
+    const handleTabChange = (tab: EvidenceTab) => {
+        setActiveTab(tab);
+        const tabDef = EVIDENCE_TABS.find(t => t.id === tab);
+        setSourceFilter(tabDef?.sourceFilter || "");
+        setIMessageView(tab === "imessage");
+        setActiveConversation(null);
+        setConvMessages([]);
+        setPage(1);
+    };
 
     // ── Toast notifications ──
     const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null);
@@ -933,40 +954,128 @@ export default function EvidenceHubPage() {
                 }
                 .eh-detail-body-selectable::selection { background: rgba(251, 191, 36, 0.3); }
 
-                /* ── Conversation Playlists ── */
-                .eh-conv-bar {
-                    display: flex; align-items: center; gap: 8px; padding: 8px 20px;
-                    background: rgba(15, 23, 42, 0.4); border-bottom: 1px solid rgba(71, 85, 105, 0.2);
-                    flex-wrap: wrap;
+                /* ── Category Tab Bar ── */
+                .eh-tab-bar {
+                    display: flex; gap: 2px; padding: 6px 24px;
+                    background: rgba(15, 23, 42, 0.6);
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.25);
+                    flex-shrink: 0;
                 }
-                .eh-conv-bar .conv-label {
-                    font-size: 11px; color: #64748b; text-transform: uppercase;
-                    letter-spacing: 0.05em; font-weight: 600; display: flex; align-items: center; gap: 4px;
+                .eh-tab-btn {
+                    display: flex; align-items: center; gap: 7px;
+                    padding: 10px 18px; border-radius: 8px;
+                    font-size: 13px; font-weight: 600; cursor: pointer;
+                    border: 1px solid transparent;
+                    background: transparent; color: #64748b;
+                    transition: all 0.2s; position: relative;
+                    letter-spacing: 0.01em;
                 }
-                .eh-conv-bar .conv-pill {
-                    display: inline-flex; align-items: center; gap: 6px;
-                    padding: 4px 10px; border-radius: 16px; font-size: 12px;
-                    cursor: pointer; transition: all 0.15s; border: 1px solid rgba(71, 85, 105, 0.3);
-                    background: rgba(30, 41, 59, 0.5); color: #cbd5e1;
+                .eh-tab-btn:hover { color: #cbd5e1; background: rgba(30, 41, 59, 0.5); }
+                .eh-tab-btn.active {
+                    background: rgba(30, 41, 59, 0.8);
+                    border-color: rgba(71, 85, 105, 0.4);
                 }
-                .eh-conv-bar .conv-pill:hover { background: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.3); }
-                .eh-conv-bar .conv-pill.active { background: rgba(96, 165, 250, 0.15); border-color: #60a5fa; color: #60a5fa; }
-                .eh-conv-bar .conv-pill .conv-count {
-                    font-size: 10px; background: rgba(96, 165, 250, 0.2); color: #60a5fa;
-                    padding: 1px 6px; border-radius: 8px;
+                .eh-tab-btn.active::after {
+                    content: ''; position: absolute; bottom: -7px; left: 20%; right: 20%;
+                    height: 2px; border-radius: 2px;
                 }
-                .eh-conv-bar .conv-pill .conv-dot {
-                    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+
+                /* ── iOS-style Conversation List ── */
+                .ios-conv-list {
+                    display: flex; flex-direction: column;
+                    overflow-y: auto; height: 100%;
                 }
-                .eh-conv-bar .conv-create-form {
-                    display: flex; gap: 4px; align-items: center;
+                .ios-conv-list .ios-search {
+                    padding: 10px 16px;
+                    background: rgba(15, 23, 42, 0.3);
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.15);
                 }
-                .eh-conv-bar .conv-create-form input {
-                    background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(71, 85, 105, 0.3);
-                    border-radius: 6px; padding: 4px 8px; font-size: 12px; color: #e2e8f0;
-                    outline: none; width: 160px;
+                .ios-conv-list .ios-search input {
+                    width: 100%; padding: 8px 12px; border-radius: 10px;
+                    background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(71, 85, 105, 0.2);
+                    color: #e2e8f0; font-size: 13px; outline: none;
                 }
-                .eh-conv-bar .conv-create-form input:focus { border-color: #60a5fa; }
+                .ios-conv-list .ios-search input::placeholder { color: #475569; }
+                .ios-conv-list .ios-search input:focus { border-color: rgba(52, 211, 153, 0.4); }
+                .ios-conv-row {
+                    display: flex; align-items: center; gap: 12px;
+                    padding: 14px 16px; cursor: pointer;
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.1);
+                    transition: background 0.15s;
+                    position: relative;
+                }
+                .ios-conv-row:hover { background: rgba(30, 41, 59, 0.5); }
+                .ios-conv-row.active { background: rgba(52, 211, 153, 0.08); }
+                .ios-conv-avatar {
+                    width: 44px; height: 44px; border-radius: 50%;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 16px; font-weight: 700; color: white;
+                    flex-shrink: 0; letter-spacing: -0.5px;
+                }
+                .ios-conv-info { flex: 1; min-width: 0; }
+                .ios-conv-name {
+                    font-size: 15px; font-weight: 600; color: #f1f5f9;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                    line-height: 1.3;
+                }
+                .ios-conv-preview {
+                    font-size: 13px; color: #64748b;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                    line-height: 1.4; margin-top: 2px;
+                }
+                .ios-conv-right {
+                    display: flex; flex-direction: column; align-items: flex-end;
+                    gap: 4px; flex-shrink: 0;
+                }
+                .ios-conv-time {
+                    font-size: 12px; color: #475569; white-space: nowrap;
+                }
+                .ios-conv-badge {
+                    background: #3b82f6; color: white; font-size: 11px;
+                    font-weight: 700; padding: 1px 7px; border-radius: 10px;
+                    min-width: 20px; text-align: center;
+                }
+                .ios-conv-delete {
+                    position: absolute; top: 50%; right: 8px; transform: translateY(-50%);
+                    background: none; border: none; color: #475569; cursor: pointer;
+                    padding: 4px; opacity: 0; transition: opacity 0.15s;
+                }
+                .ios-conv-row:hover .ios-conv-delete { opacity: 1; }
+                .ios-conv-delete:hover { color: #ef4444; }
+                .ios-conv-new-btn {
+                    display: flex; align-items: center; gap: 8px;
+                    padding: 12px 16px; cursor: pointer;
+                    border: none; background: none; color: #3b82f6;
+                    font-size: 14px; font-weight: 600; width: 100%;
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.1);
+                    transition: background 0.15s;
+                }
+                .ios-conv-new-btn:hover { background: rgba(59, 130, 246, 0.06); }
+
+                /* ── Chat Header (inside conversation) ── */
+                .imsg-chat-header {
+                    display: flex; align-items: center; gap: 12px;
+                    padding: 12px 16px;
+                    background: rgba(15, 23, 42, 0.5);
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.2);
+                    flex-shrink: 0;
+                }
+                .imsg-chat-back {
+                    display: flex; align-items: center; gap: 4px;
+                    background: none; border: none; cursor: pointer;
+                    color: #3b82f6; font-size: 14px; font-weight: 600;
+                    padding: 4px 0; transition: opacity 0.15s;
+                }
+                .imsg-chat-back:hover { opacity: 0.8; }
+                .imsg-chat-title {
+                    flex: 1; text-align: center;
+                    font-size: 15px; font-weight: 700; color: #f1f5f9;
+                }
+                .imsg-chat-avatar {
+                    width: 32px; height: 32px; border-radius: 50%;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 12px; font-weight: 700; color: white;
+                }
 
                 .eh-conv-dropdown {
                     position: absolute; top: 100%; right: 0; z-index: 50;
@@ -1000,6 +1109,16 @@ export default function EvidenceHubPage() {
                 }
                 .eh-conv-msg:hover .msg-remove { opacity: 1; }
                 .eh-conv-msg .msg-remove:hover { color: #ef4444; }
+
+                /* ── Playlist bubble remove button ── */
+                .imsg-row .playlist-remove {
+                    position: absolute; top: 4px; right: -28px;
+                    background: none; border: none; color: #475569; cursor: pointer;
+                    padding: 2px; opacity: 0; transition: opacity 0.15s;
+                }
+                .imsg-row:hover .playlist-remove { opacity: 1; }
+                .imsg-row .playlist-remove:hover { color: #ef4444; }
+                .imsg-row.me .playlist-remove { right: auto; left: -28px; }
 
                 /* ── iMessage Bubble View ── */
                 .imsg-thread {
@@ -1112,102 +1231,43 @@ export default function EvidenceHubPage() {
                 <button className={`eh-btn ${showStats ? "active" : ""}`} onClick={fetchStats}>
                     <BarChart2 size={14} /> Stats
                 </button>
-                <button
-                    className={`eh-btn ${iMessageView ? "active" : ""}`}
-                    onClick={() => setIMessageView(!iMessageView)}
-                    style={iMessageView ? { background: "rgba(52, 211, 153, 0.15)", borderColor: "rgba(52, 211, 153, 0.4)" } : {}}
-                    title="Toggle iMessage chat view"
-                >
-                    <Smartphone size={14} /> iMessage
-                </button>
-                <button
-                    className="eh-btn"
-                    onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
-                    title={sortDir === "asc" ? "Showing oldest first" : "Showing newest first"}
-                    style={{ minWidth: 80 }}
-                >
-                    {sortDir === "asc" ? "↑ Oldest" : "↓ Newest"}
-                </button>
                 <div className="eh-header-meta">
+                    <button
+                        className="eh-btn"
+                        onClick={() => setSortDir(d => d === "asc" ? "desc" : "asc")}
+                        title={sortDir === "asc" ? "Showing oldest first" : "Showing newest first"}
+                        style={{ minWidth: 72, padding: "4px 10px" }}
+                    >
+                        {sortDir === "asc" ? "↑ Oldest" : "↓ Newest"}
+                    </button>
                     <span className="count">{total.toLocaleString()} results</span>
                     {searchMode && <span className="badge">{searchMode}</span>}
                     {hasFilters && (
-                        <button className="eh-btn" onClick={clearFilters} style={{ padding: "4px 8px" }}>
+                        <button className="eh-btn" onClick={() => { clearFilters(); setActiveTab("imessage"); setIMessageView(true); }} style={{ padding: "4px 8px" }}>
                             <X size={14} /> Clear
                         </button>
                     )}
                 </div>
             </header>
 
-            {/* ─── Conversation Playlist Bar ─── */}
-            <div className="eh-conv-bar">
-                <span className="conv-label"><Bookmark size={12} /> Playlists</span>
-                <span
-                    className={`conv-pill ${!activeConversation ? "active" : ""}`}
-                    onClick={() => { setActiveConversation(null); setConvMessages([]); }}
-                >
-                    All Messages
-                </span>
-                {conversations.map(c => (
-                    <span
-                        key={c.id}
-                        className={`conv-pill ${activeConversation === c.id ? "active" : ""}`}
-                        onClick={() => setActiveConversation(c.id)}
+            {/* ─── Category Tab Bar ─── */}
+            <div className="eh-tab-bar">
+                {EVIDENCE_TABS.map(tab => (
+                    <button
+                        key={tab.id}
+                        className={`eh-tab-btn ${activeTab === tab.id ? "active" : ""}`}
+                        onClick={() => handleTabChange(tab.id)}
+                        style={activeTab === tab.id ? { color: tab.color } : {}}
                     >
-                        <span className="conv-dot" style={{ background: c.color }} />
-                        {c.name}
-                        <span className="conv-count">{c.message_count}</span>
-                        {activeConversation === c.id && (
-                            <button
-                                style={{ background: "none", border: "none", cursor: "pointer", padding: 0, marginLeft: 2 }}
-                                onClick={(e) => { e.stopPropagation(); setPendingDeleteConv(c.id); }}
-                                title="Delete playlist"
-                            >
-                                <Trash2 size={10} color="#ef4444" />
-                            </button>
+                        {tab.icon} {tab.label}
+                        {activeTab === tab.id && (
+                            <span style={{ position: "absolute", bottom: -7, left: "20%", right: "20%", height: 2, borderRadius: 2, background: tab.color }} />
                         )}
-                    </span>
-                ))}
-                {showCreateConv ? (
-                    <div className="conv-create-form">
-                        <input
-                            autoFocus
-                            placeholder="Playlist name…"
-                            value={newConvName}
-                            onChange={e => setNewConvName(e.target.value)}
-                            onKeyDown={e => { if (e.key === "Enter") createConversation(newConvName); if (e.key === "Escape") setShowCreateConv(false); }}
-                        />
-                        <button className="eh-btn" onClick={() => createConversation(newConvName)} style={{ padding: "4px 8px" }}>✓</button>
-                        <button className="eh-btn" onClick={() => setShowCreateConv(false)} style={{ padding: "4px 8px" }}><X size={12} /></button>
-                    </div>
-                ) : (
-                    <button className="eh-btn" onClick={() => setShowCreateConv(true)} style={{ padding: "4px 8px" }}>
-                        <Plus size={12} /> New
                     </button>
-                )}
-                {/* Bulk add button — shown when filtering + conversations exist */}
-                {conversations.length > 0 && (sourceFilter || participantFilter.length > 0 || dateFrom || dateTo || query) && !activeConversation && (
-                    <div style={{ position: "relative", marginLeft: "auto" }}>
-                        <button
-                            className="eh-btn"
-                            onClick={() => setShowConvPicker(!showConvPicker)}
-                            style={{ padding: "4px 10px" }}
-                        >
-                            <Plus size={12} /> Add {total} to playlist
-                        </button>
-                        {showConvPicker && (
-                            <div className="eh-conv-dropdown">
-                                {conversations.map(c => (
-                                    <button key={c.id} onClick={() => { bulkAddToConversation(c.id); setShowConvPicker(false); }}>
-                                        <span className="conv-dot" style={{ background: c.color, width: 8, height: 8, borderRadius: "50%", flexShrink: 0 }} />
-                                        {c.name}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
+                ))}
             </div>
+
+            {/* removed — playlist selector now in eh-list as iOS-style conversation list */}
 
             {/* ─── Filters ─── */}
             {showFilters && (
@@ -1333,8 +1393,56 @@ export default function EvidenceHubPage() {
             >
                 {/* ── List ── */}
                 <div className="eh-list">
-                    {/* Conversation view mode */}
-                    {activeConversation ? (
+                    {/* iMessage tab — iOS-style conversation list OR chat view */}
+                    {activeTab === "imessage" && !activeConversation ? (
+                        <div className="ios-conv-list">
+                            {showCreateConv ? (
+                                <div style={{ display: "flex", gap: 6, padding: "10px 16px", borderBottom: "1px solid rgba(71,85,105,0.1)" }}>
+                                    <input
+                                        autoFocus
+                                        placeholder="New playlist name…"
+                                        value={newConvName}
+                                        onChange={e => setNewConvName(e.target.value)}
+                                        onKeyDown={e => { if (e.key === "Enter") createConversation(newConvName); if (e.key === "Escape") setShowCreateConv(false); }}
+                                        style={{ flex: 1, padding: "8px 12px", borderRadius: 10, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(71,85,105,0.2)", color: "#e2e8f0", fontSize: 13, outline: "none" }}
+                                    />
+                                    <button className="eh-btn" onClick={() => createConversation(newConvName)} style={{ padding: "6px 12px" }}>✓</button>
+                                    <button className="eh-btn" onClick={() => setShowCreateConv(false)} style={{ padding: "6px 8px" }}><X size={14} /></button>
+                                </div>
+                            ) : (
+                                <button className="ios-conv-new-btn" onClick={() => setShowCreateConv(true)}>
+                                    <Plus size={16} /> New Conversation
+                                </button>
+                            )}
+                            {conversations.map(c => {
+                                const initials = c.name.split(/[\s-]+/).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("");
+                                return (
+                                    <div
+                                        key={c.id}
+                                        className="ios-conv-row"
+                                        onClick={() => setActiveConversation(c.id)}
+                                    >
+                                        <div className="ios-conv-avatar" style={{ background: c.color }}>{initials}</div>
+                                        <div className="ios-conv-info">
+                                            <div className="ios-conv-name">{c.name}</div>
+                                            <div className="ios-conv-preview">{c.description || `${c.message_count} messages`}</div>
+                                        </div>
+                                        <div className="ios-conv-right">
+                                            <div className="ios-conv-time">{new Date(c.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>
+                                            <div className="ios-conv-badge">{c.message_count}</div>
+                                        </div>
+                                        <button
+                                            className="ios-conv-delete"
+                                            title="Delete playlist"
+                                            onClick={(e) => { e.stopPropagation(); setPendingDeleteConv(c.id); }}
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : activeConversation ? (
                         convLoading ? (
                             <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading playlist…</div>
                         ) : convMessages.length === 0 ? (
@@ -1343,28 +1451,59 @@ export default function EvidenceHubPage() {
                                 <p>No messages in this playlist yet. Use filters to find messages, then add them.</p>
                             </div>
                         ) : (
-                            <div className="eh-conv-view">
-                                {convMessages.map((msg: any) => {
-                                    const dateObj = msg.raw_date ? new Date((msg.raw_date / 1e9 + 978307200) * 1000) : null;
-                                    const dateStr = dateObj ? dateObj.toLocaleString() : "";
+                            <>
+                                {/* Chat header with back button */}
+                                {(() => {
+                                    const conv = conversations.find(c => c.id === activeConversation);
+                                    const initials = conv ? conv.name.split(/[\s-]+/).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("") : "?";
                                     return (
-                                        <div key={msg.rowid} className={`eh-conv-msg ${msg.is_from_me ? "from-me" : ""}`}>
-                                            <div className="msg-meta">
-                                                <div>{msg.is_from_me ? "JZ" : (msg.handle_id || "?")}</div>
-                                                <div>{dateStr}</div>
-                                            </div>
-                                            <div className="msg-body">{msg.body || "[no content]"}</div>
-                                            <button
-                                                className="msg-remove"
-                                                title="Remove from playlist"
-                                                onClick={() => removeFromConversation(activeConversation, [msg.rowid])}
-                                            >
-                                                <X size={12} />
+                                        <div className="imsg-chat-header">
+                                            <button className="imsg-chat-back" onClick={() => { setActiveConversation(null); setConvMessages([]); }}>
+                                                <ChevronLeft size={18} /> Messages
                                             </button>
+                                            <div className="imsg-chat-title">{conv?.name || "Conversation"}</div>
+                                            <div className="imsg-chat-avatar" style={{ background: conv?.color || "#64748b" }}>{initials}</div>
                                         </div>
                                     );
-                                })}
-                            </div>
+                                })()}
+                                <div className="imsg-thread">
+                                    {(() => {
+                                        let lastDate = "";
+                                        return convMessages.map((msg: any, i: number) => {
+                                            const dateObj = msg.raw_date ? new Date((msg.raw_date / 1e9 + 978307200) * 1000) : null;
+                                            const dateLabel = dateObj ? dateObj.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
+                                            const timeLabel = dateObj ? dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+                                            const showDateSep = dateLabel !== lastDate;
+                                            if (showDateSep) lastDate = dateLabel;
+                                            const isMe = msg.is_from_me === 1;
+                                            const senderName = isMe ? "JZ" : resolveHandle(msg.handle_id || "?");
+                                            return (
+                                                <React.Fragment key={`${msg.rowid}-${i}`}>
+                                                    {showDateSep && <div className="imsg-time-sep">{dateLabel}</div>}
+                                                    <div className={`imsg-row ${isMe ? "me" : "them"}`} style={{ position: "relative" }}>
+                                                        <div>
+                                                            <div className="imsg-sender">{senderName}</div>
+                                                            <div className="imsg-bubble">
+                                                                {msg.body || <span className="imsg-empty-body">[attachment]</span>}
+                                                            </div>
+                                                            <div className="imsg-meta">
+                                                                {timeLabel} · {isMe ? "+17736109104" : (msg.handle_id || "Unknown")}
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            className="playlist-remove"
+                                                            title="Remove from playlist"
+                                                            onClick={(e) => { e.stopPropagation(); removeFromConversation(activeConversation, [msg.rowid]); }}
+                                                        >
+                                                            <X size={11} />
+                                                        </button>
+                                                    </div>
+                                                </React.Fragment>
+                                            );
+                                        });
+                                    })()}
+                                </div>
+                            </>
                         )
                     ) : loading ? (
                         <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading…</div>

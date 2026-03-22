@@ -36,7 +36,7 @@ WHITELIST_HANDLES = {
     # Michael Sanderson
     "+18473801876",
     # Ryan Hayes
-    "+13127254059",
+    "+13127254069",
     # Henry Badani
     "+18478040165",
     # Steven Farag
