@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS conversations (
     name        TEXT NOT NULL,
     description TEXT,
     color       TEXT DEFAULT '#60a5fa',
+    folder      TEXT,
     created_at  TEXT DEFAULT (datetime('now','localtime')),
     updated_at  TEXT DEFAULT (datetime('now','localtime'))
 );

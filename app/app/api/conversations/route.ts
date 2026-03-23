@@ -79,18 +79,19 @@ export async function POST(request: NextRequest) {
         const wb = getWorkbenchDb();
 
         if (action === "create") {
-            const { name, description, color } = await request.json();
+            const { name, description, color, folder } = await request.json();
             if (!name) return NextResponse.json({ error: "name required" }, { status: 400 });
 
             const result = wb.prepare(
-                "INSERT INTO conversations (name, description, color) VALUES (?, ?, ?)"
-            ).run(name, description || null, color || "#60a5fa");
+                "INSERT INTO conversations (name, description, color, folder) VALUES (?, ?, ?, ?)"
+            ).run(name, description || null, color || "#60a5fa", folder || null);
 
             return NextResponse.json({
                 id: result.lastInsertRowid,
                 name,
                 description: description || null,
-                color: color || "#60a5fa"
+                color: color || "#60a5fa",
+                folder: folder || null
             });
         }
 
@@ -213,12 +214,12 @@ export async function POST(request: NextRequest) {
         }
 
         if (action === "update") {
-            const { id, name, description, color } = await request.json();
+            const { id, name, description, color, folder } = await request.json();
             if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
             wb.prepare(
-                "UPDATE conversations SET name = COALESCE(?, name), description = COALESCE(?, description), color = COALESCE(?, color), updated_at = datetime('now','localtime') WHERE id = ?"
-            ).run(name || null, description ?? null, color || null, id);
+                "UPDATE conversations SET name = COALESCE(?, name), description = COALESCE(?, description), color = COALESCE(?, color), folder = COALESCE(?, folder), updated_at = datetime('now','localtime') WHERE id = ?"
+            ).run(name || null, description ?? null, color || null, folder ?? null, id);
 
             return NextResponse.json({ updated: true });
         }
