@@ -68,7 +68,8 @@ The **Evidence Hub (`evidence_hub.db`)** is the final authority.
 > 1. Check the `source_type` (email vs imessage).
 > 2. For **iMessage**, use the `original_guid` to find the record in `chat_master.db`.
 > 3. For **Email**, use the `local_vault_filename` in the `primary_ids` metadata to locate the physical file within the ZIP archives on `/Volumes/batdrivetb5/`.
+> 4. For **iMessage Attachments**, the `guid` from `chat_master.db` is cross-referenced against `chat_case_only.db` (via `message_attachment_join` → `attachment`) to resolve `~/Library/Messages/Attachments/...` paths to `data/IMESSAGE_LOCKER/Messages/Attachments/...`. Served via `/api/imessage-attachment?guid=<message-guid>`.
 
 ---
-**Document Version**: 1.0.0  
-**Updated**: 2026-03-17
+**Document Version**: 1.1.0  
+**Updated**: 2026-03-22

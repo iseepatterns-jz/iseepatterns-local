@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
                 const msg = chatDb.prepare(`
                     SELECT m.ROWID, m.guid, m.text as body,
                            m.date as raw_date, m.is_from_me,
+                           m.cache_has_attachments,
                            COALESCE(h.id, '') as handle_id,
                            COALESCE(c.display_name, '') as chat_name
                     FROM message m
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest) {
                     body: msg?.body || "[message not found]",
                     raw_date: msg?.raw_date,
                     is_from_me: msg?.is_from_me,
+                    cache_has_attachments: msg?.cache_has_attachments || 0,
                     handle_id: msg?.handle_id || "",
                     chat_name: msg?.chat_name || ""
                 };

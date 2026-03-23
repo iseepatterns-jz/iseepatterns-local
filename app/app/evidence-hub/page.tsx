@@ -673,11 +673,10 @@ export default function EvidenceHubPage() {
                 .evidence-hub-page {
                     display: flex;
                     flex-direction: column;
-                    height: 100vh;
+                    min-height: 100vh;
                     background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
                     color: #e2e8f0;
                     font-family: 'Inter', -apple-system, system-ui, sans-serif;
-                    overflow: hidden;
                 }
                 .eh-header {
                     padding: 16px 24px;
@@ -790,7 +789,6 @@ export default function EvidenceHubPage() {
                 .eh-main {
                     flex: 1;
                     display: grid;
-                    overflow: hidden;
                     position: relative;
                 }
                 .eh-main.no-detail { grid-template-columns: 1fr; }
@@ -828,7 +826,6 @@ export default function EvidenceHubPage() {
 
                 /* ── List panel ── */
                 .eh-list {
-                    overflow-y: auto;
                     border-right: 1px solid rgba(71, 85, 105, 0.2);
                 }
                 .eh-list-item {
@@ -864,9 +861,13 @@ export default function EvidenceHubPage() {
 
                 /* ── Detail panel ── */
                 .eh-detail {
+                    position: sticky;
+                    top: 0;
+                    max-height: 100vh;
                     overflow-y: auto;
                     background: rgba(15, 23, 42, 0.6);
                     padding: 20px;
+                    align-self: start;
                 }
                 .eh-detail-header {
                     display: flex;
@@ -1344,6 +1345,11 @@ export default function EvidenceHubPage() {
                     cursor: default;
                 }
                 .imsg-empty-body { color: #4b5563; font-style: italic; }
+                .imsg-attachment { display: flex; flex-direction: column; gap: 6px; }
+                .imsg-attachment-img { max-width: 280px; max-height: 320px; border-radius: 10px; cursor: zoom-in; object-fit: cover; }
+                .imsg-attachment-text { font-size: 13px; margin-top: 2px; }
+                .imsg-attachment-fallback { font-size: 13px; color: #94a3b8; }
+                .hidden { display: none; }
 
                 /* ── Participant Multi-Select ── */
                 .participant-select {
@@ -1947,7 +1953,22 @@ export default function EvidenceHubPage() {
                                                         >
                                                             <div className="imsg-sender">{senderName}</div>
                                                             <div className="imsg-bubble" title={`ROWID: ${msg.rowid}\nGUID: ${msg.guid || 'N/A'}`}>
-                                                                {msg.body || <span className="imsg-empty-body">[attachment]</span>}
+                                                                {msg.cache_has_attachments ? (
+                                                                    <div className="imsg-attachment">
+                                                                        <img
+                                                                            src={`/api/imessage-attachment?guid=${encodeURIComponent(msg.guid)}`}
+                                                                            alt="attachment"
+                                                                            className="imsg-attachment-img"
+                                                                            loading="lazy"
+                                                                            onClick={(e) => { e.stopPropagation(); window.open(`/api/imessage-attachment?guid=${encodeURIComponent(msg.guid)}`, '_blank'); }}
+                                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden'); }}
+                                                                        />
+                                                                        <span className="imsg-attachment-fallback hidden">📎 Attachment</span>
+                                                                        {msg.body && <div className="imsg-attachment-text">{msg.body}</div>}
+                                                                    </div>
+                                                                ) : (
+                                                                    msg.body || <span className="imsg-empty-body">[attachment]</span>
+                                                                )}
                                                             </div>
                                                             <div className="imsg-meta">
                                                                 {timeLabel} · {isMe ? "+17736109104" : (msg.handle_id || "Unknown")}

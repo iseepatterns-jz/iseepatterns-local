@@ -58,7 +58,7 @@ lawmodel1/
 ├── .agent/skills/                         # Agent skills (governance, etc.)
 │   └── lawmodel1-governance/              # Governance agent — single source of truth
 ├── app/                                   # Next.js Application (Evidence Hub UI)
-│   ├── app/api/                           # 22 API route directories
+│   ├── app/api/                           # 24 API route directories
 │   └── app/[page]/                        # 15 UI pages
 ├── gems/                                  # Gem Registry (modular pipeline definitions)
 │   ├── registry.json                      # Master manifest of all 10 gems
