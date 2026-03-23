@@ -126,27 +126,34 @@ const parseTags = (tags: string): string[] => {
     catch { return []; }
 };
 
-/* ─── Player Profiles ─── */
+/* ─── Player Profiles (hardcoded fallback for filters — full names come from handleMap) ─── */
 const PLAYER_PROFILES = [
     {
-        id: "jz", name: "JZ", fullName: "Joseph Zangrilli",
+        id: "jz", name: "Joseph Zangrilli", fullName: "Joseph Zangrilli",
         color: "#0b84fe",
         identifiers: ["+17736109104", "joe@rowboatcreative.com", "jfzangrilli@gmail.com"]
     },
     {
-        id: "lg", name: "LG", fullName: "Lucas Guariglia",
+        id: "lg", name: "Lucas Guariglia", fullName: "Lucas Guariglia",
         color: "#f59e0b",
         identifiers: ["+18478280944", "lucas@rowboatcreative.com", "lucasideas@gmail.com", "lucas@allworldagency.com", "lucas@allworldmerch.com", "luke@joefreshgoods.com"]
     },
 ];
 
-/* ─── Resolve handle to player name ─── */
+/* ─── Handle → Full Name map (populated from /api/players?mode=handles) ─── */
+let _handleMap: Record<string, string> = {};
 const resolveHandle = (handle: string): string => {
     if (!handle || handle === 'Unknown') return handle;
-    for (const p of PLAYER_PROFILES) {
-        if (p.identifiers.some(id => handle.includes(id) || id.includes(handle))) return p.name;
+    // Direct match
+    if (_handleMap[handle]) return _handleMap[handle];
+    // Try with/without + prefix for phone numbers
+    if (handle.startsWith('+') && _handleMap[handle.slice(1)]) return _handleMap[handle.slice(1)];
+    if (!handle.startsWith('+') && _handleMap['+' + handle]) return _handleMap['+' + handle];
+    // Partial match (e.g., handle is substring or vice versa)
+    for (const [id, name] of Object.entries(_handleMap)) {
+        if (handle.includes(id) || id.includes(handle)) return name;
     }
-    return handle; // return raw handle if no match
+    return handle;
 };
 
 /* ─── component ─── */
@@ -189,6 +196,7 @@ export default function EvidenceHubPage() {
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
     const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+    const [jumpToRowid, setJumpToRowid] = useState<number | null>(null);
 
     // ── Category Tabs ──
     type EvidenceTab = "all" | "imessage" | "email" | "transcripts" | "financial" | "court";
@@ -359,8 +367,13 @@ export default function EvidenceHubPage() {
         setPendingDeleteConv(null);
     }, [fetchConversations, activeConversation, showToast]);
 
-    // Load conversations on mount
-    useEffect(() => { fetchConversations(); }, [fetchConversations]);
+    // Load conversations + handle map on mount
+    useEffect(() => {
+        fetchConversations();
+        fetch('/api/players?mode=handles').then(r => r.json()).then(data => {
+            if (data.handleMap) _handleMap = data.handleMap;
+        }).catch(() => {});
+    }, [fetchConversations]);
 
     // Load conversation messages when active changes
     useEffect(() => {
@@ -408,6 +421,22 @@ export default function EvidenceHubPage() {
     }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir]);
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
+
+    // ── Scroll to target message after timeline loads from playlist click ──
+    useEffect(() => {
+        if (!jumpToRowid || loading || !results.length) return;
+        // Small delay to let DOM render
+        const timer = setTimeout(() => {
+            const el = document.querySelector(`[data-rowid="${jumpToRowid}"]`);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+                el.classList.add("imsg-highlight-jump");
+                setTimeout(() => el.classList.remove("imsg-highlight-jump"), 2500);
+            }
+            setJumpToRowid(null);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [jumpToRowid, loading, results]);
 
     /* ─── fetch detail ─── */
     const fetchDetail = async (id: number, itemSourceType?: string) => {
@@ -1172,6 +1201,18 @@ export default function EvidenceHubPage() {
                 .imsg-row.selected .imsg-bubble {
                     outline: 2px solid #22d3ee; outline-offset: 2px;
                 }
+                .imsg-highlight-jump {
+                    animation: jumpPulse 2.5s ease-out;
+                }
+                @keyframes jumpPulse {
+                    0% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7); }
+                    30% { box-shadow: 0 0 16px 4px rgba(34, 211, 238, 0.5); }
+                    100% { box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+                }
+                .imsg-bubble[title]:hover {
+                    filter: brightness(1.1);
+                    cursor: default;
+                }
                 .imsg-empty-body { color: #4b5563; font-style: italic; }
 
                 /* ── Participant Multi-Select ── */
@@ -1472,18 +1513,38 @@ export default function EvidenceHubPage() {
                                         return convMessages.map((msg: any, i: number) => {
                                             const dateObj = msg.raw_date ? new Date((msg.raw_date / 1e9 + 978307200) * 1000) : null;
                                             const dateLabel = dateObj ? dateObj.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
-                                            const timeLabel = dateObj ? dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "";
+                                            const timeLabel = dateObj ? dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" }) : "";
                                             const showDateSep = dateLabel !== lastDate;
                                             if (showDateSep) lastDate = dateLabel;
                                             const isMe = msg.is_from_me === 1;
-                                            const senderName = isMe ? "JZ" : resolveHandle(msg.handle_id || "?");
+                                            const senderName = isMe ? resolveHandle("+17736109104") : resolveHandle(msg.handle_id || "?");
                                             return (
                                                 <React.Fragment key={`${msg.rowid}-${i}`}>
                                                     {showDateSep && <div className="imsg-time-sep">{dateLabel}</div>}
                                                     <div className={`imsg-row ${isMe ? "me" : "them"}`} style={{ position: "relative" }}>
-                                                        <div>
+                                                        <div
+                                                            style={{ cursor: "pointer" }}
+                                                            onClick={() => {
+                                                                // Jump to full timeline for this handle
+                                                                const handle = msg.handle_id || "";
+                                                                if (!handle) return;
+                                                                // Find which player profile matches this handle
+                                                                const matchedProfile = PLAYER_PROFILES.find(p => p.identifiers.some(id => handle.includes(id) || id.includes(handle)));
+                                                                if (matchedProfile) setParticipantFilter([matchedProfile.id]);
+                                                                // Switch to All tab with imessage source — full timeline, no date restriction
+                                                                setActiveTab("all");
+                                                                setSourceFilter("imessage");
+                                                                setIMessageView(false);
+                                                                setDateFrom("");
+                                                                setDateTo("");
+                                                                setQuery("");
+                                                                setActiveConversation(null);
+                                                                setConvMessages([]);
+                                                                setPage(1);
+                                                            }}
+                                                        >
                                                             <div className="imsg-sender">{senderName}</div>
-                                                            <div className="imsg-bubble">
+                                                            <div className="imsg-bubble" title={`ROWID: ${msg.rowid}\nGUID: ${msg.guid || 'N/A'}`}>
                                                                 {msg.body || <span className="imsg-empty-body">[attachment]</span>}
                                                             </div>
                                                             <div className="imsg-meta">
@@ -1532,8 +1593,8 @@ export default function EvidenceHubPage() {
                                                 onClick={() => fetchDetail(item.id, "imessage")}
                                             >
                                             <div>
-                                                    <div className="imsg-sender">{isMe ? "JZ" : resolveHandle(item.handle_id || "?")}</div>
-                                                    <div className="imsg-bubble">
+                                                    <div className="imsg-sender">{isMe ? resolveHandle("+17736109104") : resolveHandle(item.handle_id || "?")}</div>
+                                                    <div className="imsg-bubble" title={`ROWID: ${item.id}\nGUID: ${item.canonical_id || 'N/A'}`} data-rowid={item.id}>
                                                         {item.preview || <span className="imsg-empty-body">[attachment]</span>}
                                                     </div>
                                                     <div className="imsg-meta">

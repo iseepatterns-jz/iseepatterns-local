@@ -8,10 +8,36 @@ function getDb() {
     return new Database(DB_PATH, { readonly: true });
 }
 
-/** GET /api/players — list all players, optional ?q=search&type=person|entity */
+/** GET /api/players — list all players, optional ?q=search&type=person|entity&mode=handles */
 export async function GET(req: NextRequest) {
     try {
         const db = getDb();
+        const mode = req.nextUrl.searchParams.get("mode") || "";
+
+        // ── Lightweight handle→name map (for resolveHandle in frontend) ──
+        if (mode === "handles") {
+            const rows = db.prepare(
+                `SELECT display_name, imessage_handles, phone_numbers, email_addresses FROM players`
+            ).all() as { display_name: string; imessage_handles: string | null; phone_numbers: string | null; email_addresses: string | null }[];
+            db.close();
+
+            const handleMap: Record<string, string> = {};
+            for (const row of rows) {
+                const name = row.display_name;
+                // Parse all identifier columns and map each to the player's name
+                for (const col of [row.imessage_handles, row.phone_numbers, row.email_addresses]) {
+                    if (!col) continue;
+                    try {
+                        const arr = JSON.parse(col) as string[];
+                        for (const id of arr) {
+                            if (id && id.trim()) handleMap[id.trim()] = name;
+                        }
+                    } catch { /* skip unparseable */ }
+                }
+            }
+            return NextResponse.json({ handleMap });
+        }
+
         const q = req.nextUrl.searchParams.get("q") || "";
         const typeFilter = req.nextUrl.searchParams.get("type") || "";
 

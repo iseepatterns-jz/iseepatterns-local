@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
             const chatDb = getImessageDb();
             const messages = members.map((m: any) => {
                 const msg = chatDb.prepare(`
-                    SELECT m.ROWID, m.text as body,
+                    SELECT m.ROWID, m.guid, m.text as body,
                            m.date as raw_date, m.is_from_me,
                            COALESCE(h.id, '') as handle_id,
                            COALESCE(c.display_name, '') as chat_name
@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
 
                 return {
                     rowid: m.message_rowid,
+                    guid: msg?.guid || "",
                     sort_order: m.sort_order,
                     note: m.note,
                     added_at: m.added_at,
