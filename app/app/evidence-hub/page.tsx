@@ -4,7 +4,7 @@ import {
     Search, Filter, ChevronLeft, ChevronRight, Mail, MessageSquare, Shield,
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
-    Archive, HardDrive, ChevronDown, MessageCircle, Bookmark, GripVertical,
+    Archive, HardDrive, ChevronDown, ChevronUp, MessageCircle, Bookmark, GripVertical,
     Smartphone, Mic, DollarSign, Scale, LayoutGrid
 } from "lucide-react";
 
@@ -1328,7 +1328,7 @@ export default function EvidenceHubPage() {
                         />
                     </label>
                     <div ref={participantRef} style={{ position: "relative" }}>
-                        <label>Contact:</label>
+                        <label></label>
                         <div
                             className="participant-select"
                             onClick={() => setParticipantDropdownOpen(!participantDropdownOpen)}
@@ -1379,6 +1379,38 @@ export default function EvidenceHubPage() {
                     <label>To:
                         <input type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} />
                     </label>
+                    {dateFrom && dateTo && (
+                        <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                            <button
+                                className="eh-btn"
+                                title="Shift window earlier (−7 days)"
+                                style={{ padding: "2px 6px", fontSize: 13 }}
+                                onClick={() => {
+                                    const f = new Date(dateFrom); f.setDate(f.getDate() - 7);
+                                    const t = new Date(dateTo); t.setDate(t.getDate() - 7);
+                                    setDateFrom(f.toISOString().split('T')[0]);
+                                    setDateTo(t.toISOString().split('T')[0]);
+                                    setPage(1);
+                                }}
+                            >
+                                <ChevronUp size={14} /> Earlier
+                            </button>
+                            <button
+                                className="eh-btn"
+                                title="Shift window later (+7 days)"
+                                style={{ padding: "2px 6px", fontSize: 13 }}
+                                onClick={() => {
+                                    const f = new Date(dateFrom); f.setDate(f.getDate() + 7);
+                                    const t = new Date(dateTo); t.setDate(t.getDate() + 7);
+                                    setDateFrom(f.toISOString().split('T')[0]);
+                                    setDateTo(t.toISOString().split('T')[0]);
+                                    setPage(1);
+                                }}
+                            >
+                                <ChevronDown size={14} /> Later
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -1528,15 +1560,18 @@ export default function EvidenceHubPage() {
                                                                 // Jump to full timeline for this handle
                                                                 const handle = msg.handle_id || "";
                                                                 if (!handle) return;
-                                                                // Find which player profile matches this handle
                                                                 const matchedProfile = PLAYER_PROFILES.find(p => p.identifiers.some(id => handle.includes(id) || id.includes(handle)));
                                                                 if (matchedProfile) setParticipantFilter([matchedProfile.id]);
-                                                                // Switch to All tab with imessage source — full timeline, no date restriction
+                                                                // Switch to All tab with ±3 day date window
                                                                 setActiveTab("all");
                                                                 setSourceFilter("imessage");
                                                                 setIMessageView(false);
-                                                                setDateFrom("");
-                                                                setDateTo("");
+                                                                if (dateObj) {
+                                                                    const before = new Date(dateObj); before.setDate(before.getDate() - 3);
+                                                                    const after = new Date(dateObj); after.setDate(after.getDate() + 3);
+                                                                    setDateFrom(before.toISOString().split('T')[0]);
+                                                                    setDateTo(after.toISOString().split('T')[0]);
+                                                                }
                                                                 setQuery("");
                                                                 setActiveConversation(null);
                                                                 setConvMessages([]);
