@@ -795,6 +795,17 @@ body:has(.sidebar-collapsed) .main-content {
   color: var(--text-primary);
 }
 
+.workbench-ctrl-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.workbench-ctrl-btn.flagged-active {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: var(--accent-emerald);
+}
+
 /* ── Modal ── */
 .workbench-overlay {
   position: fixed;

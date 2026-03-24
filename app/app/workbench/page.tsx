@@ -105,6 +105,10 @@ export default function WorkbenchPage() {
     const [newSecPrefix, setNewSecPrefix] = useState("");
     const [isCreatingSection, setIsCreatingSection] = useState(false);
 
+    // Cleaning flags
+    const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set());
+    const [flagging, setFlagging] = useState(false);
+
     /* ── Load sections ── */
     const loadSections = useCallback(() => {
         setSectionsLoading(true);
@@ -537,8 +541,46 @@ export default function WorkbenchPage() {
                                 <button className="workbench-ctrl-btn" onClick={() => setDescEditorOpen(true)}>
                                     <Edit3 size={12} /> Edit Description
                                 </button>
-                                <button className="workbench-ctrl-btn">
-                                    <Paintbrush size={12} /> Flag for Cleaning
+                                <button
+                                    className={`workbench-ctrl-btn ${selectedEvidence && flaggedIds.has(selectedEvidence.id) ? 'flagged-active' : ''}`}
+                                    disabled={flagging}
+                                    onClick={async () => {
+                                        if (!selectedEvidence) return;
+                                        if (flaggedIds.has(selectedEvidence.id)) {
+                                            alert('Already flagged for cleaning');
+                                            return;
+                                        }
+                                        setFlagging(true);
+                                        try {
+                                            const res = await fetch('/api/workbench/cleaning', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({
+                                                    evidenceId: selectedEvidence.id,
+                                                    evidenceType: selectedEvidence.type,
+                                                    ruleType: 'flag_for_review',
+                                                    params: {
+                                                        issueCount: previewIssues.length,
+                                                        issues: previewIssues.slice(0, 20).map(i => ({ type: i.type, text: i.text })),
+                                                        section: selectedSection || '',
+                                                    },
+                                                    reason: `Flagged for review — ${previewIssues.length} cleaning issues detected`,
+                                                }),
+                                            });
+                                            if (res.ok) {
+                                                setFlaggedIds(prev => new Set([...prev, selectedEvidence.id]));
+                                                alert(`Flagged for cleaning (${previewIssues.length} issues)`);
+                                            } else {
+                                                alert('Failed to flag for cleaning');
+                                            }
+                                        } catch {
+                                            alert('Network error flagging item');
+                                        } finally {
+                                            setFlagging(false);
+                                        }
+                                    }}
+                                >
+                                    <Paintbrush size={12} /> {selectedEvidence && flaggedIds.has(selectedEvidence.id) ? '✓ Flagged' : flagging ? 'Flagging...' : 'Flag for Cleaning'}
                                 </button>
                             </div>
                         </div>

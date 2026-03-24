@@ -35,6 +35,19 @@ CREATE TABLE IF NOT EXISTS workbench_audit (
     created_at  TEXT DEFAULT (datetime('now'))
 );
 
+-- Cleaning Overrides (versioned, with supersede chain)
+CREATE TABLE IF NOT EXISTS cleaning_overrides (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    evidence_id     TEXT NOT NULL,
+    evidence_type   TEXT NOT NULL,
+    rule_type       TEXT NOT NULL,         -- 'flag_for_review', 'strip_signature', 'remove_line', etc.
+    params          TEXT,                  -- JSON params
+    reason          TEXT,
+    version         INTEGER DEFAULT 1,
+    superseded_at   TEXT,                  -- NULL = active
+    created_at      TEXT DEFAULT (datetime('now'))
+);
+
 -- Timeline Events
 CREATE TABLE IF NOT EXISTS timeline_events (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
