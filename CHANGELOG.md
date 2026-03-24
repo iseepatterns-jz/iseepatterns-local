@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-03-24 — Workbench: Evidence Persistence, Preview & Cleaning Flags
+
+### Critical Fixes
+- **Evidence Display** — Rewrote `GET /api/workbench/evidence` to query `evidence_assignments` from workbench.db, then join with `mbox_metadata.db` for email metadata. Previously the endpoint only scanned the filesystem for `.eml` files and never read DB assignments.
+- **Preview Rendering** — Fixed `GET /api/workbench/preview` column mapping: `msg_id`→`rfc822_id`, `sender`→`from_addr`, `date`→`date_sent`. Added `to_addr` and `cc_addr` for complete header rendering.
+- **Section Item Counts** — Updated `GET /api/workbench/sections` to include DB assignment counts (not just physical file counts), so sections correctly show "3 items" instead of "0 items".
+- **Assignment Route** — Fixed `POST /api/workbench/assign` to query the `emails` table (not `messages`) with correct columns (`rfc822_id`, `zip_source`, `mbox_source`).
+- **Unique Index** — Added `idx_evidence_assignments_unique` on `(evidence_id, evidence_type, target_section)` for `ON CONFLICT` upsert support.
+
+### Features
+- **Flag for Cleaning** — Wired the "Flag for Cleaning" button to `POST /api/workbench/cleaning`. Captures detected cleaning issues (signatures, quoted replies, encoding) and stores them in `cleaning_overrides` with full audit trail. Button shows green "✓ Flagged" state after click.
+- **cleaning_overrides Table** — Created versioned cleaning override table with supersede chains for tracking cleanup decisions.
+
+### Files Changed
+- `app/api/workbench/evidence/route.ts` — Rewritten email branch to query assignments
+- `app/api/workbench/preview/route.ts` — Fixed column names, added To/CC headers
+- `app/api/workbench/sections/route.ts` — Added assignment count to totalItems
+- `app/api/workbench/assign/route.ts` — Fixed table and column references
+- `app/workbench/page.tsx` — Wired Flag for Cleaning with state, handler, visual feedback
+- `app/globals.css` — Added `.flagged-active` and `:disabled` styles
+- `schemas/missing_schemas.sql` — Added unique index and cleaning_overrides table
+
+---
+
 ## 2026-03-24 — Evidence Hub: Workbench Integration & Thread Enhancements
 
 ### Features
