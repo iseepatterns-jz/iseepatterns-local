@@ -3,7 +3,7 @@
   "case_id": "RC-2026",
   "client_id": "rowboat-creative",
   "project_root": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
-  "updated_at": "2026-03-22T22:30:00-05:00",
+  "updated_at": "2026-03-23T11:42:00-05:00",
   "gems": [
     {
       "id": "gem-imessages",
@@ -136,7 +136,7 @@
           "scripts/ingest_flights_to_evidence_hub.py"
         ]
       },
-      "schemas": ["schemas/financials.sql"],
+      "schemas": ["schemas/financials.sql", "schemas/forensic_audit.sql"],
       "canonical_id_format": "txn_{source}_{id} (e.g., txn_RBC_2020-05-26-001)",
       "evidence_source_type": "financial",
       "dependencies": [],
@@ -145,7 +145,8 @@
         "app/app/api/financials/import",
         "app/app/api/financials/transactions",
         "app/app/api/financials/automatch",
-        "app/app/api/financials/finalize-verification"
+        "app/app/api/financials/finalize-verification",
+        "app/app/api/financials/forensic-audit"
       ],
       "ui_pages": [
         "app/app/financials/",
@@ -356,7 +357,7 @@
       "db_accessor": "N/A (standalone read-only DB)"
     }
   ],
-  "registry_version": "1.5.0",
+  "registry_version": "1.6.0",
   "project_id": "lawmodel1-RC-2026",
   "data_root_structure": {
     "data_locker": "data/",

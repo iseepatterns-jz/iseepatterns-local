@@ -5,6 +5,41 @@ export const dynamic = "force-dynamic";
 
 interface CountRow { total: number }
 
+/* ─── Email body cleaner ─── */
+function cleanEmailBody(body: string | null, bodySingle: string | null): string {
+    // Prefer body_single (first-message-only) if available
+    let text = (bodySingle || body || "").trim();
+    if (!text) return "";
+
+    // Remove "On ... wrote:" reply headers and everything after if it's a quote block
+    text = text.replace(/^On [\s\S]*?wrote:\s*$/gm, "");
+
+    // Remove quoted lines (> prefix)
+    text = text.replace(/^>.*$/gm, "");
+
+    // Remove signature blocks (-- followed by content)
+    text = text.replace(/^--\s*\n[\s\S]*$/m, "");
+
+    // Remove horizontal rule separators (common sig/footer delimiters)
+    text = text.replace(/^[_]{3,}[\s\S]*$/m, "");
+    text = text.replace(/^[-]{3,}[\s\S]*$/m, "");
+    text = text.replace(/^[=]{3,}[\s\S]*$/m, "");
+
+    // Remove "Sent from my ..." footers
+    text = text.replace(/^Sent from .+$/gmi, "");
+
+    // Remove legal disclaimers / confidentiality notices
+    text = text.replace(/^\s*[-–—]?\s*(Confidential|NOTICE|DISCLAIMER|This email|This message|CONFIDENTIALITY)[\s\S]*$/mi, "");
+
+    // Remove "---------- Forwarded message ----------" blocks
+    text = text.replace(/^-+\s*Forwarded message\s*-+[\s\S]*?^$/gmi, "");
+
+    // Collapse excessive blank lines
+    text = text.replace(/\n{3,}/g, "\n\n");
+
+    return text.trim();
+}
+
 export async function GET(request: NextRequest) {
     try {
         const url = new URL(request.url);
@@ -119,8 +154,105 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ evidence, participants, provenance });
         }
 
+        // ── Thread mode — resolve full email chain ──
+        if (mode === "thread") {
+            const messageId = url.searchParams.get("message_id") || "";
+            if (!messageId) {
+                return NextResponse.json({ error: "message_id required" }, { status: 400 });
+            }
+
+            // Find the seed email and its refs chain
+            const seedEmail = mboxDb.prepare(`
+                SELECT rfc822_id, refs, in_reply_to, subject
+                FROM emails WHERE rfc822_id = ? LIMIT 1
+            `).get(messageId) as any;
+
+            if (!seedEmail) {
+                return NextResponse.json({ error: "Email not found in mbox_metadata.db" }, { status: 404 });
+            }
+
+            // Collect all Message-IDs in the thread
+            const threadIds = new Set<string>();
+            threadIds.add(messageId);
+
+            // refs contains space-separated Message-IDs for the entire thread
+            if (seedEmail.refs) {
+                seedEmail.refs.split(/\s+/).filter(Boolean).forEach((id: string) => threadIds.add(id));
+            }
+            if (seedEmail.in_reply_to) {
+                threadIds.add(seedEmail.in_reply_to);
+            }
+
+            // Expand: find all emails that reference any of these IDs (catches forks)
+            if (threadIds.size > 0) {
+                const idsArr = Array.from(threadIds);
+                const placeholders = idsArr.map(() => "?").join(",");
+
+                // Find emails whose rfc822_id, in_reply_to, or refs contain any of these IDs
+                const related = mboxDb.prepare(`
+                    SELECT DISTINCT rfc822_id, refs, in_reply_to
+                    FROM emails
+                    WHERE rfc822_id IN (${placeholders})
+                       OR in_reply_to IN (${placeholders})
+                `).all(...idsArr, ...idsArr) as any[];
+
+                for (const r of related) {
+                    threadIds.add(r.rfc822_id);
+                    if (r.refs) r.refs.split(/\s+/).filter(Boolean).forEach((id: string) => threadIds.add(id));
+                    if (r.in_reply_to) threadIds.add(r.in_reply_to);
+                }
+            }
+
+            // Fetch full email data for all thread members
+            const allIds = Array.from(threadIds);
+            const ph = allIds.map(() => "?").join(",");
+            const threadEmails = mboxDb.prepare(`
+                SELECT rfc822_id, from_addr, to_addr, cc_addr, subject,
+                       date_sent, body, body_single, account
+                FROM emails
+                WHERE rfc822_id IN (${ph})
+                ORDER BY date_sent ASC
+            `).all(...allIds) as any[];
+
+            // Deduplicate by rfc822_id (same email may exist in multiple accounts)
+            const seen = new Set<string>();
+            const deduped = threadEmails.filter((e: any) => {
+                if (seen.has(e.rfc822_id)) return false;
+                seen.add(e.rfc822_id);
+                return true;
+            });
+
+            // Clean bodies and build response
+            const thread = deduped.map((e: any) => ({
+                rfc822_id: e.rfc822_id,
+                from_addr: e.from_addr,
+                to_addr: e.to_addr,
+                cc_addr: e.cc_addr,
+                subject: e.subject,
+                date_sent: e.date_sent,
+                account: e.account,
+                cleaned_body: cleanEmailBody(e.body, e.body_single),
+            }));
+
+            return NextResponse.json({
+                thread,
+                thread_count: thread.length,
+                seed_message_id: messageId,
+                seed_subject: seedEmail.subject,
+            });
+        }
         // ── FTS5 search ──
         if (q) {
+            // Minimum query length to avoid full-table-scan FTS queries
+            if (q.trim().length < 3) {
+                return NextResponse.json({
+                    results: [],
+                    total: 0,
+                    page,
+                    totalPages: 0,
+                    error: "Search query must be at least 3 characters"
+                });
+            }
             try {
                 const ftsQuery = /[^a-zA-Z0-9\s@._-]/.test(q) ? `"${q}"` : q;
 

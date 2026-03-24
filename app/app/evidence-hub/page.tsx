@@ -5,7 +5,7 @@ import {
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
     Archive, HardDrive, ChevronDown, ChevronUp, MessageCircle, Bookmark, GripVertical,
-    Smartphone, Mic, DollarSign, Scale, LayoutGrid, Folder, Edit3
+    Smartphone, Mic, DollarSign, Scale, LayoutGrid, Folder, FolderOpen, Edit3, Link2
 } from "lucide-react";
 
 /* ─── types ─── */
@@ -57,6 +57,21 @@ interface Annotation {
     flag_level: string;
     tags: string;
     created_at: string;
+}
+
+interface ThreadEmail {
+    row_id: number;
+    msg_id: string;
+    sender: string;
+    account: string;
+    subject: string;
+    date: string;
+    body: string;
+    cleaned_body: string;
+    to_addr: string;
+    cc_addr: string;
+    source_file: string;
+    zip_path: string;
 }
 
 interface CoCStep { label: string; detail: string; icon: string; timestamp?: string }
@@ -188,10 +203,34 @@ export default function EvidenceHubPage() {
     const [highlightNote, setHighlightNote] = useState("");
     const [highlightColor, setHighlightColor] = useState(HIGHLIGHT_COLORS[0]);
     const [savingAnnotation, setSavingAnnotation] = useState(false);
-    const [detailTab, setDetailTab] = useState<"body" | "annotations" | "coc" | "ai">("body");
+    const [detailTab, setDetailTab] = useState<"body" | "annotations" | "coc" | "ai" | "thread">("body");
     const [aiResponse, setAiResponse] = useState<string | null>(null);
     const [aiLoading, setAiLoading] = useState(false);
+
+    // ── Thread view state ──
+    const [threadEmails, setThreadEmails] = useState<ThreadEmail[]>([]);
+    const [threadSubject, setThreadSubject] = useState("");
+    const [threadLoading, setThreadLoading] = useState(false);
+    const [threadExpanded, setThreadExpanded] = useState<string | null>(null);
+    const [threadSelected, setThreadSelected] = useState<Set<number>>(new Set());
+    const [showThreadPlaylistPicker, setShowThreadPlaylistPicker] = useState(false);
     const bodyRef = useRef<HTMLDivElement>(null);
+
+    // ── Workbench Sections ──
+    interface WorkbenchSection { name: string; prefix: string; description?: string; totalItems: number; }
+    const [wbSections, setWbSections] = useState<WorkbenchSection[]>([]);
+    const [showSectionPicker, setShowSectionPicker] = useState(false);
+    const [showThreadSectionPicker, setShowThreadSectionPicker] = useState(false);
+
+    const fetchSections = useCallback(async () => {
+        try {
+            const res = await fetch("/api/workbench/sections");
+            const data = await res.json();
+            setWbSections(data.sections || []);
+        } catch (e) { console.error("fetch sections err:", e); }
+    }, []);
+
+
 
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
@@ -240,6 +279,20 @@ export default function EvidenceHubPage() {
         setToast({ msg, error });
         setTimeout(() => setToast(null), 3500);
     }, []);
+
+    const assignToSection = useCallback(async (section: string, evidenceIds: string[], evidenceType: string = "email") => {
+        try {
+            const results = await Promise.all(evidenceIds.map(id =>
+                fetch("/api/workbench/assign", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ evidenceId: id, evidenceType, targetSection: section }),
+                })
+            ));
+            const ok = results.filter(r => r.ok).length;
+            showToast(`📁 Assigned ${ok} item${ok !== 1 ? "s" : ""} to ${section}`);
+        } catch (e) { console.error("assign err:", e); showToast("❌ Failed to assign", true); }
+    }, [showToast]);
 
     // ── Resizable detail panel ──
     const [detailWidth, setDetailWidth] = useState(420);
@@ -445,10 +498,11 @@ export default function EvidenceHubPage() {
     // Load conversations + handle map on mount
     useEffect(() => {
         fetchConversations();
+        fetchSections();
         fetch('/api/players?mode=handles').then(r => r.json()).then(data => {
             if (data.handleMap) _handleMap = data.handleMap;
         }).catch(() => {});
-    }, [fetchConversations]);
+    }, [fetchConversations, fetchSections]);
 
     // Load conversation messages when active changes
     useEffect(() => {
@@ -538,6 +592,26 @@ export default function EvidenceHubPage() {
             console.error("detail error:", err);
         } finally {
             setDetailLoading(false);
+        }
+    };
+
+    /* ─── fetch email thread ─── */
+    const fetchThread = async (messageId: string) => {
+        setThreadLoading(true);
+        setThreadEmails([]);
+        setThreadExpanded(null);
+        setThreadSelected(new Set());
+        setShowThreadPlaylistPicker(false);
+        try {
+            const res = await fetch(`/api/communications/${encodeURIComponent(messageId)}/thread`);
+            const data = await res.json();
+            setThreadEmails(data.thread || []);
+            setThreadSubject(data.base_subject || "");
+            setDetailTab("thread");
+        } catch (err) {
+            console.error("thread fetch error:", err);
+        } finally {
+            setThreadLoading(false);
         }
     };
 
@@ -945,7 +1019,7 @@ export default function EvidenceHubPage() {
                 .eh-list::-webkit-scrollbar-thumb, .eh-detail::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.4); border-radius: 3px; }
 
                 /* ── Detail tabs ── */
-                .eh-detail-tabs { display: flex; gap: 2px; margin-bottom: 16px; background: rgba(15, 23, 42, 0.5); border-radius: 8px; padding: 3px; }
+                .eh-detail-tabs { display: flex; gap: 2px; margin-bottom: 16px; background: rgba(15, 23, 42, 0.5); border-radius: 8px; padding: 3px; overflow-x: auto; flex-wrap: wrap; }
                 .eh-detail-tab {
                     flex: 1; padding: 6px 10px; border-radius: 6px; font-size: 12px; font-weight: 500;
                     text-align: center; cursor: pointer; border: none;
@@ -2186,7 +2260,7 @@ export default function EvidenceHubPage() {
                         ) : detail?.evidence ? (
                             <>
                                 <div className="eh-detail-header">
-                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                                         <span className="eh-detail-title">{detail.evidence.title || detail.evidence.canonical_id}</span>
                                         <button 
                                             className="eh-btn active" 
@@ -2196,8 +2270,8 @@ export default function EvidenceHubPage() {
                                         >
                                             <MessageCircle size={14} color="#a78bfa" /> <span style={{ color: "#a78bfa" }}>Ask AI</span>
                                         </button>
-                                        {/* Add to Playlist button */}
-                                        {conversations.length > 0 && detail.evidence.source_type === "imessage" && (
+                                        {/* Add to Playlist button — all source types */}
+                                        {conversations.length > 0 && (
                                             <div style={{ position: "relative" }}>
                                                 <button
                                                     className="eh-btn"
@@ -2222,6 +2296,54 @@ export default function EvidenceHubPage() {
                                                 )}
                                             </div>
                                         )}
+                                        {/* Assign to Section button */}
+                                        {wbSections.length > 0 && (
+                                            <div style={{ position: "relative" }}>
+                                                <button
+                                                    className="eh-btn"
+                                                    onClick={() => { setShowSectionPicker(prev => !prev); setShowConvPicker(false); }}
+                                                    title="Assign to workbench section"
+                                                    style={{ padding: "4px 8px", background: "rgba(251, 191, 36, 0.1)", borderColor: "rgba(251, 191, 36, 0.3)" }}
+                                                >
+                                                    <FolderOpen size={14} color="#fbbf24" /> <span style={{ color: "#fbbf24" }}>Section</span>
+                                                </button>
+                                                {showSectionPicker && (
+                                                    <div className="eh-conv-dropdown" style={{ top: "110%", left: 0, maxHeight: 240, overflowY: "auto" }}>
+                                                        {wbSections.map(s => (
+                                                            <button key={s.name} onClick={() => {
+                                                                const eid = detail.evidence.canonical_id || String(detail.evidence.id);
+                                                                assignToSection(s.name, [eid], detail.evidence.source_type || "email");
+                                                                setShowSectionPicker(false);
+                                                            }}>
+                                                                <span style={{ fontSize: 10, color: "#fbbf24", fontWeight: 700, marginRight: 4 }}>{s.prefix}</span>
+                                                                {s.name.replace(/_/g, " ")} <span style={{ color: "#64748b", fontSize: 10 }}>({s.totalItems})</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        {/* View Thread button — email only */}
+                                        {detail.evidence.source_type === "email" && (() => {
+                                            try {
+                                                const ids = JSON.parse(detail.evidence.primary_ids || "{}");
+                                                const msgId = ids.message_id;
+                                                if (!msgId) return null;
+                                                return (
+                                                    <button
+                                                        className="eh-btn"
+                                                        onClick={() => fetchThread(msgId)}
+                                                        title="View full email thread"
+                                                        style={{ padding: "4px 8px", background: "rgba(59, 130, 246, 0.12)", borderColor: "rgba(59, 130, 246, 0.35)" }}
+                                                    >
+                                                        <Link2 size={14} color="#3b82f6" />
+                                                        <span style={{ color: "#3b82f6" }}>
+                                                            {threadEmails.length > 1 ? `Thread (${threadEmails.length})` : "Thread"}
+                                                        </span>
+                                                    </button>
+                                                );
+                                            } catch { return null; }
+                                        })()}
                                     </div>
                                     <button className="eh-btn" onClick={() => { setSelectedId(null); setDetail(null); setHighlightPopup(null); }} style={{ padding: "4px 8px" }}>
                                         <X size={14} />
@@ -2265,6 +2387,12 @@ export default function EvidenceHubPage() {
                                     <button className={`eh-detail-tab ${detailTab === "ai" ? "active" : ""}`} onClick={() => setDetailTab("ai")}>
                                         <MessageCircle size={12} /> AI Insights
                                     </button>
+                                    {threadEmails.length > 0 && (
+                                        <button className={`eh-detail-tab ${detailTab === "thread" ? "active" : ""}`} onClick={() => setDetailTab("thread")}>
+                                            <Link2 size={12} /> Thread
+                                            <span className="badge-count">{threadEmails.length}</span>
+                                        </button>
+                                    )}
                                 </div>
 
                                 {/* ── Body tab ── */}
@@ -2535,6 +2663,185 @@ export default function EvidenceHubPage() {
                                             <div className="eh-empty" style={{ padding: 30 }}>
                                                 <MessageCircle size={30} />
                                                 <p style={{ fontSize: 13 }}>Click the "Ask AI" button above to perform a contextual analysis of this record.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* ── Thread tab ── */}
+                                {detailTab === "thread" && (
+                                    <div className="eh-detail-section" style={{ overflow: "hidden", minWidth: 0 }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+                                            <Link2 size={14} style={{ color: "#3b82f6", flexShrink: 0 }} />
+                                            <span style={{ fontSize: 13, fontWeight: 600, color: "#e2e8f0", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                {threadSubject || "Email Thread"}
+                                            </span>
+                                            <span style={{ fontSize: 11, color: "#64748b", marginLeft: "auto", flexShrink: 0 }}>
+                                                {threadSelected.size > 0 ? `${threadSelected.size} selected` : `${threadEmails.length} message${threadEmails.length !== 1 ? "s" : ""}`}
+                                            </span>
+                                        </div>
+
+                                        {/* Thread action bar */}
+                                        {threadEmails.length > 0 && (
+                                            <div style={{ display: "flex", gap: 6, marginBottom: 12, flexWrap: "wrap" }}>
+                                                <button
+                                                    className="eh-btn"
+                                                    onClick={() => {
+                                                        if (threadSelected.size === threadEmails.length) {
+                                                            setThreadSelected(new Set());
+                                                        } else {
+                                                            setThreadSelected(new Set(threadEmails.map(t => t.row_id)));
+                                                        }
+                                                    }}
+                                                    style={{ padding: "4px 8px", fontSize: 11 }}
+                                                >
+                                                    {threadSelected.size === threadEmails.length ? "Deselect All" : "Select All"}
+                                                </button>
+                                                {threadSelected.size > 0 && conversations.length > 0 && (
+                                                    <div style={{ position: "relative" }}>
+                                                        <button
+                                                            className="eh-btn"
+                                                            onClick={() => setShowThreadSectionPicker(prev => !prev)}
+                                                            style={{ padding: "4px 8px", fontSize: 11, background: "rgba(251, 191, 36, 0.1)", borderColor: "rgba(251, 191, 36, 0.3)" }}
+                                                        >
+                                                            <FolderOpen size={12} color="#fbbf24" />
+                                                            <span style={{ color: "#fbbf24" }}>Assign {threadSelected.size} to Section</span>
+                                                        </button>
+                                                        {showThreadSectionPicker && (
+                                                            <div className="eh-conv-dropdown" style={{ top: "110%", left: 0, zIndex: 50, maxHeight: 240, overflowY: "auto" }}>
+                                                                {wbSections.map(s => (
+                                                                    <button key={s.name} onClick={() => {
+                                                                        const ids = threadEmails.filter(t => threadSelected.has(t.row_id)).map(t => t.msg_id);
+                                                                        assignToSection(s.name, ids, "email");
+                                                                        setShowThreadSectionPicker(false);
+                                                                    }}>
+                                                                        <span style={{ fontSize: 10, color: "#fbbf24", fontWeight: 700, marginRight: 4 }}>{s.prefix}</span>
+                                                                        {s.name.replace(/_/g, " ")} <span style={{ color: "#64748b", fontSize: 10 }}>({s.totalItems})</span>
+                                                                    </button>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {threadLoading ? (
+                                            <div className="eh-loading" style={{ padding: 40 }}>
+                                                <RefreshCw size={24} />
+                                                <p style={{ marginTop: 12 }}>Resolving thread…</p>
+                                            </div>
+                                        ) : threadEmails.length === 0 ? (
+                                            <div className="eh-empty" style={{ padding: 30 }}>
+                                                <Link2 size={30} />
+                                                <p style={{ fontSize: 13 }}>No thread found. This may be a standalone email.</p>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: "flex", flexDirection: "column", gap: 0, minWidth: 0, overflow: "hidden" }}>
+                                                {threadEmails.map((t, idx) => {
+                                                    const isExpanded = threadExpanded === t.msg_id;
+                                                    const isLast = idx === threadEmails.length - 1;
+                                                    return (
+                                                        <div key={t.row_id || idx} style={{ display: "flex", gap: 8, minWidth: 0 }}>
+                                                            {/* Selection checkbox */}
+                                                            <div style={{ display: "flex", alignItems: "flex-start", paddingTop: 12, flexShrink: 0 }}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={threadSelected.has(t.row_id)}
+                                                                    onChange={(e) => {
+                                                                        e.stopPropagation();
+                                                                        setThreadSelected(prev => {
+                                                                            const next = new Set(prev);
+                                                                            if (next.has(t.row_id)) next.delete(t.row_id);
+                                                                            else next.add(t.row_id);
+                                                                            return next;
+                                                                        });
+                                                                    }}
+                                                                    style={{ accentColor: "#3b82f6", cursor: "pointer", width: 14, height: 14 }}
+                                                                />  
+                                                            </div>
+                                                            {/* Timeline connector */}
+                                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
+                                                                <div style={{
+                                                                    width: 10, height: 10, borderRadius: "50%",
+                                                                    background: idx === 0 ? "#3b82f6" : "rgba(100, 116, 139, 0.4)",
+                                                                    border: `2px solid ${idx === 0 ? "#3b82f6" : "rgba(100, 116, 139, 0.3)"}`,
+                                                                    flexShrink: 0, marginTop: 14
+                                                                }} />
+                                                                {!isLast && (
+                                                                    <div style={{
+                                                                        width: 2, flex: 1,
+                                                                        background: "linear-gradient(to bottom, rgba(59, 130, 246, 0.3), rgba(100, 116, 139, 0.15))",
+                                                                        minHeight: 20
+                                                                    }} />
+                                                                )}
+                                                            </div>
+
+                                                            {/* Email card */}
+                                                            <div
+                                                                style={{
+                                                                    flex: 1, minWidth: 0, borderRadius: 8, marginBottom: isLast ? 0 : 4,
+                                                                    background: isExpanded ? "rgba(59, 130, 246, 0.06)" : "rgba(30, 41, 59, 0.5)",
+                                                                    border: `1px solid ${isExpanded ? "rgba(59, 130, 246, 0.2)" : "rgba(51, 65, 85, 0.4)"}`,
+                                                                    overflow: "hidden", cursor: "pointer",
+                                                                    transition: "all 0.15s ease"
+                                                                }}
+                                                            >
+                                                                {/* Card header */}
+                                                                <div
+                                                                    onClick={() => setThreadExpanded(isExpanded ? null : t.msg_id)}
+                                                                    style={{
+                                                                        padding: "10px 12px", display: "flex",
+                                                                        alignItems: "center", gap: 8
+                                                                    }}
+                                                                >
+                                                                    <span style={{
+                                                                        fontSize: 10, fontWeight: 700, color: "#64748b",
+                                                                        background: "rgba(100, 116, 139, 0.15)",
+                                                                        padding: "2px 6px", borderRadius: 4, flexShrink: 0
+                                                                    }}>
+                                                                        {idx + 1}
+                                                                    </span>
+                                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                                        <div style={{ fontSize: 12, fontWeight: 600, color: "#e2e8f0", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                                                            {t.sender || t.account}
+                                                                        </div>
+                                                                        <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                                                                            {t.date ? new Date(t.date).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) : "—"}
+                                                                        </div>
+                                                                    </div>
+                                                                    {isExpanded ? <ChevronUp size={14} color="#64748b" /> : <ChevronDown size={14} color="#64748b" />}
+                                                                </div>
+
+                                                                {/* Expanded content */}
+                                                                {isExpanded && (
+                                                                    <div style={{
+                                                                        padding: "0 12px 12px 12px",
+                                                                        borderTop: "1px solid rgba(51, 65, 85, 0.3)"
+                                                                    }}>
+                                                                        {/* Recipients */}
+                                                                        <div style={{ fontSize: 11, color: "#94a3b8", padding: "8px 0 6px", lineHeight: 1.5 }}>
+                                                                            {t.to_addr && <div><strong style={{ color: "#64748b" }}>To:</strong> {t.to_addr}</div>}
+                                                                            {t.cc_addr && <div><strong style={{ color: "#64748b" }}>Cc:</strong> {t.cc_addr}</div>}
+                                                                            {t.subject && <div><strong style={{ color: "#64748b" }}>Subject:</strong> {t.subject}</div>}
+                                                                        </div>
+                                                                        {/* Cleaned body */}
+                                                                        <pre style={{
+                                                                            whiteSpace: "pre-wrap", wordBreak: "break-word",
+                                                                            fontFamily: "var(--font-body, system-ui)",
+                                                                            fontSize: 12.5, lineHeight: 1.6,
+                                                                            color: "#cbd5e1", margin: 0,
+                                                                            maxHeight: 400, overflowY: "auto",
+                                                                            padding: "8px 0"
+                                                                        }}>
+                                                                            {t.cleaned_body || t.body || "(no body)"}
+                                                                        </pre>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
                                             </div>
                                         )}
                                     </div>

@@ -105,7 +105,7 @@ export function getWorkbenchDb(): Database.Database {
             _workbenchDb.pragma("foreign_keys = ON");
 
             // Initialize schema if needed
-            const schemaFiles = ["workbench.sql", "transcript_annotations.sql", "missing_schemas.sql", "timeline.sql", "financial_import.sql", "conversations_schema.sql"];
+            const schemaFiles = ["workbench.sql", "transcript_annotations.sql", "missing_schemas.sql", "timeline.sql", "financial_import.sql", "conversations_schema.sql", "forensic_audit.sql"];
             schemaFiles.forEach(file => {
                 const schemaPath = path.join(PROJECT_ROOT, "schemas", file);
                 if (fs.existsSync(schemaPath)) {

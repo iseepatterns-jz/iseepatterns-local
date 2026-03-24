@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { 
     Upload, FileText, CheckCircle, AlertCircle, 
     Loader2, Search, ArrowRight, Shield, History, Trash2,
-    RefreshCw, X
+    RefreshCw, X, ShieldCheck, ShieldAlert, ShieldX, BarChart3
 } from "lucide-react";
 import Link from "next/link";
 
@@ -20,6 +20,26 @@ interface ImportSession {
     error_message?: string;
 }
 
+interface AuditResult {
+    id: number;
+    audit_year: number;
+    bank_name: string;
+    account_suffix: string;
+    status: string;
+    total_sessions: number;
+    total_txns: number;
+    matched_txns: number;
+    unmatched_txns: number;
+    match_rate: number;
+    months_covered: number;
+    missing_months: string;
+    rosetta_total: number;
+    findings: string;
+    monthly_breakdown: string;
+    variance_detail: string;
+    created_at: string;
+}
+
 export default function StatementImportPage() {
     const [file, setFile] = useState<File | null>(null);
     const [bankName, setBankName] = useState("");
@@ -30,6 +50,14 @@ export default function StatementImportPage() {
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
+
+    // Forensic Audit state
+    const [auditYear, setAuditYear] = useState(2020);
+    const [auditBank, setAuditBank] = useState("Chase");
+    const [auditing, setAuditing] = useState(false);
+    const [auditResult, setAuditResult] = useState<any | null>(null);
+    const [pastAudits, setPastAudits] = useState<AuditResult[]>([]);
+    const [showAuditDetail, setShowAuditDetail] = useState<AuditResult | null>(null);
 
     const [confirmDialog, setConfirmDialog] = useState<{
         open: boolean;
@@ -112,7 +140,41 @@ export default function StatementImportPage() {
         });
     };
 
-    useEffect(() => { fetchSessions(); }, []);
+    const fetchAudits = async () => {
+        try {
+            const res = await fetch(`/api/financials/forensic-audit?t=${Date.now()}`);
+            const data = await res.json();
+            if (Array.isArray(data)) setPastAudits(data);
+        } catch (e) {
+            console.error("Fetch audits error:", e);
+        }
+    };
+
+    const runAudit = async () => {
+        setAuditing(true);
+        setAuditResult(null);
+        try {
+            const res = await fetch("/api/financials/forensic-audit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ year: auditYear, bank: auditBank })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                showToast(data.error || "Audit failed", "error");
+                return;
+            }
+            setAuditResult(data);
+            showToast(`Audit complete: ${data.status}`, data.status === "PASSED" ? "success" : "error");
+            fetchAudits();
+        } catch (e) {
+            showToast("Audit request failed", "error");
+        } finally {
+            setAuditing(false);
+        }
+    };
+
+    useEffect(() => { fetchSessions(); fetchAudits(); }, []);
 
     const handleUpload = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -370,6 +432,212 @@ export default function StatementImportPage() {
                     </tbody>
                 </table>
             </div>
+
+            {/* ═══ Forensic Integrity Audit Section ═══ */}
+            <div style={{ marginTop: "3rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <ShieldCheck size={16} style={{ color: "var(--accent-cyan)" }} />
+                <h2 style={{ fontSize: "1rem", fontWeight: 700 }}>Forensic Integrity Audit</h2>
+            </div>
+
+            <div className="glass-panel" style={{ padding: "2rem", marginBottom: "2rem" }}>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.8125rem", margin: "0 0 1.5rem 0" }}>
+                    Run a variance audit comparing imported statement transactions against the Rosetta Stone master ledger.
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "1rem", alignItems: "end" }}>
+                    <div>
+                        <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                            Year
+                        </label>
+                        <input
+                            type="number" min={2013} max={2025} value={auditYear}
+                            onChange={e => setAuditYear(parseInt(e.target.value) || 2020)}
+                            style={{
+                                width: "100%", background: "var(--bg-glass)", border: "var(--glass-border)",
+                                borderRadius: 6, padding: "8px 12px", color: "var(--text-primary)", outline: "none"
+                            }}
+                        />
+                    </div>
+                    <div>
+                        <label style={{ display: "block", fontSize: "0.7rem", fontWeight: 700, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                            Bank
+                        </label>
+                        <input
+                            type="text" value={auditBank}
+                            onChange={e => setAuditBank(e.target.value)}
+                            placeholder="e.g. Chase"
+                            style={{
+                                width: "100%", background: "var(--bg-glass)", border: "var(--glass-border)",
+                                borderRadius: 6, padding: "8px 12px", color: "var(--text-primary)", outline: "none"
+                            }}
+                        />
+                    </div>
+                    <button
+                        onClick={runAudit}
+                        disabled={auditing || !auditBank}
+                        style={{
+                            padding: "8px 24px", borderRadius: 6,
+                            background: auditing ? "var(--bg-glass)" : "linear-gradient(135deg, #00f5d4, #00bbf9)",
+                            color: auditing ? "var(--text-muted)" : "#000",
+                            border: "none", fontWeight: 800, cursor: auditing ? "default" : "pointer",
+                            display: "flex", alignItems: "center", gap: "0.5rem", height: "38px",
+                            boxShadow: auditing ? "none" : "0 4px 12px rgba(0, 245, 212, 0.2)"
+                        }}
+                    >
+                        {auditing ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}
+                        {auditing ? "Auditing..." : "Run Audit"}
+                    </button>
+                </div>
+
+                {/* Live Audit Result */}
+                {auditResult && (
+                    <div style={{ marginTop: "2rem" }}>
+                        <div style={{
+                            display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem",
+                            padding: "1rem", borderRadius: 8,
+                            background: auditResult.status === "PASSED" ? "rgba(16, 185, 129, 0.08)" :
+                                        auditResult.status === "WARNING" ? "rgba(245, 158, 11, 0.08)" : "rgba(239, 68, 68, 0.08)",
+                            border: `1px solid ${auditResult.status === "PASSED" ? "rgba(16, 185, 129, 0.3)" :
+                                        auditResult.status === "WARNING" ? "rgba(245, 158, 11, 0.3)" : "rgba(239, 68, 68, 0.3)"}`
+                        }}>
+                            {auditResult.status === "PASSED" ? <ShieldCheck size={24} style={{ color: "#10b981" }} /> :
+                             auditResult.status === "WARNING" ? <ShieldAlert size={24} style={{ color: "#f59e0b" }} /> :
+                             <ShieldX size={24} style={{ color: "#ef4444" }} />}
+                            <div>
+                                <div style={{ fontWeight: 700, fontSize: "1.125rem" }}>
+                                    {auditResult.year} {auditResult.bank} — {auditResult.status}
+                                </div>
+                                <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+                                    Account •{auditResult.account_suffix} · Match Rate: {auditResult.summary.match_rate}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Executive Summary */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
+                            {[
+                                { label: "Total Transactions", value: auditResult.summary.total_txns.toLocaleString() },
+                                { label: "Matched", value: auditResult.summary.matched_txns.toLocaleString() },
+                                { label: "Unmatched", value: auditResult.summary.unmatched_txns },
+                                { label: "Rosetta Records", value: auditResult.summary.rosetta_total.toLocaleString() }
+                            ].map((stat, i) => (
+                                <div key={i} style={{
+                                    padding: "1rem", borderRadius: 8,
+                                    background: "rgba(255,255,255,0.02)", border: "1px solid var(--glass-border)",
+                                    textAlign: "center"
+                                }}>
+                                    <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--accent-cyan)" }}>{stat.value}</div>
+                                    <div style={{ fontSize: "0.65rem", color: "var(--text-muted)", textTransform: "uppercase", fontWeight: 700, marginTop: "0.25rem" }}>{stat.label}</div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Findings */}
+                        {auditResult.findings.length > 0 && (
+                            <div style={{ marginBottom: "1.5rem", padding: "1rem", borderRadius: 8, background: "rgba(245, 158, 11, 0.05)", border: "1px solid rgba(245, 158, 11, 0.15)" }}>
+                                <div style={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", color: "#f59e0b", marginBottom: "0.5rem" }}>Findings</div>
+                                {auditResult.findings.map((f: string, i: number) => (
+                                    <div key={i} style={{ fontSize: "0.8125rem", color: "var(--text-secondary)", padding: "0.25rem 0" }}>• {f}</div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Monthly Breakdown Table */}
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
+                            <thead>
+                                <tr style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                    <th style={{ textAlign: "left", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>SESSION</th>
+                                    <th style={{ textAlign: "left", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>STATEMENT</th>
+                                    <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>TRANS</th>
+                                    <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>MATCHED</th>
+                                    <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>UNMATCHED</th>
+                                    <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>MATCH %</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {auditResult.monthly_breakdown.map((m: any, i: number) => (
+                                    <tr key={i} style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                        <td style={{ padding: "0.75rem", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>{m.session_id}</td>
+                                        <td style={{ padding: "0.75rem" }}>{m.filename}</td>
+                                        <td style={{ padding: "0.75rem", textAlign: "right" }}>{m.trans_count}</td>
+                                        <td style={{ padding: "0.75rem", textAlign: "right", color: "#10b981" }}>{m.matched}</td>
+                                        <td style={{ padding: "0.75rem", textAlign: "right", color: m.unmatched > 0 ? "#f59e0b" : "var(--text-muted)" }}>{m.unmatched}</td>
+                                        <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: 700, color: m.match_pct === "100.0%" ? "#10b981" : "#f59e0b" }}>{m.match_pct}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
+                        {/* Variance Detail */}
+                        {auditResult.variance_detail.length > 0 && (
+                            <div style={{ marginTop: "1.5rem" }}>
+                                <div style={{ fontWeight: 700, fontSize: "0.75rem", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
+                                    Missing from Master (Variance)
+                                </div>
+                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                            <th style={{ textAlign: "left", padding: "0.5rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>DATE</th>
+                                            <th style={{ textAlign: "left", padding: "0.5rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>DESCRIPTION</th>
+                                            <th style={{ textAlign: "right", padding: "0.5rem", color: "var(--text-muted)", fontSize: "0.7rem" }}>AMOUNT</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {auditResult.variance_detail.map((v: any, i: number) => (
+                                            <tr key={i} style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                                <td style={{ padding: "0.5rem", fontFamily: "var(--font-mono)", fontSize: "0.75rem" }}>{v.date}</td>
+                                                <td style={{ padding: "0.5rem" }}>{v.description}</td>
+                                                <td style={{ padding: "0.5rem", textAlign: "right", fontFamily: "var(--font-mono)" }}>${Math.abs(v.amount).toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Past Audits */}
+            {pastAudits.length > 0 && (
+                <div className="glass-panel" style={{ overflow: "hidden", marginBottom: "2rem" }}>
+                    <div style={{ padding: "1rem", borderBottom: "1px solid var(--border-glass)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <BarChart3 size={14} style={{ color: "var(--text-muted)" }} />
+                        <span style={{ fontWeight: 700, fontSize: "0.8125rem" }}>Past Audit Results</span>
+                    </div>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8125rem" }}>
+                        <thead>
+                            <tr style={{ background: "rgba(255, 255, 255, 0.02)", borderBottom: "1px solid var(--border-glass)" }}>
+                                <th style={{ textAlign: "left", padding: "0.75rem", color: "var(--text-muted)" }}>YEAR</th>
+                                <th style={{ textAlign: "left", padding: "0.75rem", color: "var(--text-muted)" }}>BANK</th>
+                                <th style={{ textAlign: "left", padding: "0.75rem", color: "var(--text-muted)" }}>STATUS</th>
+                                <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)" }}>MATCH RATE</th>
+                                <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)" }}>TXNS</th>
+                                <th style={{ textAlign: "right", padding: "0.75rem", color: "var(--text-muted)" }}>DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pastAudits.map(a => (
+                                <tr key={a.id} style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                    <td style={{ padding: "0.75rem", fontWeight: 600 }}>{a.audit_year}</td>
+                                    <td style={{ padding: "0.75rem" }}>{a.bank_name} •{a.account_suffix}</td>
+                                    <td style={{ padding: "0.75rem" }}>
+                                        <span style={{
+                                            color: a.status === "PASSED" ? "#10b981" : a.status === "WARNING" ? "#f59e0b" : "#ef4444",
+                                            fontWeight: 700, fontSize: "0.7rem", textTransform: "uppercase"
+                                        }}>
+                                            {a.status === "PASSED" ? "✅" : a.status === "WARNING" ? "⚠️" : "❌"} {a.status}
+                                        </span>
+                                    </td>
+                                    <td style={{ padding: "0.75rem", textAlign: "right", fontWeight: 700 }}>{a.match_rate}%</td>
+                                    <td style={{ padding: "0.75rem", textAlign: "right" }}>{a.total_txns.toLocaleString()}</td>
+                                    <td style={{ padding: "0.75rem", textAlign: "right", fontSize: "0.75rem", color: "var(--text-muted)" }}>{a.created_at?.slice(0, 16).replace("T", " ")}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
 
             {/* ═══ Confirmation Dialog ═══ */}
             {confirmDialog.open && (
