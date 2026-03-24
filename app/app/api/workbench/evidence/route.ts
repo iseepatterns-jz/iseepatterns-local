@@ -57,9 +57,59 @@ export async function GET(request: NextRequest) {
         const items: EvidenceItem[] = [];
 
         if (type === "email") {
-            // Try RAW_EML folder first
+            // 1) Get assigned evidence IDs for this section from workbench.db
+            const { getWorkbenchDb } = await import("@/lib/db");
+            const wbDb = getWorkbenchDb();
+            
+            let assignedIds: string[] = [];
+            if (section) {
+                const rows = wbDb.prepare(
+                    `SELECT evidence_id FROM evidence_assignments 
+                     WHERE evidence_type = 'email' AND target_section = ?
+                     ORDER BY assigned_at DESC`
+                ).all(section) as { evidence_id: string }[];
+                assignedIds = rows.map(r => r.evidence_id);
+            }
+
+            if (assignedIds.length === 0) {
+                // No assignments → no items (don't fall through to dump all emails)
+            } else {
+                // 2) Look up email metadata from mbox_metadata.db
+                const db = getCommDb();
+                const ph = assignedIds.map(() => "?").join(",");
+                let sql = `SELECT rfc822_id as msg_id, from_addr as sender, subject, date_sent as date, mbox_source as source_file
+                           FROM emails WHERE rfc822_id IN (${ph})`;
+                const params: string[] = [...assignedIds];
+
+                if (query) {
+                    sql = `SELECT rfc822_id as msg_id, from_addr as sender, subject, date_sent as date, mbox_source as source_file
+                           FROM emails WHERE rfc822_id IN (${ph}) AND (subject LIKE ? OR from_addr LIKE ?)`;
+                    params.push(`%${query}%`, `%${query}%`);
+                }
+
+                sql += ` ORDER BY date_sent DESC`;
+
+                const rows = db.prepare(sql).all(...params) as Array<{
+                    msg_id: string; sender: string; subject: string; date: string; source_file: string;
+                }>;
+
+                for (const row of rows) {
+                    items.push({
+                        id: row.msg_id,
+                        type: "email",
+                        title: row.subject || "(no subject)",
+                        subtitle: row.sender || "Unknown",
+                        date: row.date || "",
+                        preview: "",
+                        source: row.source_file || "",
+                    });
+                }
+            }
+
+            // 3) Also add any physical .eml files not yet in the list
             const rawEmlDir = path.join(EVIDENCE_DIR, section, "RAW_EML");
             if (fs.existsSync(rawEmlDir)) {
+                const existingIds = new Set(items.map(i => i.id));
                 const walk = (dir: string): string[] => {
                     const results: string[] = [];
                     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -70,62 +120,26 @@ export async function GET(request: NextRequest) {
                     return results;
                 };
 
-                let emlFiles = walk(rawEmlDir).sort();
-
-                for (let i = 0; i < emlFiles.length; i++) {
-                    const parsed = parseEmlHeader(emlFiles[i]);
+                for (const emlFile of walk(rawEmlDir).sort()) {
+                    const parsed = parseEmlHeader(emlFile);
                     if (!parsed) continue;
+                    const id = parsed.messageId || path.basename(emlFile);
+                    if (existingIds.has(id)) continue; // already in list from DB
 
-                    const item: EvidenceItem = {
-                        id: parsed.messageId || path.basename(emlFiles[i]),
+                    if (query) {
+                        const haystack = `${parsed.subject} ${parsed.from} ${parsed.date}`.toLowerCase();
+                        if (!haystack.includes(query.toLowerCase())) continue;
+                    }
+
+                    items.push({
+                        id,
                         type: "email",
                         title: parsed.subject || "(no subject)",
                         subtitle: parsed.from || "Unknown",
                         date: parsed.date || "",
                         preview: "",
-                        source: path.basename(emlFiles[i]),
-                        batesNumber: undefined,
-                    };
-
-                    if (query) {
-                        const haystack = `${item.title} ${item.subtitle} ${item.date}`.toLowerCase();
-                        if (!haystack.includes(query.toLowerCase())) continue;
-                    }
-
-                    items.push(item);
-                }
-            }
-
-            // Also check indexed emails in the comm DB
-            if (items.length === 0) {
-                try {
-                    const db = getCommDb();
-                    let sql = `SELECT msg_id, sender, subject, date, source_file FROM emails`;
-                    const params: string[] = [];
-                    if (query) {
-                        sql += ` WHERE subject LIKE ? OR sender LIKE ?`;
-                        params.push(`%${query}%`, `%${query}%`);
-                    }
-                    sql += ` ORDER BY date DESC LIMIT ? OFFSET ?`;
-                    params.push(String(limit), String((page - 1) * limit));
-
-                    const rows = db.prepare(sql).all(...params) as Array<{
-                        msg_id: string; sender: string; subject: string; date: string; source_file: string;
-                    }>;
-
-                    for (const row of rows) {
-                        items.push({
-                            id: row.msg_id,
-                            type: "email",
-                            title: row.subject || "(no subject)",
-                            subtitle: row.sender || "Unknown",
-                            date: row.date || "",
-                            preview: "",
-                            source: row.source_file || "",
-                        });
-                    }
-                } catch {
-                    // DB not available, that's ok
+                        source: path.basename(emlFile),
+                    });
                 }
             }
         } else if (type === "text") {

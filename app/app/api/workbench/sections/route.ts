@@ -51,6 +51,11 @@ export async function GET() {
             const pdfCount = exists ? countFiles(sectionPath, ".pdf") : 0;
             const emlCount = fs.existsSync(rawEmlPath) ? countFiles(rawEmlPath, ".eml") : 0;
 
+            // Count DB assignments for this section
+            const assignmentCount = (db.prepare(
+                `SELECT COUNT(*) as cnt FROM evidence_assignments WHERE target_section = ?`
+            ).get(name) as { cnt: number })?.cnt || 0;
+
             sections.push({
                 name,
                 prefix: row.prefix,
@@ -58,7 +63,7 @@ export async function GET() {
                 description: row.description,
                 pdfCount,
                 emlCount,
-                totalItems: Math.max(pdfCount, emlCount),
+                totalItems: Math.max(pdfCount, emlCount, assignmentCount),
                 path: sectionPath,
             });
         }

@@ -261,16 +261,18 @@ export async function GET(request: NextRequest) {
             try {
                 const db = getCommDb();
                 const row = db.prepare(
-                    `SELECT msg_id, sender, subject, date, body FROM emails WHERE msg_id = ?`
-                ).get(id) as { msg_id: string; sender: string; subject: string; date: string; body: string } | undefined;
+                    `SELECT rfc822_id, from_addr, to_addr, cc_addr, subject, date_sent, body FROM emails WHERE rfc822_id = ?`
+                ).get(id) as { rfc822_id: string; from_addr: string; to_addr: string; cc_addr: string; subject: string; date_sent: string; body: string } | undefined;
 
                 if (row) {
-                    const headers = {
-                        From: row.sender || "",
+                    const headers: Record<string, string> = {
+                        From: row.from_addr || "",
+                        To: row.to_addr || "",
                         Subject: row.subject || "",
-                        Date: row.date || "",
-                        "Message-ID": row.msg_id || "",
+                        Date: row.date_sent || "",
+                        "Message-ID": row.rfc822_id || "",
                     };
+                    if (row.cc_addr) headers["CC"] = row.cc_addr;
                     const html = renderEmailPreview(headers, row.body || "", "PREVIEW", 1);
                     const { issues } = cleanBody(row.body || "");
                     return NextResponse.json({ html, issues, type: "email", id });
