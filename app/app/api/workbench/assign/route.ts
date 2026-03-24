@@ -27,17 +27,17 @@ export async function POST(request: NextRequest) {
         if (evidenceType === "email") {
             const commDb = getCommDb();
             const emailRow = commDb.prepare(`
-                SELECT zip_path, source_file FROM messages WHERE msg_id = ?
-            `).get(evidenceId) as { zip_path: string, source_file: string } | undefined;
+                SELECT zip_source, mbox_source FROM emails WHERE rfc822_id = ?
+            `).get(evidenceId) as { zip_source: string, mbox_source: string } | undefined;
 
-            if (emailRow && emailRow.zip_path && emailRow.source_file) {
+            if (emailRow && emailRow.zip_source && emailRow.mbox_source) {
                 const targetPath = path.join(EVIDENCE_DIR, targetSection, "RAW_EML", `${evidenceId.replace(/[^a-zA-Z0-9.\-_@]/g, "_")}.eml`);
 
                 // Spawn the extraction script
                 const extractionCommand = JSON.stringify([{
                     msg_id: evidenceId,
-                    zip_path: emailRow.zip_path,
-                    mbox_name: emailRow.source_file,
+                    zip_path: emailRow.zip_source,
+                    mbox_name: emailRow.mbox_source,
                     target_path: targetPath
                 }]);
 
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
                     } catch (e) { /* ignore */ }
                 }
             } else {
-                console.warn(`Could not find zip_path or source_file for email ${evidenceId}`);
+                console.warn(`Could not find zip_source or mbox_source for email ${evidenceId}`);
             }
         }
 
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         console.error("Assignment error:", error);
         return NextResponse.json(
-            { error: "Failed to assign evidence" },
+            { error: "Failed to assign evidence", detail: String(error) },
             { status: 500 }
         );
     }

@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS evidence_assignments (
     assigned_at     TEXT DEFAULT (datetime('now'))
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS idx_evidence_assignments_unique
+    ON evidence_assignments(evidence_id, evidence_type, target_section);
+
 -- Workbench Audit Trail
 CREATE TABLE IF NOT EXISTS workbench_audit (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
