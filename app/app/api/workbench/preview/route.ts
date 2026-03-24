@@ -131,7 +131,40 @@ function escapeHtml(text: string): string {
         .replace(/"/g, "&quot;");
 }
 
-function renderEmailPreview(headers: Record<string, string>, body: string, batesPrefix: string, index: number): string {
+/**
+ * Replace [image: filename.ext] placeholders with <img> tags.
+ * These placeholders come from Gmail's plain-text rendering of inline images.
+ * After HTML escaping, they appear as [image: filename.ext] in the output.
+ */
+function replaceImagePlaceholders(html: string, rfc822Id?: string): string {
+    return html.replace(
+        /\[image:\s*([^\]]+?)\]/gi,
+        (_, filename: string) => {
+            const trimmed = filename.trim();
+            const encodedName = encodeURIComponent(trimmed);
+            const idParam = rfc822Id ? `&rfc822id=${encodeURIComponent(rfc822Id)}` : '';
+            const isImage = /\.(png|jpg|jpeg|gif|webp|bmp|svg)$/i.test(trimmed);
+
+            if (isImage) {
+                return `<div style="margin: 12px 0; text-align: center;">
+                    <img src="/api/workbench/attachment?name=${encodedName}${idParam}" 
+                         alt="${escapeHtml(trimmed)}" 
+                         style="max-width: 100%; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.1);"
+                         onerror="this.outerHTML='<span style=&quot;color:#999;font-style:italic;&quot;>[Attachment: ${escapeHtml(trimmed)}]</span>'" />
+                    <div style="font-size: 9px; color: #888; margin-top: 4px;">${escapeHtml(trimmed)}</div>
+                </div>`;
+            } else {
+                return `<a href="/api/workbench/attachment?name=${encodedName}${idParam}" 
+                           target="_blank" 
+                           style="color: #0066cc; text-decoration: underline;">
+                    📎 ${escapeHtml(trimmed)}
+                </a>`;
+            }
+        }
+    );
+}
+
+function renderEmailPreview(headers: Record<string, string>, body: string, batesPrefix: string, index: number, rfc822Id?: string): string {
     const bates = `${batesPrefix}-${String(index).padStart(4, "0")}`;
     const { cleaned } = cleanBody(body);
 
@@ -145,7 +178,7 @@ function renderEmailPreview(headers: Record<string, string>, body: string, bates
             <td style="font-size: 11px; padding: 4px 8px; border: 0.25px solid #DDD;">${escapeHtml(val)}</td>
         </tr>`).join("")}
     </table>
-    <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(cleaned)}</div>
+    <div style="font-size: 11px; line-height: 1.6; white-space: pre-wrap;">${replaceImagePlaceholders(escapeHtml(cleaned), rfc822Id)}</div>
     <div style="margin-top: 24px; padding-top: 8px; border-top: 1px solid #ddd; font-size: 9px; color: #888;">
         ${escapeHtml(bates)} | Preview render | Chain of custody preserved
     </div>
@@ -250,7 +283,8 @@ export async function GET(request: NextRequest) {
                     const cc = getHeader("Cc");
                     if (cc) (headers as Record<string, string>)["CC"] = cc;
 
-                    const html = renderEmailPreview(headers, body, "PREVIEW", 1);
+                    const msgId = getHeader("Message-ID").replace(/^<|>$/g, "");
+                    const html = renderEmailPreview(headers, body, "PREVIEW", 1, msgId || id);
                     const { issues } = cleanBody(body);
 
                     return NextResponse.json({ html, issues, type: "email", id });
@@ -273,7 +307,7 @@ export async function GET(request: NextRequest) {
                         "Message-ID": row.rfc822_id || "",
                     };
                     if (row.cc_addr) headers["CC"] = row.cc_addr;
-                    const html = renderEmailPreview(headers, row.body || "", "PREVIEW", 1);
+                    const html = renderEmailPreview(headers, row.body || "", "PREVIEW", 1, row.rfc822_id);
                     const { issues } = cleanBody(row.body || "");
                     return NextResponse.json({ html, issues, type: "email", id });
                 }
