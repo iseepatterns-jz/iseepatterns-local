@@ -51,10 +51,15 @@ export async function GET(request: NextRequest) {
         const dateFrom = url.searchParams.get("date_from") || "";
         const dateTo = url.searchParams.get("date_to") || "";
         const tag = url.searchParams.get("tag") || "";
+        const excludeLabels = (url.searchParams.get("exclude_labels") || "").split(",").map(s => s.trim()).filter(Boolean);
         const mode = url.searchParams.get("mode") || "list"; // list | stats | detail
         const evidenceId = url.searchParams.get("id") || "";
         const offset = (page - 1) * limit;
         const sortDir = (url.searchParams.get("sort_dir") || "desc").toLowerCase() === "asc" ? "ASC" : "DESC";
+
+        // Build exclude clause for tags
+        const excludeClause = excludeLabels.map(() => "AND e.tags NOT LIKE ?").join(" ");
+        const excludeParams = excludeLabels.map(l => `%${l}%`);
 
         const db = getEvidenceHubDb();
         const chatDb = getImessageDb();
@@ -280,8 +285,8 @@ export async function GET(request: NextRequest) {
                     SELECT COUNT(*) as total
                     FROM evidence_fts f
                     JOIN evidence e ON e.id = f.rowid
-                    WHERE evidence_fts MATCH ? ${extraWhere}
-                `).get(ftsQuery, ...extraParams) as CountRow;
+                    WHERE evidence_fts MATCH ? ${extraWhere} ${excludeClause}
+                `).get(ftsQuery, ...extraParams, ...excludeParams) as CountRow;
 
                 const rows = db.prepare(`
                     SELECT e.id, e.canonical_id, e.source_type, e.title, e.summary,
@@ -289,10 +294,10 @@ export async function GET(request: NextRequest) {
                            e.start_timestamp, e.tags, e.primary_ids
                     FROM evidence_fts f
                     JOIN evidence e ON e.id = f.rowid
-                    WHERE evidence_fts MATCH ? ${extraWhere}
+                    WHERE evidence_fts MATCH ? ${extraWhere} ${excludeClause}
                     ORDER BY rank
                     LIMIT ? OFFSET ?
-                `).all(ftsQuery, ...extraParams, limit, offset);
+                `).all(ftsQuery, ...extraParams, ...excludeParams, limit, offset);
 
                 return NextResponse.json({
                     results: rows,
@@ -432,6 +437,12 @@ export async function GET(request: NextRequest) {
             params.push(pattern, pattern, pattern);
         }
 
+        // Apply exclude_labels to the fallback query
+        for (const label of excludeLabels) {
+            where += " AND e.tags NOT LIKE ?";
+            params.push(`%${label}%`);
+        }
+
         const countRow = db.prepare(
             `SELECT COUNT(*) as total FROM evidence e ${where}`
         ).get(...params) as CountRow;
@@ -441,7 +452,7 @@ export async function GET(request: NextRequest) {
                    substr(e.body_snippet, 1, 200) as preview,
                    e.start_timestamp, e.tags, e.primary_ids
             FROM evidence e ${where}
-            ORDER BY e.start_timestamp DESC
+            ORDER BY e.start_timestamp ${sortDir}
             LIMIT ? OFFSET ?
         `).all(...params, limit, offset);
 

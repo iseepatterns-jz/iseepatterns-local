@@ -103,6 +103,16 @@ export default function EvidenceHubPage() {
     const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
     const [jumpToRowid, setJumpToRowid] = useState<number | null>(null);
 
+    // ── Label exclusion (auto-filter trash/spam/draft) ──
+    const DEFAULT_EXCLUDES = ["trash", "spam", "draft"];
+    const [excludeLabels, setExcludeLabels] = useState<string[]>(DEFAULT_EXCLUDES);
+    const toggleExclude = (label: string) => {
+        setExcludeLabels(prev =>
+            prev.includes(label) ? prev.filter(l => l !== label) : [...prev, label]
+        );
+        setPage(1);
+    };
+
     // ── Multi-select mode ──
     const [selectMode, setSelectMode] = useState(false);
     const [selectedRowids, setSelectedRowids] = useState<Set<number>>(new Set());
@@ -402,6 +412,7 @@ export default function EvidenceHubPage() {
             if (dateFrom) params.set("date_from", dateFrom);
             if (dateTo) params.set("date_to", dateTo);
             params.set("sort_dir", sortDir);
+            if (excludeLabels.length > 0) params.set("exclude_labels", excludeLabels.join(","));
             const res = await fetch(`/api/evidence-hub?${params}`);
             const data = await res.json();
             setResults(data.results || []);
@@ -413,7 +424,7 @@ export default function EvidenceHubPage() {
         } finally {
             setLoading(false);
         }
-    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir]);
+    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir, excludeLabels.join()]);
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
@@ -1022,6 +1033,27 @@ export default function EvidenceHubPage() {
                     height: 2px; border-radius: 2px;
                 }
 
+                /* ── Label Exclusion Chips ── */
+                .eh-label-chips {
+                    display: flex; align-items: center; gap: 6px;
+                    padding: 6px 24px;
+                    background: rgba(15, 23, 42, 0.4);
+                    border-bottom: 1px solid rgba(71, 85, 105, 0.15);
+                    flex-shrink: 0;
+                }
+                .label-chip {
+                    display: inline-flex; align-items: center; gap: 4px;
+                    padding: 3px 10px; border-radius: 12px;
+                    font-size: 11px; font-weight: 500; cursor: pointer;
+                    border: 1px solid; background: transparent;
+                    transition: all 0.2s; text-transform: capitalize;
+                    letter-spacing: 0.02em;
+                }
+                .label-chip:hover { opacity: 0.8; transform: scale(1.02); }
+                .label-chip.excluded { font-weight: 600; }
+                .label-chip.included { opacity: 0.5; }
+                .label-chip.included:hover { opacity: 0.9; }
+
                 /* ── iOS-style Conversation List ── */
                 .ios-conv-list {
                     display: flex; flex-direction: column;
@@ -1441,6 +1473,46 @@ export default function EvidenceHubPage() {
             </div>
 
             {/* removed — playlist selector now in eh-list as iOS-style conversation list */}
+
+            {/* ─── Label Exclusion Chips ─── */}
+            {(activeTab === "email" || activeTab === "all") && (
+                <div className="eh-label-chips">
+                    <span style={{ fontSize: 11, color: "#64748b", marginRight: 6 }}>
+                        <Filter size={11} /> Hiding:
+                    </span>
+                    {["trash", "spam", "draft", "sent", "archived"].map(label => {
+                        const isExcluded = excludeLabels.includes(label);
+                        const colors: Record<string, string> = {
+                            trash: "#ef4444", spam: "#f97316", draft: "#a78bfa",
+                            sent: "#60a5fa", archived: "#94a3b8",
+                        };
+                        return (
+                            <button
+                                key={label}
+                                className={`label-chip ${isExcluded ? "excluded" : "included"}`}
+                                onClick={() => toggleExclude(label)}
+                                style={{
+                                    borderColor: isExcluded ? colors[label] : "#334155",
+                                    color: isExcluded ? colors[label] : "#94a3b8",
+                                    background: isExcluded ? `${colors[label]}15` : "transparent",
+                                }}
+                            >
+                                {isExcluded ? <X size={10} /> : null}
+                                {label}
+                            </button>
+                        );
+                    })}
+                    {excludeLabels.length > 0 && excludeLabels.some(l => !DEFAULT_EXCLUDES.includes(l)) && (
+                        <button
+                            className="label-chip reset"
+                            onClick={() => { setExcludeLabels(DEFAULT_EXCLUDES); setPage(1); }}
+                            style={{ color: "#64748b", borderColor: "#334155" }}
+                        >
+                            Reset
+                        </button>
+                    )}
+                </div>
+            )}
 
             {/* ─── Filters ─── */}
             {showFilters && (
