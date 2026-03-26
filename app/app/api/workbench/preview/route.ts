@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { getImessageDb, getCommDb, EVIDENCE_DIR } from "@/lib/db";
+import { getImessageDb, getCommDb, getWorkbenchDb, EVIDENCE_DIR } from "@/lib/db";
 
 /**
  * GET /api/workbench/preview?type=email&id=<MSG_ID_or_filename>&section=<section>
@@ -285,7 +285,34 @@ export async function GET(request: NextRequest) {
 
                     const msgId = getHeader("Message-ID").replace(/^<|>$/g, "");
                     const html = renderEmailPreview(headers, body, "PREVIEW", 1, msgId || id);
-                    const { issues } = cleanBody(body);
+                    const { issues: allIssues } = cleanBody(body);
+
+                    // Filter issues based on overrides
+                    let issues = allIssues;
+                    try {
+                        const workbenchDb = getWorkbenchDb();
+                        const overrides = workbenchDb.prepare(`
+                            SELECT rule_type, params FROM cleaning_overrides
+                            WHERE evidence_id = ? AND evidence_type = ? AND superseded_at IS NULL
+                        `).all(msgId || id, "email") as Array<{ rule_type: string; params: string }>;
+
+                        const resolvedTypes = new Set(overrides
+                            .filter(o => o.rule_type === "resolve_issue")
+                            .map(o => {
+                                try { return JSON.parse(o.params).issueType; } catch { return null; }
+                            })
+                            .filter(Boolean));
+                        
+                        const hasBulkResolve = overrides.some(o => o.rule_type === "accept_all_typical");
+
+                        issues = allIssues.filter(issue => {
+                            if (hasBulkResolve && ["signature", "quoted_reply", "whitespace"].includes(issue.type)) return false;
+                            if (resolvedTypes.has(issue.type)) return false;
+                            return true;
+                        });
+                    } catch (e) {
+                        console.error("Error filtering issues:", e);
+                    }
 
                     return NextResponse.json({ html, issues, type: "email", id });
                 }
@@ -308,7 +335,35 @@ export async function GET(request: NextRequest) {
                     };
                     if (row.cc_addr) headers["CC"] = row.cc_addr;
                     const html = renderEmailPreview(headers, row.body || "", "PREVIEW", 1, row.rfc822_id);
-                    const { issues } = cleanBody(row.body || "");
+                    const { issues: allIssues } = cleanBody(row.body || "");
+
+                    // Filter issues based on overrides
+                    let issues = allIssues;
+                    try {
+                        const workbenchDb = getWorkbenchDb();
+                        const overrides = workbenchDb.prepare(`
+                            SELECT rule_type, params FROM cleaning_overrides
+                            WHERE evidence_id = ? AND evidence_type = ? AND superseded_at IS NULL
+                        `).all(row.rfc822_id, "email") as Array<{ rule_type: string; params: string }>;
+
+                        const resolvedTypes = new Set(overrides
+                            .filter(o => o.rule_type === "resolve_issue")
+                            .map(o => {
+                                try { return JSON.parse(o.params).issueType; } catch { return null; }
+                            })
+                            .filter(Boolean));
+                        
+                        const hasBulkResolve = overrides.some(o => o.rule_type === "accept_all_typical");
+
+                        issues = allIssues.filter(issue => {
+                            if (hasBulkResolve && ["signature", "quoted_reply", "whitespace"].includes(issue.type)) return false;
+                            if (resolvedTypes.has(issue.type)) return false;
+                            return true;
+                        });
+                    } catch (e) {
+                        console.error("Error filtering issues:", e);
+                    }
+
                     return NextResponse.json({ html, issues, type: "email", id });
                 }
             } catch { /* skip */ }

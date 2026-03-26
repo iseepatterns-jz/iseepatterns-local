@@ -19,11 +19,27 @@ BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
 DATA_DIR = BASE_DIR / "data"
 BRAINS_DB = BASE_DIR / "brains.db"
 
-# Current brain file path (the big financial brain you showed)
-BRAIN_TASK_MD = Path(
-    "/Users/iseepatterns-ms-m4/.gemini/antigravity/brain/4c252e35-483e-4c03-9b23-7d6e23bae028/task.md"
-)
-BRAIN_TASK_METADATA = BRAIN_TASK_MD.with_name("task.md.metadata.json")
+# BRAIN_TASK_MD = Path(
+#     "/Users/iseepatterns-ms-m4/.gemini/antigravity/brain/4c252e35-483e-4c03-9b23-7d6e23bae028/task.md"
+# )
+# BRAIN_TASK_METADATA = BRAIN_TASK_MD.with_name("task.md.metadata.json")
+
+BRAIN_ROOT = Path("/Users/iseepatterns-ms-m4/.gemini/antigravity/brain")
+
+def find_latest_task_md() -> Path:
+    """Find the most recent task.md in the brain directories."""
+    # List all dirs in BRAIN_ROOT, exclude _archive
+    dirs = [d for d in BRAIN_ROOT.iterdir() if d.is_dir() and d.name != "_archive"]
+    if not dirs:
+        return None
+    # Sort by modification time of the directory or task.md inside
+    dirs.sort(key=lambda d: d.stat().st_mtime, reverse=True)
+    
+    for d in dirs:
+        tm = d / "task.md"
+        if tm.exists():
+            return tm
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -163,15 +179,19 @@ def refresh_brain_from_markdown(case_id: str = "rbc_v_lg"):
 
 
     """Parse task.md + metadata into brains.db."""
-    if not BRAIN_TASK_MD.exists():
-        raise SystemExit(f"task.md not found at {BRAIN_TASK_MD}")
+    task_md = find_latest_task_md()
+    if not task_md or not task_md.exists():
+        print(f"[!] No task.md found in {BRAIN_ROOT}")
+        return
 
-    md_text = BRAIN_TASK_MD.read_text()
+    md_text = task_md.read_text()
     parsed = parse_task_markdown(md_text)
 
+    metadata_path = task_md.with_name("task.md.metadata.json")
+
     meta: Dict[str, Any] = {}
-    if BRAIN_TASK_METADATA.exists():
-        meta = json.loads(BRAIN_TASK_METADATA.read_text())
+    if metadata_path.exists():
+        meta = json.loads(metadata_path.read_text())
 
     summary = meta.get("summary", "")
     artifact_type = meta.get("artifactType", "ARTIFACT_TYPE_TASK")
@@ -197,7 +217,7 @@ def refresh_brain_from_markdown(case_id: str = "rbc_v_lg"):
                 summary,
                 version,
                 updated_at,
-                str(BRAIN_TASK_MD),
+                str(task_md),
             ),
         )
 
@@ -266,8 +286,34 @@ def get_recent_readybag_runs(limit: int = 5) -> list[dict[str, Any]]:
     ]
 
 
-def snapshot_brain(case_id: str = "rbc_v_lg") -> Dict[str, Any]:
+def snapshot_brain(case_id: str = "rbc_v_lg", session_id: str = None) -> Dict[str, Any]:
     """Return a compact JSON-like snapshot of the brain for API/UI."""
+    
+    # If session_id is provided, try to find that specific task.md
+    if session_id:
+        session_path = BRAIN_ROOT / session_id / "task.md"
+        if session_path.exists():
+            md_text = session_path.read_text()
+            parsed = parse_task_markdown(md_text)
+            
+            meta_json = session_path.with_name("task.md.metadata.json")
+            summary = "Session snapshot"
+            updated_at = datetime.fromtimestamp(session_path.stat().st_mtime).isoformat() + "Z"
+            if meta_json.exists():
+                import json
+                meta = json.loads(meta_json.read_text())
+                summary = meta.get("summary", summary)
+                updated_at = meta.get("updatedAt", updated_at)
+                
+            return {
+                "case_id": case_id,
+                "summary": summary,
+                "version": 1,
+                "updated_at": updated_at,
+                "tasks": parsed["tasks"],
+                "readybag_runs": [] # runs are global to brains.db currently
+            }
+
     with db() as conn:
         brain = conn.execute(
             """

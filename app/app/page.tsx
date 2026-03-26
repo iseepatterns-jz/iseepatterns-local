@@ -18,6 +18,7 @@ import {
   Target,
 } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 type Source = {
   source_file: string;
@@ -108,6 +109,7 @@ export default function DashboardPage() {
   const [brain, setBrain] = useState<BrainStatus | null>(null);
   const [brainLoading, setBrainLoading] = useState(false);
 
+  const searchParams = useSearchParams();
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [ragSources, setRagSources] = useState<Source[]>([]);
@@ -191,11 +193,17 @@ export default function DashboardPage() {
     [question]
   );
 
+
   // NEW: load brain status
-  const handleLoadBrain = useCallback(async () => {
+  const handleLoadBrain = useCallback(async (forcedSession?: string) => {
     setBrainLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/brain/rbc_v_lg");
+      const sessionId = forcedSession;
+      const url = sessionId 
+        ? `http://localhost:8000/brain/rbc_v_lg?session=${sessionId}`
+        : "http://localhost:8000/brain/rbc_v_lg";
+        
+      const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch brain");
       const data = await res.json();
       setBrain(data);
@@ -205,6 +213,10 @@ export default function DashboardPage() {
       setBrainLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    handleLoadBrain();
+  }, [handleLoadBrain]);
 
   const formatRunTime = (iso: string) => {
     if (!iso) return "";
@@ -346,7 +358,7 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={clearSearch}
-              style={{
+              style={{ // Corrected style block for the button
                 position: "absolute",
                 right: 8,
                 top: "50%",
@@ -444,14 +456,7 @@ export default function DashboardPage() {
               if (!items || items.length === 0) return null;
               return (
                 <div key={key}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      marginBottom: "0.375rem",
-                    }}
-                  >
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                     <Icon size={14} style={{ color }} />
                     <span
                       style={{
@@ -816,6 +821,8 @@ export default function DashboardPage() {
         )}
       </div>
 
+
+
       {/* ═══ Brain Status ═══ */}
       <div
         className="glass-panel"
@@ -838,7 +845,7 @@ export default function DashboardPage() {
 
         <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
           <button
-            onClick={handleLoadBrain}
+            onClick={() => handleLoadBrain()}
             disabled={brainLoading}
             style={{
               padding: "0.4rem 0.9rem",

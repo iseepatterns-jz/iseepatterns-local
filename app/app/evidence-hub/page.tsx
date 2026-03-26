@@ -4,12 +4,12 @@ import {
     Search, Filter, ChevronLeft, ChevronRight, Mail, MessageSquare, Shield,
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
-    Archive, HardDrive, ChevronDown, ChevronUp, MessageCircle, Bookmark, GripVertical,
-    Smartphone, Mic, DollarSign, Scale, LayoutGrid, Folder, FolderOpen, Edit3, Link2
+    Archive, HardDrive, ChevronDown, ChevronUp, MessageCircle, LayoutGrid,
+    Mic, DollarSign, Scale, FolderOpen, Link2
 } from "lucide-react";
 import {
     type EvidenceItem, type DetailResult, type Stats, type Annotation,
-    type ThreadEmail, type CoCData, type WorkbenchSection, type Conversation,
+    type ThreadEmail, type CoCData, type WorkbenchSection,
     FLAG_LEVELS, HIGHLIGHT_COLORS, PLAYER_PROFILES,
     fmtDate, parseTags, resolveHandle, setHandleMap
 } from "./types";
@@ -116,9 +116,6 @@ export default function EvidenceHubPage() {
     // ── Multi-select mode ──
     const [selectMode, setSelectMode] = useState(false);
     const [selectedRowids, setSelectedRowids] = useState<Set<number>>(new Set());
-    const [showPlaylistPicker, setShowPlaylistPicker] = useState(false);
-    const [newPlaylistName, setNewPlaylistName] = useState("");
-    const [showNewPlaylistInput, setShowNewPlaylistInput] = useState(false);
     const toggleRowid = (rowid: number) => {
         setSelectedRowids(prev => {
             const next = new Set(prev);
@@ -143,14 +140,11 @@ export default function EvidenceHubPage() {
         const tabDef = EVIDENCE_TABS.find(t => t.id === tab);
         setSourceFilter(tabDef?.sourceFilter || "");
         setIMessageView(tab === "imessage");
-        setActiveConversation(null);
-        setConvMessages([]);
         setPage(1);
     };
 
     // ── Toast notifications ──
     const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null);
-    const [pendingDeleteConv, setPendingDeleteConv] = useState<number | null>(null);
     const showToast = useCallback((msg: string, error = false) => {
         setToast({ msg, error });
         setTimeout(() => setToast(null), 3500);
@@ -206,184 +200,13 @@ export default function EvidenceHubPage() {
         };
     }, [isDragging]);
 
-    // ── Conversation Playlists ──
-    interface Conversation { id: number; name: string; description: string | null; color: string; folder: string | null; message_count: number; created_at: string; updated_at: string }
-    const [conversations, setConversations] = useState<Conversation[]>([]);
-    const [activeConversation, setActiveConversation] = useState<number | null>(null);
-    const [convMessages, setConvMessages] = useState<any[]>([]);
-    const [showConvPicker, setShowConvPicker] = useState(false);
-    const [showCreateConv, setShowCreateConv] = useState(false);
-    const [newConvName, setNewConvName] = useState("");
-    const [convLoading, setConvLoading] = useState(false);
-    const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
-    const [ctxMenu, setCtxMenu] = useState<{ x: number; y: number; convId: number } | null>(null);
-    const [ctxFolderInput, setCtxFolderInput] = useState("");
-    const [showCtxFolderInput, setShowCtxFolderInput] = useState(false);
-    const [dragConvId, setDragConvId] = useState<number | null>(null);
-    const [dropTarget, setDropTarget] = useState<string | null>(null);
-    const [folderCtxMenu, setFolderCtxMenu] = useState<{ x: number; y: number; folder: string } | null>(null);
-    const [renameFolderInput, setRenameFolderInput] = useState("");
-    const [showRenameFolderInput, setShowRenameFolderInput] = useState(false);
-
-
-    const fetchConversations = useCallback(async () => {
-        try {
-            const res = await fetch("/api/conversations");
-            const data = await res.json();
-            setConversations(data.conversations || []);
-        } catch (e) { console.error("fetch conversations err:", e); }
-    }, []);
-
-    const createConversation = useCallback(async (rawName: string) => {
-        if (!rawName.trim()) return;
-        // support "folder/name" format
-        let folder: string | null = null;
-        let name = rawName.trim();
-        const slashIdx = name.indexOf("/");
-        if (slashIdx > 0 && slashIdx < name.length - 1) {
-            folder = name.substring(0, slashIdx).trim();
-            name = name.substring(slashIdx + 1).trim();
-        }
-        try {
-            const res = await fetch("/api/conversations?action=create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, folder, color: folder ? undefined : undefined }),
-            });
-            const data = await res.json();
-            if (data.id) {
-                await fetchConversations();
-                setNewConvName("");
-                setShowCreateConv(false);
-                showToast(`✅ Playlist "${name}" created${folder ? ` in ${folder}` : ""}`);
-            }
-        } catch (e) { console.error("create conv err:", e); showToast("❌ Failed to create playlist", true); }
-    }, [fetchConversations]);
-
-    const updateConvFolder = useCallback(async (convId: number, folder: string | null) => {
-        try {
-            await fetch("/api/conversations?action=update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: convId, folder }),
-            });
-            await fetchConversations();
-            const conv = conversations.find(c => c.id === convId);
-            showToast(folder ? `📁 Moved "${conv?.name}" → ${folder}` : `📋 "${conv?.name}" moved to root`);
-        } catch (e) { console.error("update folder err:", e); showToast("❌ Failed to update folder", true); }
-    }, [fetchConversations, conversations]);
-
-    const renameFolder = useCallback(async (oldName: string, newName: string) => {
-        try {
-            const inFolder = conversations.filter(c => c.folder === oldName);
-            await Promise.all(inFolder.map(c =>
-                fetch("/api/conversations?action=update", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: c.id, folder: newName }),
-                })
-            ));
-            await fetchConversations();
-            showToast(`📁 Renamed "${oldName}" → "${newName}"`);
-        } catch (e) { console.error("rename folder err:", e); showToast("❌ Failed to rename folder", true); }
-    }, [fetchConversations, conversations]);
-
-    const unfileAll = useCallback(async (folderName: string) => {
-        try {
-            const inFolder = conversations.filter(c => c.folder === folderName);
-            await Promise.all(inFolder.map(c =>
-                fetch("/api/conversations?action=update", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ id: c.id, folder: null }),
-                })
-            ));
-            await fetchConversations();
-            showToast(`📋 Unfiled all playlists from "${folderName}"`);
-        } catch (e) { console.error("unfile all err:", e); showToast("❌ Failed to unfile", true); }
-    }, [fetchConversations, conversations]);
-
-    const addToConversation = useCallback(async (convId: number, rowids: number[]) => {
-        try {
-            await fetch("/api/conversations?action=add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ conversation_id: convId, message_rowids: rowids }),
-            });
-            await fetchConversations();
-            if (activeConversation === convId) loadConversation(convId);
-            showToast(`✅ Added to playlist`);
-        } catch (e) { console.error("add to conv err:", e); showToast("❌ Failed to add", true); }
-    }, [fetchConversations, activeConversation]);
-
-    const bulkAddToConversation = useCallback(async (convId: number) => {
-        try {
-            await fetch("/api/conversations?action=bulk", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    conversation_id: convId,
-                    participant: participantFilter.length ? participantFilter.map(id => (PLAYER_PROFILES.find(p => p.id === id)?.identifiers || []).join(",")).join("|") : undefined,
-                    date_from: dateFrom || undefined,
-                    date_to: dateTo || undefined,
-                    q: query || undefined,
-                }),
-            });
-            await fetchConversations();
-            if (activeConversation === convId) loadConversation(convId);
-            showToast(`✅ Bulk-added messages to playlist`);
-        } catch (e) { console.error("bulk add err:", e); showToast("❌ Bulk add failed", true); }
-    }, [fetchConversations, activeConversation, participantFilter.join(), dateFrom, dateTo, query]);
-
-    const loadConversation = useCallback(async (id: number) => {
-        setConvLoading(true);
-        try {
-            const res = await fetch(`/api/conversations?id=${id}`);
-            const data = await res.json();
-            setConvMessages(data.messages || []);
-        } catch (e) { console.error("load conv err:", e); }
-        setConvLoading(false);
-    }, []);
-
-    const removeFromConversation = useCallback(async (convId: number, rowids: number[]) => {
-        try {
-            await fetch("/api/conversations?action=remove", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ conversation_id: convId, message_rowids: rowids }),
-            });
-            await fetchConversations();
-            if (activeConversation === convId) loadConversation(convId);
-            showToast(`✅ Removed from playlist`);
-        } catch (e) { console.error("remove from conv err:", e); showToast("❌ Failed to remove", true); }
-    }, [fetchConversations, activeConversation, loadConversation]);
-
-    const confirmDeleteConversation = useCallback(async (id: number) => {
-        try {
-            await fetch(`/api/conversations?id=${id}`, { method: "DELETE" });
-            if (activeConversation === id) {
-                setActiveConversation(null);
-                setConvMessages([]);
-            }
-            await fetchConversations();
-            showToast(`🗑️ Playlist deleted`);
-        } catch (e) { console.error("delete conv err:", e); showToast("❌ Delete failed", true); }
-        setPendingDeleteConv(null);
-    }, [fetchConversations, activeConversation, showToast]);
-
-    // Load conversations + handle map on mount
+    // Load handle map on mount
     useEffect(() => {
-        fetchConversations();
         fetchSections();
         fetch('/api/players?mode=handles').then(r => r.json()).then(data => {
             if (data.handleMap) setHandleMap(data.handleMap);
         }).catch(() => {});
-    }, [fetchConversations, fetchSections]);
-
-    // Load conversation messages when active changes
-    useEffect(() => {
-        if (activeConversation) loadConversation(activeConversation);
-    }, [activeConversation, loadConversation]);
+    }, [fetchSections]);
 
     // Click-outside to close participant dropdown
     useEffect(() => {
@@ -428,7 +251,7 @@ export default function EvidenceHubPage() {
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
-    // ── Scroll to target message after timeline loads from playlist click ──
+
     useEffect(() => {
         if (!jumpToRowid || loading || !results.length) return;
         // Small delay to let DOM render
@@ -1239,16 +1062,6 @@ export default function EvidenceHubPage() {
                 .eh-conv-msg:hover .msg-remove { opacity: 1; }
                 .eh-conv-msg .msg-remove:hover { color: #ef4444; }
 
-                /* ── Playlist bubble remove button ── */
-                .imsg-row .playlist-remove {
-                    position: absolute; top: 4px; right: -28px;
-                    background: none; border: none; color: #475569; cursor: pointer;
-                    padding: 2px; opacity: 0; transition: opacity 0.15s;
-                }
-                .imsg-row:hover .playlist-remove { opacity: 1; }
-                .imsg-row .playlist-remove:hover { color: #ef4444; }
-                .imsg-row.me .playlist-remove { right: auto; left: -28px; }
-
                 /* ── iMessage Bubble View ── */
                 .imsg-thread {
                     display: flex; flex-direction: column; gap: 3px;
@@ -1394,19 +1207,6 @@ export default function EvidenceHubPage() {
                     width: 16px; height: 16px; accent-color: #a78bfa; cursor: pointer;
                     flex-shrink: 0;
                 }
-                .playlist-picker-dropdown {
-                    position: absolute; bottom: 100%; left: 0;
-                    background: #1e293b; border: 1px solid rgba(255,255,255,0.15);
-                    border-radius: 8px; padding: 6px; z-index: 1001;
-                    box-shadow: 0 8px 24px rgba(0,0,0,0.5); min-width: 220px;
-                    margin-bottom: 8px; max-height: 240px; overflow-y: auto;
-                }
-                .playlist-picker-item {
-                    padding: 6px 10px; border-radius: 6px; cursor: pointer;
-                    font-size: 12px; transition: background 0.1s; display: flex;
-                    align-items: center; gap: 6px;
-                }
-                .playlist-picker-item:hover { background: rgba(255,255,255,0.08); }
             `}</style>
 
             {/* ─── Header ─── */}
@@ -1431,10 +1231,10 @@ export default function EvidenceHubPage() {
                 </button>
                 <button
                     className={`eh-btn ${selectMode ? "active" : ""}`}
-                    onClick={() => { setSelectMode(!selectMode); if (selectMode) { setSelectedRowids(new Set()); setShowPlaylistPicker(false); } }}
+                    onClick={() => { setSelectMode(!selectMode); if (selectMode) { setSelectedRowids(new Set()); } }}
                     style={selectMode ? { background: "rgba(139,92,246,0.2)", borderColor: "rgba(139,92,246,0.5)", color: "#a78bfa" } : undefined}
                 >
-                    <Bookmark size={14} /> {selectMode ? "Exit Select" : "Select"}
+                    <Plus size={14} /> {selectMode ? "Exit Select" : "Select"}
                 </button>
                 <div className="eh-header-meta">
                     <button
@@ -1471,8 +1271,6 @@ export default function EvidenceHubPage() {
                     </button>
                 ))}
             </div>
-
-            {/* removed — playlist selector now in eh-list as iOS-style conversation list */}
 
             {/* ─── Label Exclusion Chips ─── */}
             {(activeTab === "email" || activeTab === "all") && (
@@ -1670,335 +1468,7 @@ export default function EvidenceHubPage() {
             >
                 {/* ── List ── */}
                 <div className="eh-list">
-                    {/* iMessage tab — iOS-style conversation list OR chat view */}
-                    {activeTab === "imessage" && !activeConversation ? (
-                        <div className="ios-conv-list">
-                            {showCreateConv ? (
-                                <div style={{ display: "flex", gap: 6, padding: "10px 16px", borderBottom: "1px solid rgba(71,85,105,0.1)" }}>
-                                    <input
-                                        autoFocus
-                                        placeholder="Folder/Name or just Name…"
-                                        value={newConvName}
-                                        onChange={e => setNewConvName(e.target.value)}
-                                        onKeyDown={e => { if (e.key === "Enter") createConversation(newConvName); if (e.key === "Escape") setShowCreateConv(false); }}
-                                        style={{ flex: 1, padding: "8px 12px", borderRadius: 10, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(71,85,105,0.2)", color: "#e2e8f0", fontSize: 13, outline: "none" }}
-                                    />
-                                    <button className="eh-btn" onClick={() => createConversation(newConvName)} style={{ padding: "6px 12px" }}>✓</button>
-                                    <button className="eh-btn" onClick={() => setShowCreateConv(false)} style={{ padding: "6px 8px" }}><X size={14} /></button>
-                                </div>
-                            ) : (
-                                <button className="ios-conv-new-btn" onClick={() => setShowCreateConv(true)}>
-                                    <Plus size={16} /> New Conversation
-                                </button>
-                            )}
-                            {(() => {
-                                // Group conversations by folder
-                                const folders = new Map<string, Conversation[]>();
-                                const ungrouped: Conversation[] = [];
-                                conversations.forEach(c => {
-                                    if (c.folder) {
-                                        if (!folders.has(c.folder)) folders.set(c.folder, []);
-                                        folders.get(c.folder)!.push(c);
-                                    } else {
-                                        ungrouped.push(c);
-                                    }
-                                });
-                                const folderNames = Array.from(folders.keys()).sort();
-                                const allFolderNames = folderNames; // for context menu
-
-                                const renderConvRow = (c: Conversation, indent = false) => {
-                                    const initials = c.name.split(/[\s-]+/).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("");
-                                    return (
-                                        <div
-                                            key={c.id}
-                                            className={`ios-conv-row ${dragConvId === c.id ? "dragging" : ""}`}
-                                            style={indent ? { paddingLeft: 36 } : undefined}
-                                            draggable
-                                            onDragStart={(e) => { setDragConvId(c.id); e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", String(c.id)); }}
-                                            onDragEnd={() => { setDragConvId(null); setDropTarget(null); }}
-                                            onClick={() => setActiveConversation(c.id)}
-                                            onContextMenu={(e) => { e.preventDefault(); setCtxMenu({ x: e.clientX, y: e.clientY, convId: c.id }); setShowCtxFolderInput(false); setCtxFolderInput(""); }}
-                                        >
-                                            <div className="ios-conv-avatar" style={{ background: c.color, ...(indent ? { width: 36, height: 36, fontSize: 12 } : {}) }}>{initials}</div>
-                                            <div className="ios-conv-info">
-                                                <div className="ios-conv-name">{c.name}</div>
-                                                <div className="ios-conv-preview">{c.description || `${c.message_count} messages`}</div>
-                                            </div>
-                                            <div className="ios-conv-right">
-                                                <div className="ios-conv-time">{new Date(c.updated_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</div>
-                                                <div className="ios-conv-badge">{c.message_count}</div>
-                                            </div>
-                                            <button className="ios-conv-delete" title="Delete playlist" onClick={(e) => { e.stopPropagation(); setPendingDeleteConv(c.id); }}>
-                                                <Trash2 size={14} />
-                                            </button>
-                                        </div>
-                                    );
-                                };
-
-                                return (
-                                    <>
-                                        {folderNames.map(folderName => {
-                                            const items = folders.get(folderName)!;
-                                            const isCollapsed = collapsedFolders.has(folderName);
-                                            const totalMsgs = items.reduce((s, c) => s + c.message_count, 0);
-                                            const isOver = dropTarget === folderName;
-                                            return (
-                                                <div key={folderName}>
-                                                    <div
-                                                        className={`ios-folder-header ${isOver ? "drop-over" : ""}`}
-                                                        onClick={() => setCollapsedFolders(prev => {
-                                                            const next = new Set(prev);
-                                                            if (next.has(folderName)) next.delete(folderName); else next.add(folderName);
-                                                            return next;
-                                                        })}
-                                                        onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); setFolderCtxMenu({ x: e.clientX, y: e.clientY, folder: folderName }); setShowRenameFolderInput(false); setRenameFolderInput(folderName); }}
-                                                        onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setDropTarget(folderName); }}
-                                                        onDragLeave={() => setDropTarget(null)}
-                                                        onDrop={(e) => {
-                                                            e.preventDefault(); setDropTarget(null);
-                                                            const id = Number(e.dataTransfer.getData("text/plain"));
-                                                            if (id && conversations.find(c => c.id === id)?.folder !== folderName) {
-                                                                updateConvFolder(id, folderName);
-                                                            }
-                                                            setDragConvId(null);
-                                                        }}
-                                                    >
-                                                        <ChevronRight size={14} style={{ transform: isCollapsed ? "rotate(0deg)" : "rotate(90deg)", transition: "transform 0.15s" }} />
-                                                        <Folder size={14} />
-                                                        <span>{folderName}</span>
-                                                        <span className="ios-folder-count">{items.length} · {totalMsgs} msgs</span>
-                                                    </div>
-                                                    {!isCollapsed && items.map(c => renderConvRow(c, true))}
-                                                </div>
-                                            );
-                                        })}
-                                        {/* Ungrouped playlists — also a drop zone to remove from folder */}
-                                        {ungrouped.length > 0 && folderNames.length > 0 && (
-                                            <div
-                                                className={`ios-folder-header ${dropTarget === "__ungrouped" ? "drop-over" : ""}`}
-                                                style={{ color: "#64748b", fontWeight: 500, fontSize: 11 }}
-                                                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setDropTarget("__ungrouped"); }}
-                                                onDragLeave={() => setDropTarget(null)}
-                                                onDrop={(e) => {
-                                                    e.preventDefault(); setDropTarget(null);
-                                                    const id = Number(e.dataTransfer.getData("text/plain"));
-                                                    if (id && conversations.find(c => c.id === id)?.folder) {
-                                                        updateConvFolder(id, null);
-                                                    }
-                                                    setDragConvId(null);
-                                                }}
-                                            >
-                                                <span>Unfiled</span>
-                                            </div>
-                                        )}
-                                        {ungrouped.map(c => renderConvRow(c, false))}
-                                        {/* Drop zone when there are NO ungrouped yet but user wants to unfile */}
-                                        {ungrouped.length === 0 && folderNames.length > 0 && dragConvId !== null && (
-                                            <div
-                                                className={`ios-folder-header ${dropTarget === "__ungrouped" ? "drop-over" : ""}`}
-                                                style={{ color: "#64748b", fontWeight: 500, fontSize: 11, borderStyle: "dashed" }}
-                                                onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; setDropTarget("__ungrouped"); }}
-                                                onDragLeave={() => setDropTarget(null)}
-                                                onDrop={(e) => {
-                                                    e.preventDefault(); setDropTarget(null);
-                                                    const id = Number(e.dataTransfer.getData("text/plain"));
-                                                    if (id) updateConvFolder(id, null);
-                                                    setDragConvId(null);
-                                                }}
-                                            >
-                                                <span>Drop here to remove from folder</span>
-                                            </div>
-                                        )}
-                                    </>
-                                );
-                            })()}
-                            {/* Context menu */}
-                            {ctxMenu && (
-                                <>
-                                    <div className="ctx-backdrop" onClick={() => setCtxMenu(null)} />
-                                    <div className="ctx-menu" style={{ top: ctxMenu.y, left: ctxMenu.x }}>
-                                        {(() => {
-                                            const conv = conversations.find(c => c.id === ctxMenu.convId);
-                                            const existingFolders = Array.from(new Set(conversations.map(c => c.folder).filter(Boolean))) as string[];
-                                            return (
-                                                <>
-                                                    <div className="ctx-menu-title">Move to Folder</div>
-                                                    {existingFolders.map(f => (
-                                                        <div key={f} className={`ctx-menu-item ${conv?.folder === f ? "active" : ""}`} onClick={() => { updateConvFolder(ctxMenu.convId, f); setCtxMenu(null); }}>
-                                                            <Folder size={12} /> {f}
-                                                        </div>
-                                                    ))}
-                                                    {!showCtxFolderInput ? (
-                                                        <div className="ctx-menu-item new" onClick={() => setShowCtxFolderInput(true)}>
-                                                            <Plus size={12} /> New Folder…
-                                                        </div>
-                                                    ) : (
-                                                        <div className="ctx-menu-input-wrap">
-                                                            <input
-                                                                autoFocus
-                                                                className="ctx-menu-input"
-                                                                placeholder="Folder name…"
-                                                                value={ctxFolderInput}
-                                                                onChange={e => setCtxFolderInput(e.target.value)}
-                                                                onKeyDown={e => {
-                                                                    if (e.key === "Enter" && ctxFolderInput.trim()) { updateConvFolder(ctxMenu.convId, ctxFolderInput.trim()); setCtxMenu(null); }
-                                                                    if (e.key === "Escape") setShowCtxFolderInput(false);
-                                                                }}
-                                                            />
-                                                        </div>
-                                                    )}
-                                                    {conv?.folder && (
-                                                        <>
-                                                            <div className="ctx-menu-separator" />
-                                                            <div className="ctx-menu-item danger" onClick={() => { updateConvFolder(ctxMenu.convId, null); setCtxMenu(null); }}>
-                                                                <X size={12} /> Remove from Folder
-                                                            </div>
-                                                        </>
-                                                    )}
-                                                </>
-                                            );
-                                        })()}
-                                    </div>
-                                </>
-                            )}
-                            {/* Folder context menu */}
-                            {folderCtxMenu && (
-                                <>
-                                    <div className="ctx-backdrop" onClick={() => setFolderCtxMenu(null)} />
-                                    <div className="ctx-menu" style={{ top: folderCtxMenu.y, left: folderCtxMenu.x }}>
-                                        <div className="ctx-menu-title">{folderCtxMenu.folder}</div>
-                                        {!showRenameFolderInput ? (
-                                            <div className="ctx-menu-item" onClick={() => setShowRenameFolderInput(true)}>
-                                                <Edit3 size={12} /> Rename Folder
-                                            </div>
-                                        ) : (
-                                            <div className="ctx-menu-input-wrap">
-                                                <input
-                                                    autoFocus
-                                                    className="ctx-menu-input"
-                                                    placeholder="New folder name…"
-                                                    value={renameFolderInput}
-                                                    onChange={e => setRenameFolderInput(e.target.value)}
-                                                    onKeyDown={e => {
-                                                        if (e.key === "Enter" && renameFolderInput.trim() && renameFolderInput.trim() !== folderCtxMenu.folder) {
-                                                            renameFolder(folderCtxMenu.folder, renameFolderInput.trim());
-                                                            setFolderCtxMenu(null);
-                                                        }
-                                                        if (e.key === "Escape") setShowRenameFolderInput(false);
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-                                        <div className="ctx-menu-separator" />
-                                        <div className="ctx-menu-item danger" onClick={() => { unfileAll(folderCtxMenu.folder); setFolderCtxMenu(null); }}>
-                                            <X size={12} /> Unfile All Playlists
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                    ) : activeConversation ? (
-                        convLoading ? (
-                            <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading playlist…</div>
-                        ) : convMessages.length === 0 ? (
-                            <div className="eh-empty">
-                                <Bookmark size={40} />
-                                <p>No messages in this playlist yet. Use filters to find messages, then add them.</p>
-                            </div>
-                        ) : (
-                            <>
-                                {/* Chat header with back button */}
-                                {(() => {
-                                    const conv = conversations.find(c => c.id === activeConversation);
-                                    const initials = conv ? conv.name.split(/[\s-]+/).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("") : "?";
-                                    return (
-                                        <div className="imsg-chat-header">
-                                            <button className="imsg-chat-back" onClick={() => { setActiveConversation(null); setConvMessages([]); }}>
-                                                <ChevronLeft size={18} /> Messages
-                                            </button>
-                                            <div className="imsg-chat-title">{conv?.name || "Conversation"}</div>
-                                            <div className="imsg-chat-avatar" style={{ background: conv?.color || "#64748b" }}>{initials}</div>
-                                        </div>
-                                    );
-                                })()}
-                                <div className="imsg-thread">
-                                    {(() => {
-                                        let lastDate = "";
-                                        return convMessages.map((msg: any, i: number) => {
-                                            const dateObj = msg.raw_date ? new Date((msg.raw_date / 1e9 + 978307200) * 1000) : null;
-                                            const dateLabel = dateObj ? dateObj.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) : "";
-                                            const timeLabel = dateObj ? dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" }) : "";
-                                            const showDateSep = dateLabel !== lastDate;
-                                            if (showDateSep) lastDate = dateLabel;
-                                            const isMe = msg.is_from_me === 1;
-                                            const senderName = isMe ? resolveHandle("+17736109104") : resolveHandle(msg.handle_id || "?");
-                                            return (
-                                                <React.Fragment key={`${msg.rowid}-${i}`}>
-                                                    {showDateSep && <div className="imsg-time-sep">{dateLabel}</div>}
-                                                    <div className={`imsg-row ${isMe ? "me" : "them"}`} style={{ position: "relative" }}>
-                                                        <div
-                                                            style={{ cursor: "pointer" }}
-                                                            onClick={() => {
-                                                                // Jump to full timeline for this handle
-                                                                const handle = msg.handle_id || "";
-                                                                if (!handle) return;
-                                                                const matchedProfile = PLAYER_PROFILES.find(p => p.identifiers.some(id => handle.includes(id) || id.includes(handle)));
-                                                                if (matchedProfile) setParticipantFilter([matchedProfile.id]);
-                                                                // Switch to All tab with ±3 day date window
-                                                                setActiveTab("all");
-                                                                setSourceFilter("imessage");
-                                                                setIMessageView(false);
-                                                                if (dateObj) {
-                                                                    const before = new Date(dateObj); before.setDate(before.getDate() - 3);
-                                                                    const after = new Date(dateObj); after.setDate(after.getDate() + 3);
-                                                                    setDateFrom(before.toISOString().split('T')[0]);
-                                                                    setDateTo(after.toISOString().split('T')[0]);
-                                                                }
-                                                                setQuery("");
-                                                                setActiveConversation(null);
-                                                                setConvMessages([]);
-                                                                setPage(1);
-                                                            }}
-                                                        >
-                                                            <div className="imsg-sender">{senderName}</div>
-                                                            <div className="imsg-bubble" title={`ROWID: ${msg.rowid}\nGUID: ${msg.guid || 'N/A'}`}>
-                                                                {msg.cache_has_attachments ? (
-                                                                    <div className="imsg-attachment">
-                                                                        <img
-                                                                            src={`/api/imessage-attachment?guid=${encodeURIComponent(msg.guid)}`}
-                                                                            alt="attachment"
-                                                                            className="imsg-attachment-img"
-                                                                            loading="lazy"
-                                                                            onClick={(e) => { e.stopPropagation(); window.open(`/api/imessage-attachment?guid=${encodeURIComponent(msg.guid)}`, '_blank'); }}
-                                                                            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden'); }}
-                                                                        />
-                                                                        <span className="imsg-attachment-fallback hidden">📎 Attachment</span>
-                                                                        {msg.body && <div className="imsg-attachment-text">{msg.body}</div>}
-                                                                    </div>
-                                                                ) : (
-                                                                    msg.body || <span className="imsg-empty-body">[attachment]</span>
-                                                                )}
-                                                            </div>
-                                                            <div className="imsg-meta">
-                                                                {timeLabel} · {isMe ? "+17736109104" : (msg.handle_id || "Unknown")}
-                                                            </div>
-                                                        </div>
-                                                        <button
-                                                            className="playlist-remove"
-                                                            title="Remove from playlist"
-                                                            onClick={(e) => { e.stopPropagation(); removeFromConversation(activeConversation, [msg.rowid]); }}
-                                                        >
-                                                            <X size={11} />
-                                                        </button>
-                                                    </div>
-                                                </React.Fragment>
-                                            );
-                                        });
-                                    })()}
-                                </div>
-                            </>
-                        )
-                    ) : loading ? (
+                    {loading ? (
                         <div className="eh-loading"><RefreshCw size={20} /> &nbsp; Loading…</div>
                     ) : results.length === 0 ? (
                         <div className="eh-empty">
@@ -2108,71 +1578,6 @@ export default function EvidenceHubPage() {
                 {selectMode && selectedRowids.size > 0 && (
                     <div className="select-float-bar">
                         <span className="count">{selectedRowids.size} selected</span>
-                        <div style={{ position: "relative" }}>
-                            <button className="primary" onClick={() => setShowPlaylistPicker(!showPlaylistPicker)}>
-                                <Plus size={14} /> Add to Playlist
-                            </button>
-                            {showPlaylistPicker && (
-                                <div className="playlist-picker-dropdown">
-                                    {!showNewPlaylistInput ? (
-                                        <>
-                                            <div className="playlist-picker-item" style={{ color: "#34d399", fontWeight: 600 }}
-                                                onClick={() => setShowNewPlaylistInput(true)}
-                                            >
-                                                <Plus size={14} /> New Playlist…
-                                            </div>
-                                            {conversations.map(c => (
-                                                <div key={c.id} className="playlist-picker-item"
-                                                    onClick={async () => {
-                                                        await addToConversation(c.id, Array.from(selectedRowids));
-                                                        setSelectedRowids(new Set());
-                                                        setShowPlaylistPicker(false);
-                                                        setSelectMode(false);
-                                                    }}
-                                                >
-                                                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: c.color, flexShrink: 0 }} />
-                                                    {c.name}
-                                                    <span style={{ marginLeft: "auto", fontSize: 10, color: "#64748b" }}>{c.message_count} msgs</span>
-                                                </div>
-                                            ))}
-                                        </>
-                                    ) : (
-                                        <div style={{ padding: 6 }}>
-                                            <input
-                                                autoFocus
-                                                type="text"
-                                                placeholder="Playlist name…"
-                                                value={newPlaylistName}
-                                                onChange={(e) => setNewPlaylistName(e.target.value)}
-                                                onKeyDown={async (e) => {
-                                                    if (e.key === "Enter" && newPlaylistName.trim()) {
-                                                        const res = await fetch("/api/conversations?action=create", {
-                                                            method: "POST",
-                                                            headers: { "Content-Type": "application/json" },
-                                                            body: JSON.stringify({ name: newPlaylistName.trim() }),
-                                                        });
-                                                        const data = await res.json();
-                                                        if (data.id) {
-                                                            await addToConversation(data.id, Array.from(selectedRowids));
-                                                            await fetchConversations();
-                                                            setSelectedRowids(new Set());
-                                                            setShowPlaylistPicker(false);
-                                                            setShowNewPlaylistInput(false);
-                                                            setNewPlaylistName("");
-                                                            setSelectMode(false);
-                                                            showToast(`✅ Created "${newPlaylistName.trim()}" with ${selectedRowids.size} messages`);
-                                                        }
-                                                    }
-                                                    if (e.key === "Escape") setShowNewPlaylistInput(false);
-                                                }}
-                                                style={{ width: "100%", padding: 6, borderRadius: 6, border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.05)", color: "#e2e8f0", fontSize: 12 }}
-                                            />
-                                            <div style={{ fontSize: 10, color: "#64748b", marginTop: 4 }}>Press Enter to create, Esc to cancel</div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
                         <button className="danger" onClick={() => { setSelectedRowids(new Set()); setSelectMode(false); }}>
                             <X size={14} /> Clear
                         </button>
@@ -2205,38 +1610,12 @@ export default function EvidenceHubPage() {
                                         >
                                             <MessageCircle size={14} color="#a78bfa" /> <span style={{ color: "#a78bfa" }}>Ask AI</span>
                                         </button>
-                                        {/* Add to Playlist button — all source types */}
-                                        {conversations.length > 0 && (
-                                            <div style={{ position: "relative" }}>
-                                                <button
-                                                    className="eh-btn"
-                                                    onClick={() => setShowConvPicker(prev => !prev)}
-                                                    title="Add to playlist"
-                                                    style={{ padding: "4px 8px", background: "rgba(52, 211, 153, 0.1)", borderColor: "rgba(52, 211, 153, 0.3)" }}
-                                                >
-                                                    <Plus size={14} color="#34d399" /> <span style={{ color: "#34d399" }}>Playlist</span>
-                                                </button>
-                                                {showConvPicker && (
-                                                    <div className="eh-conv-dropdown" style={{ top: "110%", left: 0 }}>
-                                                        {conversations.map(c => (
-                                                            <button key={c.id} onClick={() => {
-                                                                addToConversation(c.id, [detail.evidence.id]);
-                                                                setShowConvPicker(false);
-                                                            }}>
-                                                                <span style={{ width: 8, height: 8, borderRadius: "50%", background: c.color, flexShrink: 0 }} />
-                                                                {c.name} <span style={{ color: "#64748b", fontSize: 10 }}>({c.message_count})</span>
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
                                         {/* Assign to Section button */}
                                         {wbSections.length > 0 && (
                                             <div style={{ position: "relative" }}>
                                                 <button
                                                     className="eh-btn"
-                                                    onClick={() => { setShowSectionPicker(prev => !prev); setShowConvPicker(false); }}
+                                                    onClick={() => { setShowSectionPicker(prev => !prev); }}
                                                     title="Assign to workbench section"
                                                     style={{ padding: "4px 8px", background: "rgba(251, 191, 36, 0.1)", borderColor: "rgba(251, 191, 36, 0.3)" }}
                                                 >
@@ -2653,41 +2032,7 @@ export default function EvidenceHubPage() {
                 </div>
             )}
 
-            {/* ═══ Delete Confirmation Modal ═══ */}
-            {pendingDeleteConv !== null && (
-                <div style={{
-                    position: "fixed", inset: 0, zIndex: 9998,
-                    background: "rgba(0,0,0,0.5)", display: "flex",
-                    alignItems: "center", justifyContent: "center",
-                }} onClick={() => setPendingDeleteConv(null)}>
-                    <div style={{
-                        background: "#1e293b", borderRadius: 12, padding: "24px 28px",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        boxShadow: "0 8px 32px rgba(0,0,0,0.5)", maxWidth: 360,
-                    }} onClick={e => e.stopPropagation()}>
-                        <div style={{ fontSize: "0.9375rem", fontWeight: 700, marginBottom: 8, color: "#fff" }}>
-                            Delete Playlist?
-                        </div>
-                        <p style={{ fontSize: "0.8125rem", color: "#94a3b8", margin: "0 0 18px", lineHeight: 1.5 }}>
-                            This will permanently delete the playlist and all its message assignments. The original messages remain untouched.
-                        </p>
-                        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-                            <button onClick={() => setPendingDeleteConv(null)}
-                                style={{
-                                    background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.15)",
-                                    color: "#fff", borderRadius: 6, padding: "6px 16px",
-                                    fontSize: "0.8rem", fontWeight: 600, cursor: "pointer",
-                                }}>Cancel</button>
-                            <button onClick={() => pendingDeleteConv !== null && confirmDeleteConversation(pendingDeleteConv)}
-                                style={{
-                                    background: "#ef4444", border: "none",
-                                    color: "#fff", borderRadius: 6, padding: "6px 16px",
-                                    fontSize: "0.8rem", fontWeight: 700, cursor: "pointer",
-                                }}>Delete</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 }

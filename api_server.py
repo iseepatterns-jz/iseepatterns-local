@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
+from datetime import datetime
 
 from pathlib import Path
 import os
@@ -100,8 +101,15 @@ def health():
     return {"status": "ok"}
 
 @app.get("/brain/{case_id}", response_model=BrainStatus)
-def get_brain(case_id: str):
-    snap = snapshot_brain(case_id)
+def get_brain(case_id: str, session: Optional[str] = None):
+    # If case_id is "latest" or "active", try to find the most recent brain session
+    target_case = case_id
+    if case_id in ("latest", "active", "rbc_v_lg"):
+        # We still use rbc_v_lg as the case_id filter in the DB, 
+        # but we want to point to the latest task.md
+        pass
+    
+    snap = snapshot_brain(target_case, session_id=session)
     return BrainStatus(
         case_id=case_id,
         summary=snap.get("summary"),
@@ -110,6 +118,7 @@ def get_brain(case_id: str):
         readybag_runs=snap.get("readybag_runs", []),
         updated_at=snap.get("updated_at"),
     )
+
 
 @app.post("/brain/readybag")
 def run_readybag():

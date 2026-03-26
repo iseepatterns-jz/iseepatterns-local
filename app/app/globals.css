@@ -772,6 +772,32 @@ body:has(.sidebar-collapsed) .main-content {
   color: var(--accent-emerald);
 }
 
+.workbench-issue-action-btn {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  background: rgba(0, 242, 255, 0.1);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 242, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  font-family: var(--font-body);
+}
+
+.workbench-issue-action-btn:hover {
+  background: rgba(0, 242, 255, 0.2);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 8px rgba(0, 242, 255, 0.2);
+}
+
+.workbench-issue-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* ── Control Buttons ── */
 .workbench-ctrl-btn {
   display: inline-flex;

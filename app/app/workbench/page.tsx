@@ -108,6 +108,7 @@ export default function WorkbenchPage() {
     // Cleaning flags
     const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set());
     const [flagging, setFlagging] = useState(false);
+    const [resolving, setResolving] = useState(false);
 
     /* ── Load sections ── */
     const loadSections = useCallback(() => {
@@ -175,6 +176,35 @@ export default function WorkbenchPage() {
         }
         setPreviewLoading(false);
     }, [selectedSection]);
+
+    /* ── Resolve all cleaning issues ── */
+    const resolveAllCleaning = async () => {
+        if (!selectedEvidence) return;
+        setResolving(true);
+        try {
+            const res = await fetch("/api/workbench/cleaning", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    evidenceId: selectedEvidence.id,
+                    evidenceType: selectedEvidence.type,
+                    ruleType: "accept_all_typical",
+                    params: {},
+                    reason: "User accepted all typical cleaning suggestions (signatures, quotes, whitespace)",
+                }),
+            });
+            if (res.ok) {
+                // Refresh preview to show 0 issues
+                await loadPreview(selectedEvidence);
+            } else {
+                alert("Failed to resolve cleaning issues");
+            }
+        } catch {
+            alert("Network error resolving issues");
+        } finally {
+            setResolving(false);
+        }
+    };
 
     /* ── Assign evidence ── */
     const handleAssign = async (targetSection: string) => {
@@ -504,12 +534,24 @@ export default function WorkbenchPage() {
                             {previewIssues.length > 0 && (
                                 <div className="workbench-issues-panel">
                                     <div style={{
-                                        display: "flex", alignItems: "center", gap: "0.5rem",
-                                        marginBottom: "0.5rem", fontSize: "0.7rem", fontWeight: 700,
-                                        letterSpacing: "0.06em", textTransform: "uppercase",
-                                        color: "var(--accent-orange)",
+                                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                                        marginBottom: "0.5rem"
                                     }}>
-                                        <AlertTriangle size={12} /> Cleaning Issues
+                                        <div style={{
+                                            display: "flex", alignItems: "center", gap: "0.5rem",
+                                            fontSize: "0.7rem", fontWeight: 700,
+                                            letterSpacing: "0.06em", textTransform: "uppercase",
+                                            color: "var(--accent-orange)",
+                                        }}>
+                                            <AlertTriangle size={12} /> Cleaning Issues
+                                        </div>
+                                        <button 
+                                            className="workbench-issue-action-btn"
+                                            disabled={resolving}
+                                            onClick={resolveAllCleaning}
+                                        >
+                                            {resolving ? "Resolving..." : "Resolve All"}
+                                        </button>
                                     </div>
                                     {previewIssues.slice(0, 8).map((issue, i) => (
                                         <div key={i} className="workbench-issue-row">

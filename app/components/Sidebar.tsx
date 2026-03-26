@@ -10,6 +10,7 @@ import {
     Mail,
     Briefcase,
     FileText,
+    MessageSquare,
     Scale,
     DollarSign,
     Gem,
@@ -42,7 +43,7 @@ const NAV_GROUPS = [
             { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
             { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
             { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
-            { label: "History", href: "/coc", icon: ClipboardList, enabled: true },
+            { label: "CoC History", href: "/coc", icon: ClipboardList, enabled: true },
         ]
     },
     {

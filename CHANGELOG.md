@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-03-26 — Evidence Hub: Playlist Decommissioning & Stabilization
+
+### Critical Fixes
+- **SyntaxError Resolution** — Removed orphaned fetch calls to `/api/conversations` that caused JSON parsing errors in the Evidence Hub. The page now loads correctly.
+- **Icon Regression Fix** — Restored `Trash2` and `Plus` icons unintentionally removed during cleanup, ensuring annotation and multi-select features remain functional.
+- **CSS Restoration** — Restored `.select-checkbox` CSS required for the multi-select interface.
+
+### Decommissioning
+- **Conversation Playlists** — Fully removed the playlist sidebar, picker modal, and "Add to Playlist" functionality. This feature was redundant with the native Antigravity sidebar and was causing stability issues.
+- **Agent History UI** — Removed residual agent history UI from the sidebar and dashboard as part of the transition to native conversation tracking.
+- **Backend Cleanup** — Removed the defunct `/api/conversations` endpoint from `api_server.py`.
+
+### Files Changed
+- `app/app/evidence-hub/page.tsx` — Major cleanup of playlist state, functions, and UI components.
+- `app/components/Sidebar.tsx` — Removed agent history navigation.
+- `api_server.py` — Removed old conversation routes.
+
+---
+
+
 ## 2026-03-24 — Workbench: Evidence Persistence, Preview & Cleaning Flags
 
 ### Critical Fixes
