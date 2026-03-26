@@ -1,19 +1,23 @@
 # Changelog
 
-## 2026-03-26 — Evidence Hub: Playlist Decommissioning & Stabilization
+## 2026-03-26 — Evidence Hub: Playlist Decommissioning, Pivot Filters & Workbench Stabilization
 
 ### Critical Fixes
+- **Workbench Key Collision Fix** — Resolved a React "duplicate key" error that caused UI instability in `app/workbench/page.tsx`. Implemented `GROUP BY rfc822_id` in the API and transitioned to composite keys in the frontend.
 - **SyntaxError Resolution** — Removed orphaned fetch calls to `/api/conversations` that caused JSON parsing errors in the Evidence Hub. The page now loads correctly.
-- **Icon Regression Fix** — Restored `Trash2` and `Plus` icons unintentionally removed during cleanup, ensuring annotation and multi-select features remain functional.
-- **CSS Restoration** — Restored `.select-checkbox` CSS required for the multi-select interface.
+- **Icon Regression Fix** — Restored `Trash2` and `Plus` icons unintentionally removed during cleanup.
+
+### Features
+- **Context Menu Pivot Filter** — Implemented a right-click menu for email results. Users can now pivot search results to a specific account or domain within a ±3 day window of the selected record, with automatic state synchronization.
 
 ### Decommissioning
-- **Conversation Playlists** — Fully removed the playlist sidebar, picker modal, and "Add to Playlist" functionality. This feature was redundant with the native Antigravity sidebar and was causing stability issues.
-- **Agent History UI** — Removed residual agent history UI from the sidebar and dashboard as part of the transition to native conversation tracking.
-- **Backend Cleanup** — Removed the defunct `/api/conversations` endpoint from `api_server.py`.
+- **Conversation Playlists** — Fully removed the playlist sidebar and picker modal.
+- **Agent History UI** — Removed residual agent history UI from the sidebar and dashboard.
 
 ### Files Changed
-- `app/app/evidence-hub/page.tsx` — Major cleanup of playlist state, functions, and UI components.
+- `app/app/evidence-hub/page.tsx` — Cleanup of playlist state; implementation of Pivot Context Menu.
+- `app/app/workbench/page.tsx` — Robustified React keys for evidence items.
+- `app/app/api/workbench/evidence/route.ts` — Added de-duplication for email queries.
 - `app/components/Sidebar.tsx` — Removed agent history navigation.
 - `api_server.py` — Removed old conversation routes.
 
