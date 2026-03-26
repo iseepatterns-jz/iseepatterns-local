@@ -427,12 +427,14 @@ export default function WorkbenchPage() {
                                         : "Select a section to view evidence"}
                             </div>
                         ) : (
-                            evidenceItems.map(item => {
+                            evidenceItems.map((item, idx) => {
                                 const Icon = TYPE_ICONS[item.type] || Mail;
                                 const isSelected = selectedEvidence?.id === item.id;
+                                // Use composite key to prevent collisions if IDs match across types or duplicates exist
+                                const itemKey = `${item.type}-${item.id}-${idx}`;
                                 return (
                                     <div
-                                        key={item.id}
+                                        key={itemKey}
                                         className={`workbench-evidence-item ${isSelected ? "active" : ""}`}
                                         onClick={() => loadPreview(item)}
                                     >

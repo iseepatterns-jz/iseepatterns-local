@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
                     params.push(`%${query}%`, `%${query}%`);
                 }
 
-                sql += ` ORDER BY date_sent DESC`;
+                sql += ` GROUP BY rfc822_id ORDER BY date_sent DESC`;
 
                 const rows = db.prepare(sql).all(...params) as Array<{
                     msg_id: string; sender: string; subject: string; date: string; source_file: string;
