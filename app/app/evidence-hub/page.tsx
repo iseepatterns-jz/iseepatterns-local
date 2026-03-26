@@ -5,7 +5,7 @@ import {
     Clock, Tag, User, FileText, ExternalLink, RefreshCw, BarChart2, X,
     Highlighter, Flag, AlertTriangle, Info, Trash2, Plus, Database, Server,
     Archive, HardDrive, ChevronDown, ChevronUp, MessageCircle, LayoutGrid,
-    Mic, DollarSign, Scale, FolderOpen, Link2
+    Mic, DollarSign, Scale, FolderOpen, Link2, Globe
 } from "lucide-react";
 import {
     type EvidenceItem, type DetailResult, type Stats, type Annotation,
@@ -52,6 +52,50 @@ export default function EvidenceHubPage() {
     const [dateFrom, setDateFrom] = useState("");
     const [dateTo, setDateTo] = useState("");
     const [page, setPage] = useState(1);
+    const [limit] = useState(50);
+    const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+
+    // ── Context Menu State ──
+    const [contextMenu, setContextMenu] = useState<{ x: number, y: number, item: any } | null>(null);
+
+    const handleContextMenu = (e: React.MouseEvent, item: any) => {
+        if (item.source_type !== "email") return; // Only for emails as requested
+        e.preventDefault();
+        setContextMenu({ x: e.clientX, y: e.clientY, item });
+    };
+
+    const pivotToAccount = (email: string, ts: number) => {
+        handleTabChange("all"); 
+        const d = new Date(ts);
+        const from = new Date(d); from.setDate(d.getDate() - 3);
+        const to = new Date(d); to.setDate(d.getDate() + 3);
+        
+        setResults([]);
+        setQuery(email);
+        setDateFrom(from.toISOString().split("T")[0]);
+        setDateTo(to.toISOString().split("T")[0]);
+        setPage(1);
+        setContextMenu(null);
+    };
+
+    const pivotToDomain = (email: string, ts: number) => {
+        const domainMatch = email.match(/@([\w.-]+)$/);
+        const domain = domainMatch ? domainMatch[0] : "";
+        if (!domain) return;
+
+        handleTabChange("all");
+        const d = new Date(ts);
+        const from = new Date(d); from.setDate(d.getDate() - 3);
+        const to = new Date(d); to.setDate(d.getDate() + 3);
+
+        setResults([]);
+        setQuery(domain);
+        setDateFrom(from.toISOString().split("T")[0]);
+        setDateTo(to.toISOString().split("T")[0]);
+        setPage(1);
+        setContextMenu(null);
+    };
+
     const [results, setResults] = useState<EvidenceItem[]>([]);
     const [total, setTotal] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -63,8 +107,6 @@ export default function EvidenceHubPage() {
     const [showStats, setShowStats] = useState(false);
     const [showFilters, setShowFilters] = useState(false);
     const [searchMode, setSearchMode] = useState("");
-    const limit = 50;
-
     // ── Annotations & CoC state ──
     const [annotations, setAnnotations] = useState<Annotation[]>([]);
     const [cocData, setCocData] = useState<CoCData | null>(null);
@@ -100,7 +142,6 @@ export default function EvidenceHubPage() {
 
     // ── iMessage View toggle ──
     const [iMessageView, setIMessageView] = useState(false);
-    const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
     const [jumpToRowid, setJumpToRowid] = useState<number | null>(null);
 
     // ── Label exclusion (auto-filter trash/spam/draft) ──
@@ -208,17 +249,19 @@ export default function EvidenceHubPage() {
         }).catch(() => {});
     }, [fetchSections]);
 
-    // Click-outside to close participant dropdown
+    // Click-outside to close context menu and participant dropdown
     useEffect(() => {
-        if (!participantDropdownOpen) return;
         const handler = (e: MouseEvent) => {
-            if (participantRef.current && !participantRef.current.contains(e.target as Node)) {
+            if (participantDropdownOpen && participantRef.current && !participantRef.current.contains(e.target as Node)) {
                 setParticipantDropdownOpen(false);
+            }
+            if (contextMenu) {
+                setContextMenu(null);
             }
         };
         document.addEventListener("mousedown", handler);
         return () => document.removeEventListener("mousedown", handler);
-    }, [participantDropdownOpen]);
+    }, [participantDropdownOpen, contextMenu]);
 
     const fetchResults = useCallback(async () => {
         setLoading(true);
@@ -247,7 +290,7 @@ export default function EvidenceHubPage() {
         } finally {
             setLoading(false);
         }
-    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir, excludeLabels.join()]);
+    }, [query, sourceFilter, tagFilter, participantFilter.join(), dateFrom, dateTo, page, sortDir, excludeLabels.join(), limit]);
 
     useEffect(() => { fetchResults(); }, [fetchResults]);
 
@@ -1528,6 +1571,7 @@ export default function EvidenceHubPage() {
                                     key={item.canonical_id || item.id}
                                     className={`eh-list-item ${selectedId === item.id ? "selected" : ""}`}
                                     onClick={() => selectMode ? toggleRowid(item.id) : fetchDetail(item.id, item.source_type)}
+                                    onContextMenu={(e) => handleContextMenu(e, item)}
                                     style={selectMode ? { display: "flex", alignItems: "center", gap: 8 } : undefined}
                                 >
                                     {selectMode && (
@@ -2031,8 +2075,86 @@ export default function EvidenceHubPage() {
                     {toast.msg}
                 </div>
             )}
-
-
+            {/* ── Context Menu Overlay ── */}
+            {contextMenu && (
+                <div 
+                    className="eh-context-menu"
+                    style={{ 
+                        position: 'fixed', 
+                        top: contextMenu.y, 
+                        left: contextMenu.x,
+                        zIndex: 9999,
+                        background: '#1e1e2e',
+                        border: '1px solid #313244',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                        padding: '4px',
+                        minWidth: '240px'
+                    }}
+                >
+                    {(() => {
+                        let email = "Unknown";
+                        try {
+                            const parsed = JSON.parse(contextMenu.item.primary_ids || "{}");
+                            email = parsed.account || parsed.message_id?.match(/[\w.+-]+@[\w.-]+/)?.[0] || "Unknown";
+                        } catch {
+                            const emailMatch = contextMenu.item.primary_ids?.split(',')[0] || contextMenu.item.title.match(/[\w.+-]+@[\w.-]+/)?.[0];
+                            email = emailMatch || "Unknown";
+                        }
+                        const domain = email.split('@')[1];
+                        
+                        return (
+                            <>
+                                <div style={{ padding: '8px 12px', fontSize: '11px', color: '#7f849c', borderBottom: '1px solid #313244', marginBottom: '4px' }}>
+                                    PIVOT FILTERS (±3 DAYS)
+                                </div>
+                                <button 
+                                    className="eh-context-item"
+                                    onClick={(e) => { e.stopPropagation(); pivotToAccount(email, contextMenu.item.start_timestamp); }}
+                                >
+                                    <User size={14} /> All mail for <strong>{email}</strong>
+                                </button>
+                                {domain && (
+                                    <button 
+                                        className="eh-context-item"
+                                        onClick={(e) => { e.stopPropagation(); pivotToDomain(email, contextMenu.item.start_timestamp); }}
+                                    >
+                                        <Globe size={14} /> All mail for domain <strong>@{domain}</strong>
+                                    </button>
+                                )}
+                                <button 
+                                    className="eh-context-item"
+                                    onClick={(e) => { e.stopPropagation(); setContextMenu(null); }}
+                                >
+                                    <X size={14} /> Cancel
+                                </button>
+                            </>
+                        );
+                    })()}
+                </div>
+            )}
+            <style jsx global>{`
+                .eh-context-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    width: 100%;
+                    padding: 8px 12px;
+                    background: transparent;
+                    border: none;
+                    color: #cdd6f4;
+                    font-size: 13px;
+                    text-align: left;
+                    cursor: pointer;
+                    border-radius: 4px;
+                }
+                .eh-context-item:hover {
+                    background: #313244;
+                }
+                .eh-context-item strong {
+                    color: var(--accent-blue);
+                }
+            `}</style>
         </div>
     );
 }
