@@ -40,7 +40,8 @@
           "scripts/consolidate_forensic_chats.py",
           "scripts/extract_imessage_admissions.py",
           "scripts/extract_gaslighting_patterns.py",
-          "scripts/resolve_attachment_paths.py"
+          "scripts/resolve_attachment_paths.py",
+          "scripts/extract_per_contact_dbs.py"
         ]
       },
       "canonical_id_format": "message_guid (e.g., p:0/... or UUID)",
@@ -217,7 +218,9 @@
       "scripts": {
         "utility": [
           "scripts/rebuild_hub_index.py",
-          "scripts/check_hub_provenance.py"
+          "scripts/check_hub_provenance.py",
+          "scripts/compare_sms_dbs.py",
+          "scripts/verify_evidence_hub.py"
         ]
       },
       "canonical_id_format": "nexus_uuid",

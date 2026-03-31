@@ -25,15 +25,30 @@ A local AI-powered legal and financial forensic assistant with **hybrid search**
   - **Synthesizer**: Short, citation-heavy answers for UI.
 - **Optimized for M4 Max**: Uses `qwen2.5-32b-forensic` (derived from `qwen2.5:32b-instruct`, `num_ctx=8192`, `temp=0.2`) for fast, high-quality local answers.
 
-## Governance Architecture
+## Case Management & Governance
 
+### 1. Starting a New Case (Reset Procedure)
+To begin a fresh investigation while preserving original data repositories, use the standardized reset procedure:
+```bash
+# 1. Reset Evidence Hub (Drops and recreates schema)
+python3 -m ingest.evidence_hub_init --reset
+
+# 2. Clear Player & Brain Hubs
+sqlite3 data/players.db "DELETE FROM players; DELETE FROM player_files;"
+sqlite3 brains.db "DELETE FROM tasks; DELETE FROM subtasks; DELETE FROM brains;"
+```
+*Note: This process strictly preserves `/data/MBOX_LOCKER` and `/data/IMESSAGE_LOCKER` forensic sources.*
+
+### 2. Governance Architecture
 This project uses a three-pillar governance framework to ensure unity and harmony across all evidence pipelines:
 
-### 1. Governance Agent
-**`.agent/skills/lawmodel1-governance/SKILL.md`** — The single source of truth for all project standards. Every agent working on this project must consult this skill before modifying schemas, databases, scripts, or API routes. Contains the full schema registry, canonical ID formats, evidence path rules, data locker standards, and chain of custody requirements.
+#### A. Governance Agent
+**`.agent/skills/lawmodel1-governance/SKILL.md`** — The single source of truth for project standards.
+- **Forensic Security**: All evidence-heavy root directories (e.g., `legal_docs_business/`) are strictly ignored by Git to prevent data leakage.
+- **Canonical IDs**: Strict mapping rules for `message_id`, `nexus_uuid`, and `txn_id`.
 
-### 2. Gem Registry
-**`gems/registry.json`** — 10 modular evidence pipeline definitions ("gems") that can be snapped in and out. Each gem declares its inputs, outputs, processing scripts, schemas, dependencies, API routes, and UI pages. Gems ensure all processes follow the same patterns and no connections are missed.
+#### B. Gem Registry
+**`gems/registry.json`** — 10 modular evidence pipeline definitions. All core utility scripts (e.g., `extract_per_contact_dbs.py`) must be registered in the registry to maintain architectural integrity.
 
 | Gem | Purpose | Dependencies |
 |:----|:--------|:-------------|

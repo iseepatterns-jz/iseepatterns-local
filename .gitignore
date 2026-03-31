@@ -89,3 +89,17 @@ temp/
 
 # Email thread exports
 data/EMAIL_THREAD_PUBLISH_LOCKER/processed/json/
+# Forensic Evidence (Root)
+legal_docs_business/
+legal_docs_criminal/
+
+# Archive & Temp
+_archive/
+unused/
+temp/
+tmp/
+_backup_*/
+
+# App-level Local DBs
+app/app/*.db
+app/app/.DS_Store
