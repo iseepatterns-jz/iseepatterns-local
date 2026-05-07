@@ -17,7 +17,7 @@ Usage:
 
 Optional flags:
   --register-coc     Also insert artifacts into lawmodel1 mbox_index.db chain_of_custody table
-  --coc-db PATH      Path to mbox_index.db (default: /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db)
+  --coc-db PATH      Path to mbox_index.db (default: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db)
   --output DIR       Directory to write the forensic report (default: same as export root)
 """
 
@@ -765,7 +765,7 @@ def main():
     )
     parser.add_argument(
         "--coc-db",
-        default="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
+        default="/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
         help="Path to mbox_index.db for chain_of_custody registration",
     )
     parser.add_argument(

@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 // ── Initialize annotations schema ──
 function ensureSchema(db: ReturnType<typeof getWorkbenchDb>) {
     const schemaPath = path.join(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
         "schemas",
         "evidence_annotations.sql"
     );

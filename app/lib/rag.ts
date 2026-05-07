@@ -24,12 +24,12 @@ import {
 // Configuration
 // ─────────────────────────────────────────────────────────────────
 
-const LEGAL_DOCS_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data";
+const LEGAL_DOCS_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
 const BM25_INDEX_PATH = path.join(LEGAL_DOCS_DIR, "bm25_index_ts.json");
 const CHROMA_COLLECTION = "legal_docs";
 
 // Email & Messaging evidence hub (unified)
-const EVIDENCE_HUB_DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_hub.db";
+const EVIDENCE_HUB_DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db";
 
 // Labels to exclude from RAG indexing
 const EXCLUDED_LABELS = ["^DRAFT", "^SPAM", "^DELETED", "^TRASH"];

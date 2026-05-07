@@ -37,7 +37,7 @@ python3 -m ingest.evidence_hub_init --reset
 sqlite3 data/players.db "DELETE FROM players; DELETE FROM player_files;"
 sqlite3 brains.db "DELETE FROM tasks; DELETE FROM subtasks; DELETE FROM brains;"
 ```
-*Note: This process strictly preserves `/data/MBOX_LOCKER` and `/data/IMESSAGE_LOCKER` forensic sources.*
+*Note: This process strictly preserves the original forensic sources (e.g., /data/MBOX_LOCKER, /data/chatdb_storage) and their archives in /_archive/.*
 
 ### 2. Governance Architecture
 This project uses a three-pillar governance framework to ensure unity and harmony across all evidence pipelines:

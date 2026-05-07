@@ -3,7 +3,7 @@ import json
 import uuid
 from pathlib import Path
 
-DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+DATA_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 WORKBENCH_DB = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 EVIDENCE_HUB_DB = DATA_DIR / "evidence_hub.db"
 

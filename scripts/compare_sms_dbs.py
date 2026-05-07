@@ -16,7 +16,7 @@ In Apple's sms.db schema:
   - style=43 with a 'chat...' identifier = group conversation
 
 TERMINAL COMMAND:
-  python /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/compare_sms_dbs.py
+  python /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/compare_sms_dbs.py
 
 No arguments needed — paths are configured below.
 """
@@ -31,8 +31,8 @@ from collections import defaultdict
 # Configuration — UPDATE THESE PATHS IF NEEDED
 # ─────────────────────────────────────────────
 
-# DB_IPHONE12 = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/2024-06-06-iphone-12-imazing-export-showgoat/showgoat/HomeDomain/Library/SMS/sms.db"
-# DB_IPHONE14 = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/2024-06-07-iphone-14-imazing-export-showgoat2/showgoat (2)/HomeDomain/Library/SMS/sms.db"
+# DB_IPHONE12 = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/2024-06-06-iphone-12-imazing-export-showgoat/showgoat/HomeDomain/Library/SMS/sms.db"
+# DB_IPHONE14 = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/2024-06-07-iphone-14-imazing-export-showgoat2/showgoat (2)/HomeDomain/Library/SMS/sms.db"
 # NOTE: The above legacy iMazing exports were removed in March 2026.
 # Use WHITELIST_DB_EXPORT_LOCKER for per-contact databases.
 
@@ -43,7 +43,7 @@ JZ_HANDLE = "+17736109104"
 LG_HANDLE = "+18478280944"
 LG_HANDLE_VARIANTS = ["+18478280944", "18478280944", "18478280944@tmomail.net"]
 
-OUTPUT_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER"
+OUTPUT_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER"
 
 # ─────────────────────────────────────────────
 # Utility

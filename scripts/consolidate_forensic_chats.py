@@ -2,9 +2,9 @@ import sqlite3
 import os
 import shutil
 
-M1_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_targeted_investigation_pruned.db"
-IMAC_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_targeted_investigation_pruned.db"
-CONSOLIDATED_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/consolidated_investigation_m1_imac.db"
+M1_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_targeted_investigation_pruned.db"
+IMAC_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_targeted_investigation_pruned.db"
+CONSOLIDATED_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/consolidated_investigation_m1_imac.db"
 
 def get_columns(cursor, table_name, db_prefix=None):
     pragma = f"PRAGMA {db_prefix}.table_info({table_name})" if db_prefix else f"PRAGMA table_info({table_name})"

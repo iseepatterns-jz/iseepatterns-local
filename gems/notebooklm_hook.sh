@@ -26,7 +26,7 @@ if [ "${SKIP_NLM:-0}" = "1" ]; then
   exit 0
 fi
 
-BASE_DIR="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1"
+BASE_DIR="/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1"
 SCRIPT="$BASE_DIR/scripts/notebooklm_deepdive.py"
 
 # Detect Python in virtual environment

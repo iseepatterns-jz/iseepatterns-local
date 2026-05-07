@@ -23,7 +23,7 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DATA_DIR = BASE_DIR / "data"
 EXPORTS_DIR = BASE_DIR / "exports"
 ATTORNEY_PKG = EXPORTS_DIR / "attorney_package"

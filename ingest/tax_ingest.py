@@ -71,7 +71,7 @@ def create_tax_evidence_card(tax_year, form_type, entity, data, file_path):
     
     # Clean entity for filename
     safe_entity = re.sub(r'[^a-zA-Z0-9]', '_', entity_display)
-    output_path = f"/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_cards/tax_{tax_year}_{safe_entity}_{card_id[:8]}.json"
+    output_path = f"/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_cards/tax_{tax_year}_{safe_entity}_{card_id[:8]}.json"
     
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w') as f:
@@ -83,7 +83,7 @@ def process_tax_locker():
     """
     Recursively scans the TAXES_LOCKER for tax returns and related documents.
     """
-    locker_path = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/TAXES_LOCKER"
+    locker_path = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER"
     print(f"[*] Recursively scanning {locker_path}...")
     
     for root, dirs, files in os.walk(locker_path):

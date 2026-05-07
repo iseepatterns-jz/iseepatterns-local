@@ -10,7 +10,7 @@ import argparse
 import sqlite3
 from pathlib import Path
 
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 SCHEMA_PATH = PROJECT_ROOT / "schemas" / "evidence_hub.sql"
 DB_PATH = PROJECT_ROOT / "data" / "evidence_hub.db"
 

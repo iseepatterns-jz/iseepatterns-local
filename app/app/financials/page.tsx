@@ -43,14 +43,15 @@ interface K1Detail {
 }
 
 interface Transaction {
-    transaction_id: string;
-    account_id: string;
+    id: number;
     date: string;
     amount: number;
     description: string;
-    counterparty: string;
     transaction_type: string;
+    account: string;
+    bank: string;
     category: string;
+    responsible: string;
 }
 
 function formatCurrency(n: number | null | undefined): string {
@@ -323,7 +324,7 @@ export default function FinancialsPage() {
                             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
                                 <thead>
                                     <tr style={{ borderBottom: "1px solid var(--border-glass)" }}>
-                                        {["Date", "Description", "Counterparty", "Amount", "Type"].map(h => (
+                                        {["Date", "Description", "Bank", "Amount", "Type"].map(h => (
                                             <th key={h} style={{
                                                 textAlign: h === "Amount" ? "right" : "left",
                                                 padding: "0.75rem 1rem",
@@ -335,7 +336,7 @@ export default function FinancialsPage() {
                                 </thead>
                                 <tbody>
                                     {transactions.map(t => (
-                                        <tr key={t.transaction_id} style={{ borderBottom: "1px solid var(--border-glass)" }}>
+                                        <tr key={t.id} style={{ borderBottom: "1px solid var(--border-glass)" }}>
                                             <td style={{ padding: "0.6rem 1rem", fontFamily: "var(--font-mono)", whiteSpace: "nowrap" }}>
                                                 {t.date?.slice(0, 10)}
                                             </td>
@@ -343,14 +344,14 @@ export default function FinancialsPage() {
                                                 {t.description || "—"}
                                             </td>
                                             <td style={{ padding: "0.6rem 1rem", color: "var(--text-secondary)" }}>
-                                                {t.counterparty || "—"}
+                                                {t.bank || "—"}
                                             </td>
                                             <td style={{
                                                 padding: "0.6rem 1rem", textAlign: "right",
                                                 fontFamily: "var(--font-mono)", fontWeight: 600,
-                                                color: t.amount < 0 ? "var(--accent-red, #ef4444)" : "var(--accent-emerald)",
+                                                color: typeof t.amount === "number" && t.amount < 0 ? "var(--accent-red, #ef4444)" : "var(--accent-emerald)",
                                             }}>
-                                                {formatCurrency(t.amount)}
+                                                {formatCurrency(typeof t.amount === "number" ? t.amount : null)}
                                             </td>
                                             <td style={{ padding: "0.6rem 1rem" }}>
                                                 <span style={{

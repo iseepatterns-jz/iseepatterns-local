@@ -60,12 +60,12 @@ WHITELIST_HANDLES = {
     "+17085281818",  # Tom Labadie (Corrected)
 }
 
-DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+DATA_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 CARDS_OUT = DATA_DIR / "evidence_cards"
 
 # Default (you can still use this if you want a single-DB call)
 CHAT_DB_PATH = Path(
-    "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
 )
 
 

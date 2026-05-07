@@ -16,7 +16,7 @@ import os
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 CHAT_MASTER  = PROJECT_ROOT / "data" / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
 
 ATTACHMENT_ROOTS = {

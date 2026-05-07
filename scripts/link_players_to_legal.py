@@ -6,7 +6,7 @@ from pathlib import Path
 import pypdf
 
 # Paths
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 PLAYERS_DB = PROJECT_ROOT / "data" / "players.db"
 HUB_DB = PROJECT_ROOT / "data" / "evidence_hub.db"
 COURT_LOCKER = PROJECT_ROOT / "data" / "COURT_LOCKER"

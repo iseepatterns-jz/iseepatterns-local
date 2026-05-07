@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
         // Ensure timeline schema is applied
         const PROJECT_ROOT = process.env.VAULT_ROOT ||
-            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data";
+            "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
         const schemaPath = path.join(PROJECT_ROOT, "schemas", "timeline.sql");
         if (fs.existsSync(schemaPath)) {
             const schema = fs.readFileSync(schemaPath, "utf-8");
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
         // Ensure schema
         const PROJECT_ROOT = process.env.VAULT_ROOT ||
-            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data";
+            "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
         const schemaPath = path.join(PROJECT_ROOT, "schemas", "timeline.sql");
         if (fs.existsSync(schemaPath)) {
             db.exec(fs.readFileSync(schemaPath, "utf-8"));

@@ -27,7 +27,7 @@ from rank_bm25 import BM25Okapi
 # Configuration
 # ─────────────────────────────────────────────────────────────────────────────
 
-BASE_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1"
+BASE_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1"
 CHROMA_DB_PATH = os.path.join(BASE_DIR, "chroma_db")
 BM25_INDEX_PATH = os.path.join(BASE_DIR, "bm25_index.pkl")
 DOCS_BUSINESS_DIR = os.path.join(BASE_DIR, "legal_docs_business")

@@ -26,66 +26,110 @@ from typing import Dict, Optional
 
 # ── Paths ──────────────────────────────────────────────────────────────
 
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DB_PATH = PROJECT_ROOT / "data" / "evidence_hub.db"
 
-CHAT_MASTER_DB = PROJECT_ROOT / "data" / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
+CHAT_MASTER_DB = PROJECT_ROOT / "data" / "IMESSAGE_DATA_LOCKER" / "chat_case_only.db"
 EMAIL_DB = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "emails_LG_SM_SH_JZ.db"
 MBOX_METADATA_DB = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "mbox_metadata.db"
 
 # ── iMessage whitelist ─────────────────────────────────────────────────
 
 WHITELIST_HANDLES = {
-    # Joseph Zangrilli (Owner)
+    # Abel Rodriguez
+    "+17736170803", "abel@rowboatcreative.com",
+    # Adrienne Guariglia
+    "+18474319455",
+    # Amber Dys
+    "+16304325005",
+    # Cameron Lowe
+    "+16309955836",
+    # Carmel Halim
+    "+14066721522",
+    # David Baum
+    "+13122753110",
+    # Elliot Hershik
+    "+16305311521",
+    # Eric Montanez
+    "+17735584454",
+    # George Grigorakos
+    "+13124203036", "george.g@rudderservices.com",
+    # Gregory Jordan
+    "+13125437354",
+    # Henry Badani
+    "+18478040165",
+    # Jaclyn Torrey
+    "+17818711003",
+    # James Johansen
+    "+13125151010",
+    # Jay Goebel
+    "+17733549538", "jay@rowboatcreative.com",
+    # Jeff Paolino
+    "+14847588413",
+    # Jimmy Bui
+    "+18572212405",
+    # Joe Chay
+    "+16143270700",
+    # John Azara
+    "+17738515303",
+    # Jon Duong
+    "+19135485577",
+    # Jose Aburto
+    "+17733019422",
+    # Joseph Zangrilli
     "+17736109104", "joe@rowboatcreative.com",
-    
-    # Authoritative Players (from identify-players.csv)
-    "+18478280944", "lucas@rowboatcreative.com", # Lucas Guariglia
-    "+17043407505",  # Suzanne Guariglia
-    "+17738529219",  # Leonard Mayersky
-    "+17083075156",  # Pamela Visvardis
-    "+17204540129",  # Thomas Nitschke
-    "+18473801876",  # Michael Sanderson
-    "+13127254069",  # Ryan Hayes
-    "+18478040165",  # Henry Badani
-    "+18473870518",  # Steven Farag
-    "+13124203036", "george.g@rudderservices.com", # George Grigorakos
-    "+16305311521",  # Elliot Hershik
-    "+16307018110",  # Sheri Highland
-    "+17736366744", "abel@rowboatcreative.com",  # Abel Rodriguez
-    "patrick@rowboatcreative.com", # Patrick Houdek
-    "+14847588413",  # Jeff Paolino
-    "+17733549538", "jay@rowboatcreative.com",  # Jay Goebel
-    "+12245670848", "stephanie@rowboatcreative.com", # Stephanie Cuccinella
-    "+17737190088",  # Kevin Rotter
-    "fiddes56@gmail.com", "+13093393391",  # Luke Fiddes
-    "taylor@pendulum-creative.com", "+18043176988",  # Taylor Smith
-    "+17738515303",  # John Azara
-    "+17735161720",  # Wally Klejka
-    "+13122753110",  # David Baum
-    "+13128487283",  # Nicole Yalaz
-    "+19135485577",  # Jon Duong
-    "+14066721522",  # Carmel Halim
-    "+17577495856",  # Sam Cobb
-    "+15105026585",  # Sal Mohamed
-    "+17735584454",  # Eric Montanez
-    "+18572212405",  # Jimmy Bui
-    "+17739722946",  # Manny Caston
-    "+16309955836",  # Cameron Lowe
-    "+17733019422",  # Jose Aburto
-    "+16304325005",  # Amber Dys
-    "+16302729916",  # Stevie Hopkins
-    "+18474319455",  # Adrienne Guariglia
-    "+13127201399",  # Marie Hale
-    "+13125151010",  # James Johansen
-    "+13125437354",  # Gregory Jordan
-    "+17818711003",  # Jaclyn Torrey
-    "+13123443801",  # Samuel Tanios
-    "+17734433476",  # Oladipo Folami
-    
-    # User Explicit Corrections & Relevant Clients
-    "+17734196004", "joe@vita-morte.com", "joe@joefreshgoods.com", # Joe FreshGoods (Joe Robinson)
-    "+17085281818",  # Tom Labadie (Corrected)
+    # Kevin Lampe
+    "+13126177280",
+    # Kevin Rotter
+    "+17737190088",
+    # Leonard Mayersky
+    "+17738529219",
+    # Lucas Guariglia
+    "+18478280944", "18478280944@tmomail.net", "lucas@rowboatcreative.com",
+    # Luke Fiddes
+    "+13093393391", "fiddes56@gmail.com",
+    # Manny Caston
+    "+17739722946",
+    # Marie Hale
+    "+13127201399",
+    # Michael Sanderson
+    "+18473801876",
+    # Nicole Yalaz
+    "+13128487283",
+    # Oladipo Folami
+    "+17734433476",
+    # Pamela Visvardis
+    "+17083075156",
+    # Patrick Houdek
+    "+17736366744", "patrick@rowboatcreative.com",
+    # Ryan Hayes
+    "+13127254069",
+    # Sal Mohamed
+    "+15105026585",
+    # Sam Cobb
+    "+17577495856",
+    # Samuel Tanios
+    "+17732516776",
+    # Shankar Anant
+    "+18475021465",
+    # Sheri Highland
+    "+16307018110",
+    # Stephanie Cuccinella
+    "+12245670848", "stephanie@rowboatcreative.com",
+    # Stephanie Morin
+    "+13392017464",
+    # Steven Farag
+    "+18473870518",
+    # Stevie Hopkins
+    "+16302729916",
+    # Suzanne Guariglia
+    "+17043407505",
+    # Taylor Smith
+    "+18043176988", "taylor@pendulum-creative.com",
+    # Thomas Nitschke
+    "+17204540129",
+    # Wally Klejka
+    "+17735161720",
 }
 
 # ── Helpers ────────────────────────────────────────────────────────────

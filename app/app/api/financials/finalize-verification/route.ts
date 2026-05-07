@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
         finalizeTxn(matches, sessionInt);
 
         // 3. Export to CSV (Synchronize Accountant View)
-        const masterPath = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv";
+        const masterPath = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv";
         
         // Backup before export
         const csvContentOld = fs.readFileSync(masterPath, "utf-8");

@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         }
 
         // Safety: Ensure path stays within allowed directory
-        const PROJECT_ROOT = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1";
+        const PROJECT_ROOT = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1";
         const absolutePath = path.resolve(PROJECT_ROOT, filePath);
         
         if (!absolutePath.startsWith(path.join(PROJECT_ROOT, "data", "LINKED_IN_PROFILE_LOCKER"))) {

@@ -10,15 +10,15 @@ from .evidence_card import EvidenceCard
 from .imessage_ingest import generate_imessage_cards_for_db
 
 
-DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+DATA_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 CARDS_OUT = DATA_DIR / "evidence_cards"
 FINANCIAL_HUB_DB = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 QUICKBOOKS_HUB_DB = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 
 os.makedirs(CARDS_OUT, exist_ok=True)
 
-M1STUDIO_DB = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db")
-IMAC_DB = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db")
+M1STUDIO_DB = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db")
+IMAC_DB = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db")
 
 def _get_db_rows(db_path: Path, table_name: str) -> List[Dict]:
     if not db_path.exists():

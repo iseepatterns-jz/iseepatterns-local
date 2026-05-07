@@ -2,8 +2,8 @@ import sqlite3
 import json
 import os
 
-DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_hub.db"
-JSON_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/refined_cards_draft.json"
+DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db"
+JSON_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/refined_cards_draft.json"
 
 def ingest():
     if not os.path.exists(JSON_PATH):

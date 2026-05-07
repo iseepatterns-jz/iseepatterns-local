@@ -103,3 +103,10 @@ _backup_*/
 # App-level Local DBs
 app/app/*.db
 app/app/.DS_Store
+debug_ingest.log
+
+# Pipeline runtime artifacts (generated output, not source)
+tools/pipeline/artifacts/
+tools/pipeline/work-queue/
+tools/pipeline/batches/
+tools/pipeline/state/

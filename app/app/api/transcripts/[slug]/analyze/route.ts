@@ -13,7 +13,7 @@ export async function POST(
     { params }: { params: Promise<{ slug: string }> }
 ) {
     const { slug } = await params;
-    const TRANSCRIPTS_ROOT = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/TRANSCRIPTS_LOCKER";
+    const TRANSCRIPTS_ROOT = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TRANSCRIPTS_LOCKER";
     
     try {
         const transcriptDir = path.join(TRANSCRIPTS_ROOT, slug, "txt");

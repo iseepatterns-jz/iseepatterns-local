@@ -3,7 +3,8 @@ import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
 
-const DB_PATH = path.join(process.cwd(), "..", "data", "players.db");
+const DATA_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
+const DB_PATH = path.join(DATA_DIR, "players.db");
 
 function getDb() {
     return new Database(DB_PATH, { readonly: true });
@@ -56,7 +57,7 @@ export async function GET(
         const { processedPlayer, avatar } = handleOverrides(player, slug);
 
         // --- Evidence Hub Linkage ---
-        const HUB_DB_PATH = path.join(process.cwd(), "..", "data", "evidence_hub.db");
+        const HUB_DB_PATH = path.join(DATA_DIR, "evidence_hub.db");
         let evidence_count = 0;
         try {
             const hubDb = new Database(HUB_DB_PATH, { readonly: true });
@@ -100,7 +101,7 @@ export async function GET(
 }
 
 function handleOverrides(playerObj: any, slug: string) {
-    const LOCKER_BASE = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
+    const LOCKER_BASE = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
 
     const PHONE_OVERRIDES: Record<string, string[]> = {
         "lucas-guariglia-5258ab19": ["+18478280944"],

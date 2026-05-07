@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Configuration
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 ROSETTA_CSV = BASE_DIR / "FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv"
 HUB_DB = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 

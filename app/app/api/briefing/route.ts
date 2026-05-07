@@ -13,7 +13,7 @@ function getPlayersDb(): Database.Database {
     const dbPath = process.env.VAULT_ROOT
         ? path.join(process.env.VAULT_ROOT, "db", "players.db")
         : path.join(
-            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+            "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
             "data",
             "players.db"
         );
@@ -93,7 +93,7 @@ export async function GET() {
 
         // ── Players (from players.db) with avatars ──
         const fs = require("fs");
-        const LOCKER_BASE = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
+        const LOCKER_BASE = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
         const IS_LAMBDA = !!process.env.VAULT_ROOT;
 
         let rawPlayers: Array<{

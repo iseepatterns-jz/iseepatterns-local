@@ -6,7 +6,7 @@ import fs from "fs";
 export const dynamic = "force-dynamic";
 
 const IMESSAGE_LOCKER = path.resolve(
-    "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/Messages"
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/Messages"
 );
 const CASE_DB_PATH = path.join(IMESSAGE_LOCKER, "chat_case_only.db");
 const ATTACHMENTS_ROOT = path.join(IMESSAGE_LOCKER, "Attachments");

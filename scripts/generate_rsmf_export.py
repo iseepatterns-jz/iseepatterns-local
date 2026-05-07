@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # --- Configuration ---
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DATA_DIR = BASE_DIR / "data"
 CHAT_MASTER_DB = DATA_DIR / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db"
 PLAYERS_DB = DATA_DIR / "players.db"

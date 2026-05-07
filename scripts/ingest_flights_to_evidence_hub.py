@@ -7,7 +7,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Paths
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 CSV_PATH = BASE_DIR / "FLIGHTS_LOCKER/LG flights - zDataStorage - Flights 0404.csv"
 HUB_DB = BASE_DIR / "evidence_hub.db"
 

@@ -20,33 +20,21 @@ SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-# Import pieces from your existing code
-from rag_law_assistant import (
-    CHROMA_DB_PATH,
-    BM25_INDEX_PATH,
-    EMBEDDING_MODEL,
-    LLM_MODEL,
-    hybrid_search,
-    rerank_results,
-    format_context,
-    generate_answer,
-)
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import OllamaEmbeddings
-from langchain_community.llms import Ollama
+# Lazy imports for RAG — only imported when /rag/answer is hit
+# (avoids crashing on startup when langchain/chroma deps are missing)
 
 import sys
 sys.path.insert(0, str(Path(__file__).parent / "_archive"))
 from brain_cli import snapshot_brain  # moved to _archive/ during cleanup
 
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 
 app = FastAPI(title="lawmodel1-local-api")
 
 # Allow Next.js dev server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3300"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -79,6 +67,17 @@ _llm = None
 
 def ensure_indexes_loaded():
     global _embeddings, _vectorstore, _bm25_data, _llm
+    
+    # Lazy imports — only loaded when /rag/answer is actually called
+    from rag_law_assistant import (
+        CHROMA_DB_PATH, BM25_INDEX_PATH, EMBEDDING_MODEL, LLM_MODEL,
+        hybrid_search, rerank_results, format_context, generate_answer,
+        load_bm25_index,
+    )
+    from langchain_community.vectorstores import Chroma
+    from langchain_community.embeddings import OllamaEmbeddings
+    from langchain_community.llms import Ollama
+
     if _embeddings is None:
         _embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
     if _vectorstore is None:
@@ -87,7 +86,6 @@ def ensure_indexes_loaded():
             embedding_function=_embeddings,
         )
     if _bm25_data is None:
-        from rag_law_assistant import load_bm25_index
         _bm25_data = load_bm25_index()
         if not _bm25_data:
             raise RuntimeError("BM25 index not found; run rag_law_assistant.py --index first.")
@@ -129,7 +127,7 @@ def run_readybag():
     # IMPORTANT: this assumes api_server.py is in the same dir as brain_cli.py
     try:
         subprocess.run(
-            [sys.executable, str(BASE_DIR / "brain_cli.py"), "readybag"],
+            [sys.executable, str(BASE_DIR / "_archive" / "brain_cli.py"), "readybag"],
             check=True,
         )
         return {"status": "ok"}

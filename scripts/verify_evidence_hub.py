@@ -8,7 +8,7 @@ Usage:
 import sqlite3
 from pathlib import Path
 
-DB_PATH = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_hub.db")
+DB_PATH = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db")
 
 
 def verify():

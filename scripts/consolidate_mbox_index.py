@@ -5,7 +5,7 @@ import time
 
 # ── Paths ──────────────────────────────────────────────────────────────
 
-CENTRAL_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED")
+CENTRAL_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED")
 DB_PATH = CENTRAL_DIR / "gmail_master_index.db"
 
 # Sources to ingest: (source_label, metadata_csv, zip_file_name)

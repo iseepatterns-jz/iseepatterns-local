@@ -4,7 +4,7 @@ import sqlite3
 from pathlib import Path
 
 # Paths
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DB_PATH = BASE_DIR / "data/rowboat-creative/RC-2026/db/workbench.db"
 CARDS_DIR = BASE_DIR / "data/evidence_cards"
 

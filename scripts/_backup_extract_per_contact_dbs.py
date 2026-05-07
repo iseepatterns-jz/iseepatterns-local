@@ -10,13 +10,13 @@ Designed for RBC v. LG litigation — produces court-ready,
 per-contact evidence databases with full chain-of-custody logging.
 
 Usage:
-    python /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/extract_per_contact_dbs.py \
+    python /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/extract_per_contact_dbs.py \
             --sms-db
-        /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/showgoat/HomeDomain/Library/SMS/sms.db \
+        /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/showgoat/HomeDomain/Library/SMS/sms.db \
             --whitelist
-        /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/LINKED_IN_PROFILE_LOCKER/player-handle-id-profiles.xlsx \
+        /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/LINKED_IN_PROFILE_LOCKER/player-handle-id-profiles.xlsx \
             --output-dir
-        /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER \
+        /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER \
             --register-coc
 
 Optional:
@@ -761,7 +761,7 @@ def main():
     )
     parser.add_argument(
         "--coc-db",
-        default="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
+        default="/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
         help="Path to mbox_index.db for CoC registration",
     )
 

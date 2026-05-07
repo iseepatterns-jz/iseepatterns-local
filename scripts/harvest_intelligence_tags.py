@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 
 # --- Configuration ---
-DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+DATA_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 DBS = [
     DATA_DIR / "IMESSAGE_LOCKER" / "Messages" / "chat_case_only.db",
 ]

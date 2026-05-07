@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 # Paths
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 PLAYERS_DB = PROJECT_ROOT / "data" / "players.db"
 HUB_DB = PROJECT_ROOT / "data" / "evidence_hub.db"
 

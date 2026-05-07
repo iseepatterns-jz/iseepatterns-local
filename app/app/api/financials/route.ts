@@ -6,7 +6,7 @@ import fs from "fs";
 export const dynamic = "force-dynamic";
 
 function ensureSchemas(db: ReturnType<typeof getWorkbenchDb>) {
-    const PROJECT_ROOT = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1";
+    const PROJECT_ROOT = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1";
     for (const schema of ["financials.sql", "tax_returns.sql"]) {
         const p = path.join(PROJECT_ROOT, "schemas", schema);
         if (fs.existsSync(p)) {
@@ -36,15 +36,15 @@ export async function GET(req: NextRequest) {
             let totalDebits = 0, totalCredits = 0;
             let txnCount = 0, acctCount = 0, taxCount = 0;
             try {
-                const txn = db.prepare("SELECT COUNT(*) as c FROM master_transactions").get() as { c: number } | null;
+                const txn = db.prepare("SELECT COUNT(*) as c FROM financial_master").get() as { c: number } | null;
                 const acct = db.prepare("SELECT COUNT(*) as c FROM accounts").get() as { c: number } | null;
                 const tax = db.prepare("SELECT COUNT(*) as c FROM tax_returns").get() as { c: number } | null;
                 txnCount = txn?.c || 0;
                 acctCount = acct?.c || 0;
                 taxCount = tax?.c || 0;
 
-                const debits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM master_transactions WHERE amount < 0").get() as { total: number };
-                const credits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM master_transactions WHERE amount > 0").get() as { total: number };
+                const debits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM financial_master WHERE amount < 0").get() as { total: number };
+                const credits = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM financial_master WHERE amount > 0").get() as { total: number };
                 totalDebits = debits.total;
                 totalCredits = credits.total;
             } catch (e) { 
@@ -97,11 +97,11 @@ export async function GET(req: NextRequest) {
         }
 
         if (view === "transactions") {
-            let where = "WHERE 1=1";
+            let where = "WHERE typeof(amount) = 'real' AND amount != 0";
             const params: (string | number)[] = [];
             if (q) {
-                where += " AND (description LIKE ? OR account LIKE ? OR category LIKE ? OR notes LIKE ?)";
-                params.push(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
+                where += " AND (description LIKE ? OR account LIKE ? OR category LIKE ?)";
+                params.push(`%${q}%`, `%${q}%`, `%${q}%`);
             }
             if (year) {
                 where += " AND (date LIKE ? OR year = ?)";
@@ -109,12 +109,12 @@ export async function GET(req: NextRequest) {
             }
 
             const rows = db.prepare(
-                `SELECT id, date, amount, description, transaction_type, account, account_type, bank,
-                        category, class, responsible, company, verification_status
-                 FROM master_transactions ${where} ORDER BY date DESC LIMIT ? OFFSET ?`
+                `SELECT master_row_id as id, date, amount, description, transaction_type, account, bank,
+                        category, responsible
+                 FROM financial_master ${where} ORDER BY date DESC LIMIT ? OFFSET ?`
             ).all(...params, limit, offset);
 
-            const total = db.prepare(`SELECT COUNT(*) as c FROM master_transactions ${where}`).get(...params) as { c: number };
+            const total = db.prepare(`SELECT COUNT(*) as c FROM financial_master ${where}`).get(...params) as { c: number };
 
             return NextResponse.json({
                 view: "transactions",
@@ -133,7 +133,7 @@ export async function GET(req: NextRequest) {
             // Open QB forensic database (separate from workbench)
             const Database = require("better-sqlite3");
             const qbPath = path.join(
-                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/FINANCIAL_LOCKER",
+                "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/FINANCIAL_LOCKER",
                 "ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER",
                 "qb_forensic.db"
             );

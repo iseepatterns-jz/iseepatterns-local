@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "..", "data", "players.db");
+const DATA_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
+const DB_PATH = path.join(DATA_DIR, "players.db");
 
 function getDb() {
     return new Database(DB_PATH, { readonly: true });
@@ -72,7 +73,7 @@ export async function GET(req: NextRequest) {
 
         // ─ Manual Overrides & Image Discovery ─
         const fs = require('fs');
-        const LOCKER_BASE = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
+        const LOCKER_BASE = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/LINKED_IN_PROFILE_LOCKER";
         const PHONE_OVERRIDES: Record<string, string[]> = {
             "lucas-guariglia-5258ab19": ["+18478280944"],
             "joseph-zangrilli-248a52195": ["+17736109104"],
@@ -121,7 +122,7 @@ export async function GET(req: NextRequest) {
             }
         }
 
-        const HUB_DB_PATH = path.join(process.cwd(), "..", "data", "evidence_hub.db");
+        const HUB_DB_PATH = path.join(DATA_DIR, "evidence_hub.db");
         let hubDb: any = null;
         try {
             hubDb = new Database(HUB_DB_PATH, { readonly: true });

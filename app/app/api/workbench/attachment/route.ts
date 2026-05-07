@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 
-const DATA_ROOT = process.env.DATA_ROOT || path.join(process.cwd(), "..", "data");
+const DATA_ROOT = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
 const MBOX_LOCKER = path.join(DATA_ROOT, "MBOX_LOCKER");
 
 // All known attachment directories (pre-extracted Google Drive exports)

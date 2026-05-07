@@ -4,8 +4,8 @@ import pandas as pd
 import os
 import re
 
-DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_correspondence.db'
-LOG_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_paralegal_log.md'
+DB_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/accountant_correspondence.db'
+LOG_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/accountant_paralegal_log.md'
 
 # Forensic Keywords reflecting paralegal focus
 FORENSIC_CATEGORIES = {

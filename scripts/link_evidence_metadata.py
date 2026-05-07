@@ -7,7 +7,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
 # Paths
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 EC_DIR = BASE_DIR / "evidence_cards"
 DB_PATH = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 

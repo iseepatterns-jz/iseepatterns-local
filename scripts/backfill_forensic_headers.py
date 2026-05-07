@@ -4,7 +4,7 @@ from pathlib import Path
 import zipfile
 import time
 
-PROJECT_ROOT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DB_PATH = PROJECT_ROOT / "data" / "MBOX_LOCKER" / "mbox_metadata.db"
 
 LOCKER_ZIPS = {

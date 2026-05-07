@@ -3,8 +3,8 @@ import sqlite3
 import os
 from datetime import datetime
 
-XLSX_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/CALENDARS/2023-12-17_lucas@rowboatcreative_calendar.xlsx"
-DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/calendar_events.db"
+XLSX_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/CALENDARS/2023-12-17_lucas@rowboatcreative_calendar.xlsx"
+DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/calendar_events.db"
 
 def ingest_calendar():
     if not os.path.exists(XLSX_PATH):

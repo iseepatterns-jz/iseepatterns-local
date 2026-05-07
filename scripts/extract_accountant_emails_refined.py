@@ -4,8 +4,8 @@ import os
 import re
 import html
 
-SOURCE_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'
-TARGET_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_correspondence.db'
+SOURCE_DB = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'
+TARGET_DB = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/accountant_correspondence.db'
 
 # Accountants from user request
 TARGET_EMAILS = {

@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 # Paths
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 TIMELINE_PATH = BASE_DIR / "data/transcripts/narrative_timeline.md"
 LEDGER_PATH = BASE_DIR / "data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_EXPORT/general_ledger.csv"
 REPORT_PATH = BASE_DIR / "data/transcripts/discrepancy_report.md"

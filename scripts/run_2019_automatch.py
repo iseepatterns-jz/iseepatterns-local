@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 # --- Configuration ---
-DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db"
+DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db"
 SESSION_IDS = [37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47]
 PLAYER_JZ = 28
 PLAYER_LG = 25

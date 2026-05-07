@@ -2,9 +2,9 @@ import sqlite3
 from pathlib import Path
 import time
 
-M1_STUDIO_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
-IMAC_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db"
-OUT_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/chat_master_consolidated.db"
+M1_STUDIO_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
+IMAC_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/imac_2025-06-01_chatdb_old_mac_os_no_decode_needed/2025-06-01_original_file_from_imac/chat.db"
+OUT_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/chat_master_consolidated.db"
 
 def setup_target_db(src_db, target_db):
     print(f"🛠️ Setting up consolidated DB at {target_db}...")

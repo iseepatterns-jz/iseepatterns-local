@@ -12,21 +12,21 @@ const VAULT_ROOT = process.env.VAULT_ROOT || "";
 const DATA_ROOT = IS_LAMBDA
     ? path.join(VAULT_ROOT, "db")
     : path.resolve(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
         "data"
     );
 
 const EVIDENCE_DIR = IS_LAMBDA
     ? path.join(VAULT_ROOT, "db")
     : path.resolve(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data",
         "SG_and_LG_collusion_and_amazon_misappro/ATTORNEY_EVIDENCE_PACKAGE"
     );
 
 const PROJECT_ROOT = IS_LAMBDA
     ? VAULT_ROOT
     : path.resolve(
-        "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1"
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1"
     );
 
 const CLIENT_ID = "rowboat-creative";
@@ -144,7 +144,7 @@ export function getDb(name: string): Database.Database {
         const dbPath = IS_LAMBDA
             ? path.join(VAULT_ROOT, "db", `${name}.db`)
             : path.join(
-                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data",
+                "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data",
                 `${name}.db`
             );
         _genericDbs[name] = new Database(dbPath, { readonly: true });
@@ -166,7 +166,7 @@ export function getEvidenceHubDb(): Database.Database {
         const dbPath = IS_LAMBDA
             ? path.join(DATA_ROOT, "evidence_hub.db")
             : path.join(
-                "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+                "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
                 "data",
                 "evidence_hub.db"
             );

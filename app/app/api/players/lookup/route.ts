@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import Database from "better-sqlite3";
 import path from "path";
 
-const DB_PATH = path.join(process.cwd(), "..", "data", "players.db");
+const DATA_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data";
+const DB_PATH = path.join(DATA_DIR, "players.db");
 
 function getDb() {
     return new Database(DB_PATH, { readonly: true });

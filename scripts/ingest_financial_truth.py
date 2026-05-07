@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 # Configuration
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 FINANCIAL_DIR = BASE_DIR / "FINANCIAL_LOCKER" / "ROWBOAT_CREATIVE_ROSETTASTONE"
 DB_PATH = BASE_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"
 

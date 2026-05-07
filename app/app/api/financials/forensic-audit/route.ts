@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 
         // Ensure schema
         const schemaPath = path.join(
-            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+            "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
             "schemas",
             "forensic_audit.sql"
         );
@@ -223,7 +223,7 @@ export async function GET() {
 
         // Ensure schema exists
         const schemaPath = path.join(
-            "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1",
+            "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
             "schemas",
             "forensic_audit.sql"
         );

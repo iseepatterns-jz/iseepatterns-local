@@ -10,15 +10,15 @@ Designed for RBC v. LG litigation — produces court-ready,
 per-contact evidence databases with full chain-of-custody logging.
 
 TERMINAL COMMAND:
-  python /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/extract_per_contact_dbs_with_readable.py \
-      --sms-db /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/showgoat/HomeDomain/Library/SMS/sms.db \
-      --whitelist /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/LINKED_IN_PROFILE_LOCKER/contact-whitelist.xlsx \
-      --output-dir /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER \
+  python /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/extract_per_contact_dbs_with_readable.py \
+      --sms-db /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/showgoat/HomeDomain/Library/SMS/sms.db \
+      --whitelist /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/LINKED_IN_PROFILE_LOCKER/contact-whitelist.xlsx \
+      --output-dir /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER \
       --register-coc
 
 Optional flags:
   --register-coc     Also register all outputs in lawmodel1 chain_of_custody table
-  --coc-db PATH      Path to mbox_index.db (default: /Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db)
+  --coc-db PATH      Path to mbox_index.db (default: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db)
   --owner-handle NUM Your own phone number (default: +17736109104)
 
 What it produces for each contact:
@@ -796,7 +796,7 @@ def main():
     )
     parser.add_argument(
         "--coc-db",
-        default="/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
+        default="/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
         help="Path to mbox_index.db for CoC registration",
     )
 

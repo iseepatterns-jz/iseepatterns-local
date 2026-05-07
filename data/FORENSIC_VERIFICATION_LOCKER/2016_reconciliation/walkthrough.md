@@ -49,7 +49,7 @@ The forensic financial system has been upgraded from a CSV-based "Master Sheet" 
 
 ### Row Count Verification
 ```bash
-sqlite3 "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db" "SELECT count(*) FROM master_transactions;"
+sqlite3 "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db" "SELECT count(*) FROM master_transactions;"
 22000
 ```
 

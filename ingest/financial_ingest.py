@@ -5,9 +5,9 @@ import json
 import uuid
 from pathlib import Path
 
-DATA_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data")
+DATA_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data")
 FINANCIAL_DIR = DATA_DIR / "FINANCIAL_LOCKER" / "ROWBOAT_CREATIVE_ROSETTASTONE"
-SCHEMAS_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/schemas")
+SCHEMAS_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/schemas")
 
 # Unified Workbench DB
 WORKBENCH_DB = DATA_ROOT = DATA_DIR / "rowboat-creative" / "RC-2026" / "db" / "workbench.db"

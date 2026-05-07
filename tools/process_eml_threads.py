@@ -6,7 +6,7 @@ from email import policy
 from email.parser import BytesParser
 import html2text
 
-BASE = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/EMAIL_THREAD_PUBLISH_LOCKER")
+BASE = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/EMAIL_THREAD_PUBLISH_LOCKER")
 RAW_DIR = BASE / "eml/raw"
 JSON_OUT_DIR = BASE / "processed/json"
 INDEX_PATH = JSON_OUT_DIR / "threads_index.json"

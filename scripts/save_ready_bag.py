@@ -16,10 +16,10 @@ from datetime import datetime
 from pathlib import Path
 
 # gem-paralegal-exports hook
-PARALEGAL_SCRIPT = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/generate_paralegal_exports.py")
+PARALEGAL_SCRIPT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/generate_paralegal_exports.py")
 
 # Paths
-BASE_DIR = Path("/Volumes/batdrivetb5/AI_TRAINING/lawmodel1")
+BASE_DIR = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DATA_DIR = BASE_DIR / "data"
 INBOX_DIR = DATA_DIR / "inbox"
 EXPORTS_DIR = BASE_DIR / "exports"

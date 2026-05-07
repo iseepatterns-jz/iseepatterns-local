@@ -4,9 +4,9 @@ from datetime import datetime
 from langchain_community.llms import Ollama
 
 # Configuration
-DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
+DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/chatdb_storage/m1studio_2025-05-31_chatdb_decodedBody_added/db/decoded/2025-05-31_decoded_body_all_chat_from_m1studio.db"
 MODEL_NAME = "qwen2.5-32b-forensic"
-OUTPUT_FILE = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/transcripts/narrative_timeline.md"
+OUTPUT_FILE = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/transcripts/narrative_timeline.md"
 
 # Initialize LLM
 llm = Ollama(model=MODEL_NAME, temperature=0.2, num_ctx=32768)

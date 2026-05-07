@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
     const diag: Record<string, unknown> = {};
 
-    const LEGAL_DOCS_DIR = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1";
+    const LEGAL_DOCS_DIR = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1";
 
     // 1. Check base dir
     diag.baseDirExists = fs.existsSync(LEGAL_DOCS_DIR);

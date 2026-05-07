@@ -2,8 +2,8 @@ import sqlite3
 import json
 import os
 
-HUB_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/evidence_hub.db"
-MAPPING_JSON = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/scripts/vault_mapping_full.json"
+HUB_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db"
+MAPPING_JSON = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/vault_mapping_full.json"
 
 def update_hub_with_vault():
     if not os.path.exists(MAPPING_JSON):

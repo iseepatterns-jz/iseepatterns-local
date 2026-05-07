@@ -11,7 +11,7 @@ import glob
 from bs4 import BeautifulSoup
 
 # CONFIGURATION
-BASE_DIR = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/'
+BASE_DIR = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/'
 DB_PATH = os.path.join(BASE_DIR, 'gmail_master_index.db')
 SNIPPET_LENGTH = 2000
 
