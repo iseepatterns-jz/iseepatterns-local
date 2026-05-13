@@ -1,0 +1,50 @@
+{
+  "item_id": "tax-0002",
+  "exhibit_id": "EXH-TAX-0002",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/W2 2024 original.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "688518f8cd30247753d3bfee23cbecb9f6ed266d709b473bd034be9032de6b09",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 1647357,
+    "filename": "W2 2024 original.pdf",
+    "page_count": 28,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "219\n11152",
+      "48\n11152",
+      "50 in 2024",
+      "72\n11152",
+      "86\n11152",
+      "89\n11152",
+      "IL 60090",
+      "IL 60634",
+      "IL 60639"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_2": "89",
+      "box_3": "20",
+      "box_5": ""
+    },
+    "notes": "Document is 28 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 28-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

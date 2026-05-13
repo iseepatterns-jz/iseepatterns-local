@@ -72,6 +72,14 @@ function stringifyCSV(headers: string[], records: any[]) {
     return [headRow, ...bodyRows].join("\n");
 }
 
+function ensureStatementTransactionSchema(db: any) {
+    const info = db.pragma("table_info(statement_transactions)") as any[];
+    const columnNames = info.map((c: any) => c.name);
+    if (!columnNames.includes("user_label_override")) {
+        db.prepare("ALTER TABLE statement_transactions ADD COLUMN user_label_override TEXT").run();
+    }
+}
+
 /**
  * POST /api/financials/finalize-verification
  * 
@@ -89,6 +97,7 @@ export async function POST(req: NextRequest) {
     try {
         const { sessionId } = await req.json();
         const db = getWorkbenchDb();
+        ensureStatementTransactionSchema(db);
 
         // 1. Get forensic matches with their statement metadata
         const sessionInt = Number(sessionId);
@@ -96,40 +105,43 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid session ID" }, { status: 400 });
         }
 
+        // Matched + Reviewed: update existing master records
         const matches = db.prepare(`
             SELECT st.id, st.master_id, st.page_number, st.description_raw, st.amount, st.date,
                    st.rosetta_user, st.rosetta_account, st.rosetta_category, st.rosetta_company,
-                   st.match_score,
+                   st.match_score, st.player_id,
                    sf.original_filename AS source_filename
             FROM statement_transactions st
             LEFT JOIN import_sessions isess ON st.import_session_id = isess.id
             LEFT JOIN statement_files sf ON isess.statement_file_id = sf.id
-            WHERE st.import_session_id = ? 
+            WHERE st.import_session_id = ?
               AND st.verification_status = 'MATCHED'
               AND st.review_status = 'REVIEWED'
         `).all(sessionInt) as any[];
 
-        if (matches.length === 0) {
-            // Diagnostic: Why are there no matches? 
+        // Unmatched but Reviewed: insert as NEW master records (RosettaStone gap fill)
+        const unmatched = db.prepare(`
+            SELECT st.id, st.page_number, st.description_raw, st.amount, st.date,
+                   st.player_id, st.user_label_override,
+                   sf.original_filename AS source_filename,
+                   sf.bank_name
+            FROM statement_transactions st
+            LEFT JOIN import_sessions isess ON st.import_session_id = isess.id
+            LEFT JOIN statement_files sf ON isess.statement_file_id = sf.id
+            WHERE st.import_session_id = ?
+              AND st.verification_status = 'PENDING'
+              AND st.review_status = 'REVIEWED'
+              AND st.master_id IS NULL
+        `).all(sessionInt) as any[];
+
+        if (matches.length === 0 && unmatched.length === 0) {
             const anyReviewed = db.prepare(`SELECT count(*) as count FROM statement_transactions WHERE import_session_id = ? AND review_status = 'REVIEWED'`).get(sessionInt) as any;
-            const anyMatched = db.prepare(`SELECT count(*) as count FROM statement_transactions WHERE import_session_id = ? AND verification_status = 'MATCHED'`).get(sessionInt) as any;
+            const anyPending = db.prepare(`SELECT count(*) as count FROM statement_transactions WHERE import_session_id = ? AND review_status = 'PENDING_REVIEW'`).get(sessionInt) as any;
             
             return NextResponse.json({
-                error: `No approved matches found to finalize. (Stats for Session ${sessionInt}: ${anyReviewed?.count || 0} Reviewed, ${anyMatched?.count || 0} Matched). All matched records must be Reviewed (blue pill) before finalization.`,
-                debug: { anyReviewed: anyReviewed?.count, anyMatched: anyMatched?.count }
+                error: `Nothing to finalize. (Session ${sessionInt}: ${anyReviewed?.count || 0} Reviewed, ${anyPending?.count || 0} still Pending Review). All items must be Reviewed before finalization.`,
+                debug: { anyReviewed: anyReviewed?.count, anyPending: anyPending?.count }
             }, { status: 400 });
-        }
-
-        // Build a map of master_id → forensic metadata
-        const matchMap = new Map<number, any>();
-        for (const m of matches) {
-            matchMap.set(m.master_id, {
-                statementFile: m.source_filename || "unknown",
-                pageNumber: m.page_number || 0,
-                description: m.description_raw || "",
-                amount: m.amount,
-                date: m.date,
-            });
         }
 
         // 2. Perform Atomic Database Update & Audit Log
@@ -149,9 +161,29 @@ export async function POST(req: NextRequest) {
             VALUES (?, 'VERIFY', ?, 'Forensic matching finalized from statement', 'antigravity-system')
         `);
 
+        const auditInsertStmt = db.prepare(`
+            INSERT INTO master_audit_log (master_id, action, changed_fields, reason, agent_id)
+            VALUES (?, 'CREATE', ?, 'New master record from statement review (RosettaStone gap fill)', 'antigravity-system')
+        `);
+
         const updateTxnStmt = db.prepare(`
-            UPDATE statement_transactions 
+            UPDATE statement_transactions
             SET verification_status = 'FINALIZED' 
+            WHERE id = ?
+        `);
+
+        // INSERT new master record from unmatched-but-reviewed transaction
+        const insertMasterStmt = db.prepare(`
+            INSERT INTO master_transactions (
+                year, date, amount, description, transaction_type,
+                user_label, verification_status,
+                forensic_file, forensic_page, forensic_hash, verified_at, updated_at
+            ) VALUES (?, ?, ?, ?, 'UNCATEGORIZED', ?, 'FORENSICALLY_VERIFIED', ?, ?, ?, datetime('now'), datetime('now'))
+        `);
+
+        const linkStmt = db.prepare(`
+            UPDATE statement_transactions
+            SET master_id = ?
             WHERE id = ?
         `);
 
@@ -162,10 +194,12 @@ export async function POST(req: NextRequest) {
         `);
 
         let verifiedCount = 0;
+        let insertedCount = 0;
         const finalizedResults: any[] = [];
 
         // Transactional update for data integrity
-        const finalizeTxn = db.transaction((matches, sessionId) => {
+        const finalizeTxn = db.transaction((matches, unmatched, sessionId) => {
+            // --- Phase 1: Matched records — update existing master records ---
             for (const m of matches) {
                 // Generate forensic hash: SHA-256 of (master_id + amount + date + description)
                 const hashInput = `${m.master_id}|${m.amount}|${m.date}|${m.description_raw}|${m.source_filename}|${m.page_number}`;
@@ -185,12 +219,51 @@ export async function POST(req: NextRequest) {
                 updateTxnStmt.run(m.id);
 
                 verifiedCount++;
-                finalizedResults.push({ id: m.id, masterId: m.master_id, hash: forensicHash });
+                finalizedResults.push({ id: m.id, masterId: m.master_id, hash: forensicHash, action: 'matched' });
             }
+
+            // --- Phase 2: Unmatched-but-reviewed — insert NEW master records ---
+            for (const u of unmatched) {
+                const hashInput = `NEW|${u.amount}|${u.date}|${u.description_raw}|${u.source_filename}|${u.page_number}`;
+                const forensicHash = crypto.createHash("sha256").update(hashInput).digest("hex").slice(0, 16);
+
+                const txYear = u.date ? (u.date as string).slice(0, 4) : '0000';
+                const computedUserName = u.player_id === 51 ? 'JZ' : u.player_id === 20 ? 'LG' : u.player_id === 29 ? 'PH' : 'UNKNOWN';
+                const userName = u.user_label_override || computedUserName;
+
+                // Insert new master record
+                const result = insertMasterStmt.run(
+                    txYear, u.date, u.amount, u.description_raw,
+                    userName,
+                    u.source_filename, u.page_number, forensicHash
+                );
+                const newMasterId = result.lastInsertRowid;
+
+                // Link statement transaction to new master record
+                linkStmt.run(newMasterId, u.id);
+
+                // Log audit
+                const changes = JSON.stringify({
+                    action: 'RosettaStone gap fill',
+                    source: u.source_filename,
+                    player_id: u.player_id,
+                    user_label_override: u.user_label_override || null,
+                    user_label: userName,
+                    forensic_hash: forensicHash
+                });
+                auditInsertStmt.run(newMasterId, changes);
+
+                // Update statement transaction
+                updateTxnStmt.run(u.id);
+
+                insertedCount++;
+                finalizedResults.push({ id: u.id, masterId: newMasterId, hash: forensicHash, action: 'inserted' });
+            }
+
             updateSessionStmt.run(sessionId);
         });
 
-        finalizeTxn(matches, sessionInt);
+        finalizeTxn(matches, unmatched, sessionInt);
 
         // 3. Export to CSV (Synchronize Accountant View)
         const masterPath = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_ROSETTASTONE/rbc-rosettastone-statement-transactions-master-sheet-full.csv";
@@ -264,10 +337,10 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json({
             success: true,
-            verified_count: verifiedCount,
+            verified_count: verifiedCount + insertedCount,
             total_records: exportRecords.length,
             backup_file: path.basename(backupPath),
-            message: `${verifiedCount} transactions finalized in DB and synced to Master CSV. Audit logs recorded.`
+            message: `${verifiedCount} matched + ${insertedCount} new records (${verifiedCount + insertedCount} total) finalized in DB and synced to Master CSV. Audit logs recorded.`
         });
 
     } catch (error) {

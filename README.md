@@ -48,7 +48,7 @@ This project uses a three-pillar governance framework to ensure unity and harmon
 - **Canonical IDs**: Strict mapping rules for `message_id`, `nexus_uuid`, and `txn_id`.
 
 #### B. Gem Registry
-**`gems/registry.json`** — 10 modular evidence pipeline definitions. All core utility scripts (e.g., `extract_per_contact_dbs.py`) must be registered in the registry to maintain architectural integrity.
+**`gems/registry.json`** — 11 modular evidence pipeline definitions. All core utility scripts (e.g., `extract_per_contact_dbs.py`) must be registered in the registry to maintain architectural integrity.
 
 | Gem | Purpose | Dependencies |
 |:----|:--------|:-------------|
@@ -63,6 +63,16 @@ This project uses a three-pillar governance framework to ensure unity and harmon
 | `gem-rag-search` | Hybrid search → LLM answers | evidence-cards, legal-docs |
 | `gem-chain-of-custody` | Provenance + audit trails | email, imessage, financial |
 
+### Registered gem implementation note
+
+2026-05-12 registry update: `gem-chain-of-custody`, `gem-evidence-cards`, and `gem-players` are registered in `gems/registry.json` using existing implementation paths only. The registered paths are:
+
+| Gem | Registered implementation paths |
+|:----|:--------------------------------|
+| `gem-chain-of-custody` | `docs/chain_of_custody_architecture.md`; `scripts/update_chain_of_custody.py`; `data/MBOX_LOCKER/mbox_metadata.db` table `chain_of_custody` |
+| `gem-evidence-cards` | `ingest/evidence_card.py`; `ingest/generate_evidence_cards.py`; `data/evidence_cards`; `exports/attorney_package/04_evidence_cards`; `scripts/generate_paralegal_exports.py` |
+| `gem-players` | `data/players.db`; `schemas/players.sql`; `ingest/bridge_players_to_hub.py`; `scripts/link_players_to_legal.py`; `scripts/generate_paralegal_exports.py` |
+
 ### 3. Evidence Flow Visualization
 **`docs/evidence_flow.html`** — Interactive, color-coded HTML diagram showing every evidence path across 6 architectural layers: Raw Sources → Processing → Databases → APIs → UI → Outputs. Open directly in a browser to explore.
 
@@ -76,7 +86,7 @@ lawmodel1/
 │   ├── app/api/                           # 24 API route directories
 │   └── app/[page]/                        # 15 UI pages
 ├── gems/                                  # Gem Registry (modular pipeline definitions)
-│   ├── registry.json                      # Master manifest of all 10 gems
+│   ├── registry.json                      # Master manifest of all 11 gems
 │   └── README.md                          # Quick reference
 ├── schemas/                               # SQL schema definitions (canonical)
 ├── scripts/                               # Functional Utilities & One-time Scripts

@@ -1,0 +1,39 @@
+{
+  "item_id": "tax-0096",
+  "exhibit_id": "EXH-TAX-0096",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2023/Rowboat+Creative,+LLC_Sales+Tax+Liability+Report.xlsx",
+  "sha256": "a63951a20e6a3939c1104007d7a9ee26be790f44164f71e75dcd8acc1d4597f8",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": null,
+    "form_type": "Sales Tax Liability Report",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "extraction_method": "openpyxl",
+    "sheet_names": [
+      "Sales Tax Liability Report"
+    ],
+    "headers": [
+      "Rowboat Creative, LLC",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "row_count": 15,
+    "extracted_dates": [],
+    "key_figures": {},
+    "notes": ""
+  },
+  "summary": "2023 Sales Tax Liability Report spreadsheet for Rowboat Creative, LLC. Contains 1 sheet(s) with approximately 15 total rows. Extracted via openpyxl from file Rowboat+Creative,+LLC_Sales+Tax+Liability+Report.xlsx.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

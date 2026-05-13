@@ -20,6 +20,10 @@ function ensureSchema(db: any) {
         ['rosetta_category', 'TEXT'],
         ['rosetta_company', 'TEXT'],
         ['match_score', 'INTEGER'],
+        ['match_reason', 'TEXT'],
+        ['nc_flag', 'INTEGER'],
+        ['evidence_url', 'TEXT'],
+        ['user_label_override', 'TEXT'],
     ];
     for (const [col, type] of requiredColumns) {
         if (!columnNames.includes(col)) {
@@ -126,7 +130,8 @@ export async function POST(req: NextRequest) {
                 rosetta_user = NULL,
                 rosetta_account = NULL,
                 rosetta_category = NULL,
-                rosetta_company = NULL
+                rosetta_company = NULL,
+                user_label_override = NULL
             WHERE import_session_id = ? AND verification_status = 'MATCHED'
         `).run(sessionId);
 
@@ -275,9 +280,14 @@ export async function POST(req: NextRequest) {
                 usedMasterIds.add(bestCandidate.master_id_val);
                 const userInitials = (bestCandidate.user_label || '').trim().toUpperCase();
                 let playerId = null;
-                if (userInitials === 'JZ') playerId = 28;
-                else if (userInitials === 'LG') playerId = 25;
-                else if (userInitials === 'PH') playerId = 45;
+                let userLabelOverride = null;
+                if (userInitials === 'JZ') playerId = 51;
+                else if (userInitials === 'LG') playerId = 20;
+                else if (userInitials === 'PH') playerId = 29;
+                else if (userInitials === 'LG AS JZ') {
+                    playerId = 51;
+                    userLabelOverride = 'LG as JZ';
+                }
 
                 const evidenceUrl = (bestCandidate.link || bestCandidate.invoice_url || '').trim();
 
@@ -293,6 +303,7 @@ export async function POST(req: NextRequest) {
                         match_reason = ?,
                         final_account_id = ?, 
                         player_id = ?,
+                        user_label_override = ?,
                         evidence_url = ?, 
                         nc_flag = 0
                     WHERE id = ?
@@ -308,6 +319,7 @@ export async function POST(req: NextRequest) {
                     finalReason,
                     bestCandidate.account || null,
                     playerId || null,
+                    userLabelOverride,
                     evidenceUrl || null,
                     ft.id
                 );

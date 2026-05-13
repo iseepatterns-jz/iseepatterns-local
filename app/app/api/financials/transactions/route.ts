@@ -3,6 +3,34 @@ import { getWorkbenchDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+const ALLOWED_TRANSACTION_UPDATE_FIELDS = new Set([
+    "player_id",
+    "user_label_override",
+    "final_account_id",
+    "notes",
+    "tags",
+    "review_status",
+    "flag_reason",
+    "master_id",
+    "verification_status",
+    "rosetta_user",
+    "rosetta_account",
+    "rosetta_category",
+    "rosetta_company",
+    "match_score",
+    "match_reason",
+    "nc_flag",
+    "evidence_url",
+]);
+
+function ensureStatementTransactionSchema(db: any) {
+    const info = db.pragma("table_info(statement_transactions)") as any[];
+    const columnNames = info.map((c: any) => c.name);
+    if (!columnNames.includes("user_label_override")) {
+        db.prepare("ALTER TABLE statement_transactions ADD COLUMN user_label_override TEXT").run();
+    }
+}
+
 /**
  * GET /api/financials/transactions?session_id=...
  * Returns transactions for a specific import session for review.
@@ -10,6 +38,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
     try {
         const db = getWorkbenchDb();
+        ensureStatementTransactionSchema(db);
         const url = req.nextUrl;
         const sessionId = url.searchParams.get("session_id");
 
@@ -45,13 +74,26 @@ export async function PATCH(req: NextRequest) {
         }
 
         const db = getWorkbenchDb();
+        ensureStatementTransactionSchema(db);
+
+        if (!updates || typeof updates !== "object" || Array.isArray(updates)) {
+            return NextResponse.json({ error: "updates object required" }, { status: 400 });
+        }
         
-        // Prepare dynamic update query
         const fields = Object.keys(updates);
         if (fields.length === 0) {
             return NextResponse.json({ error: "No updates provided" }, { status: 400 });
         }
 
+        const invalidFields = fields.filter(f => !ALLOWED_TRANSACTION_UPDATE_FIELDS.has(f));
+        if (invalidFields.length > 0) {
+            return NextResponse.json({
+                error: "Unsupported update field(s)",
+                fields: invalidFields
+            }, { status: 400 });
+        }
+
+        // Prepare whitelisted dynamic update query
         const setClause = fields.map(f => `${f} = ?`).join(", ");
         const query = `UPDATE statement_transactions SET ${setClause}, updated_at = datetime('now') WHERE id = ?`;
         const stmt = db.prepare(query);

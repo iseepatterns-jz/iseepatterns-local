@@ -1,0 +1,130 @@
+Root: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER
+Index files found:
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-drive-links.csv (8684492 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-errors.xml (602 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-metadata.csv (267226721 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-result-counts.csv (922 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all.md5 (2661 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30 lg.md5 (299 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-drive-links.csv (2283 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-errors.xml (602 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-metadata.csv (122200 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-result-counts.csv (124 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/ATTACHMENTS_UNZIPPED/JPG/RBC Multi Garment Manual Template With Metadata_1-x9_gvN99Ua-aqKdfsdww1ISDKt5Mfpp.jpg (1164359 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/2024-06-22-all Drive Link Export.md5 (482 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/2024-06-22-all_Drive_Link_Export-metadata.xml (1774198 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/error.csv (101765 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db (2952327168 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db-shm (32768 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db-wal (0 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-errors.xml (442 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-metadata.csv (5498 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-result-counts.csv (122 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail.md5 (216 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/mbox_accounts_mapping.csv (2685 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/mbox_metadata.db (0 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-errors.xml (442 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-metadata.csv (1393414 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-result-counts.csv (128 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail.md5 (212 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/attachments/RBC Multi Garment Manual Template With Metadata_1-x9_gvN99Ua-aqKdfsdww1ISDKt5Mfpp.jpg (1164359 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30 lg.md5.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg--lucas@rowboatcreative.com-Gns93T.mbox.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-1.zip.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-drive-links.csv.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-errors.xml.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-metadata.csv.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-result-counts.csv.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/attachments.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/mbox2csv export.msf (1410 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db (126976 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db (10306514944 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db-shm (32768 bytes)
+  /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db-wal (0 bytes)
+SQL used:
+  SELECT name, type, sql FROM sqlite_master WHERE type IN ('table','index','view','trigger') ORDER BY type, name;
+  PRAGMA table_info(<table>);
+  SELECT COUNT(*) FROM <table>;
+  SELECT COUNT(*) FROM emails;
+  SELECT COUNT(*) FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '';
+  SELECT COUNT(DISTINCT rfc822_id) FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '';
+  SELECT locker_source, COUNT(*) FROM emails GROUP BY locker_source ORDER BY COUNT(*) DESC, locker_source;
+  SELECT zip_source, COUNT(*) FROM emails GROUP BY zip_source ORDER BY COUNT(*) DESC, zip_source;
+  SELECT mbox_source, COUNT(*) FROM emails GROUP BY mbox_source ORDER BY COUNT(*) DESC, mbox_source;
+  SELECT account, COUNT(*) FROM emails GROUP BY account ORDER BY COUNT(*) DESC, account;
+  SELECT gmail_id, COUNT(*) c FROM emails WHERE gmail_id IS NOT NULL AND TRIM(gmail_id) <> '' GROUP BY gmail_id HAVING c > 1 ORDER BY c DESC, gmail_id LIMIT 20;
+  SELECT rfc822_id, COUNT(*) c FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '' GROUP BY rfc822_id HAVING c > 1 ORDER BY c DESC, rfc822_id LIMIT 20;
+Database: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db
+  tables: chain_of_custody, drive_links, emails, emails_fts, emails_fts_config, emails_fts_data, emails_fts_docsize, emails_fts_idx, sqlite_sequence
+  table chain_of_custody: count=48
+    columns: id INTEGER, source_path TEXT, source_type TEXT, sha256 TEXT, size_bytes INTEGER, case_id TEXT, notes TEXT, ingested_at TEXT
+  table drive_links: count=36318
+    columns: id INTEGER, rfc822_id TEXT, account TEXT, gmail_id TEXT, drive_url TEXT, drive_item_id TEXT
+  table emails: count=813914
+    columns: id INTEGER, rfc822_id TEXT, gmail_id TEXT, filename TEXT, account TEXT, labels_raw TEXT, category TEXT, from_addr TEXT, subject TEXT, to_addr TEXT, cc_addr TEXT, bcc_addr TEXT, date_sent TEXT, date_received TEXT, thread_count INTEGER, locker_source TEXT, zip_source TEXT, mbox_source TEXT, body TEXT, body_single TEXT, has_body INTEGER, is_spam INTEGER, is_draft INTEGER, is_trash INTEGER, created_at TEXT, in_reply_to TEXT, refs TEXT
+  table emails_fts: count=813914
+    columns: subject , body , from_addr , to_addr 
+  table emails_fts_config: count=1
+    columns: k , v 
+  table emails_fts_data: count=602761
+    columns: id INTEGER, block BLOB
+  table emails_fts_docsize: count=813914
+    columns: id INTEGER, sz BLOB
+  table emails_fts_idx: count=125573
+    columns: segid , term , pgno 
+  table sqlite_sequence: count=3
+    columns: name , seq 
+  email_counts:
+    total: 813914
+    rfc822_id_nonblank: 813914
+    rfc822_id_distinct_nonblank: 611044
+    rfc822_id_duplicate_values: 127197
+    gmail_id_nonblank: 813914
+    gmail_id_distinct_nonblank: 813914
+    gmail_id_duplicate_values: 0
+    account_nonblank: 813914
+    locker_source_nonblank: 813914
+    zip_source_nonblank: 787443
+    mbox_source_nonblank: 787443
+    subject_nonblank: 812694
+    date_sent_nonblank: 813914
+    from_addr_nonblank: 813913
+    to_addr_nonblank: 809876
+    account_groups: [{"value": "lucas@rowboatcreative.com", "count": 392037}, {"value": "joe@rowboatcreative.com", "count": 217091}, {"value": "patrick@rowboatcreative.com", "count": 55133}, {"value": "jay@rowboatcreative.com", "count": 39091}, {"value": "rob@rowboatcreative.com", "count": 24278}, {"value": "accounting@rowboatcreative.com", "count": 19636}, {"value": "orders@rowboatcreative.com", "count": 19456}, {"value": "info@rowboatcreative.com", "count": 17729}, {"value": "jeff@rowboatcreative.com", "count": 12274}, {"value": "suzanne@rowboatcreative.com", "count": 4707}, {"value": "fulfillment@rowboatcreative.com", "count": 4632}, {"value": "embroidery@rowboatcreative.com", "count": 3913}, {"value": "art@rowboatcreative.com", "count": 1466}, {"value": "burner@rowboatcreative.com", "count": 1440}, {"value": "hayesr@rowboatcreative.com", "count": 342}, {"value": "filiberto@rowboatcreative.com", "count": 317}, {"value": "alex@rowboatcreative.com", "count": 172}, {"value": "employment@rowboatcreative.com", "count": 145}, {"value": "abel@rowboatcreative.com", "count": 42}, {"value": "legal@rowboatcreative.com", "count": 11}, {"value": "fidel@rowboatcreative.com", "count": 2}]
+    locker_source_groups: [{"value": "ALL", "count": 809196}, {"value": "SG", "count": 4707}, {"value": "LEGAL", "count": 11}]
+    zip_source_groups: [{"value": "2024-06-22-all-18.zip", "count": 60663}, {"value": "2024-06-22-all-12.zip", "count": 55507}, {"value": "2024-06-22-all-10.zip", "count": 36469}, {"value": "2024-06-22-all-14.zip", "count": 31248}, {"value": "2024-06-22-all-30.zip", "count": 29159}, {"value": "2024-06-22-all-20.zip", "count": 28711}, {"value": "2024-06-22-all-13.zip", "count": 27295}, {"value": "2024-06-22-all-5.zip", "count": 26598}, {"value": "2024-06-22-all-2.zip", "count": 26546}, {"value": null, "count": 26471}, {"value": "2024-06-22-all-15.zip", "count": 26287}, {"value": "2024-06-22-all-37.zip", "count": 25977}, {"value": "2024-06-22-all-43.zip", "count": 25070}, {"value": "2024-06-22-all-39.zip", "count": 24687}, {"value": "2024-06-22-all-29.zip", "count": 24377}, {"value": "2024-06-22-all-4.zip", "count": 23794}, {"value": "2024-06-22-all-26.zip", "count": 21810}, {"value": "2024-06-22-all-17.zip", "count": 20278}, {"value": "2024-06-22-all-44.zip", "count": 19870}, {"value": "2024-06-22-all-25.zip", "count": 18956}, {"value": "2024-06-22-all-36.zip", "count": 18579}, {"value": "2024-06-22-all-28.zip", "count": 15601}, {"value": "2024-06-22-all-24.zip", "count": 14814}, {"value": "2024-06-22-all-32.zip", "count": 14792}, {"value": "2024-06-22-all-11.zip", "count": 14363}, {"value": "2024-06-22-all-22.zip", "count": 14045}, {"value": "2024-06-22-all-9.zip", "count": 13188}, {"value": "2024-06-22-all-35.zip", "count": 13001}, {"value": "2024-06-22-all-42.zip", "count": 12566}, {"value": "2024-06-22-all-6.zip", "count": 12240}, {"value": "2024-06-22-all-1.zip", "count": 11570}, {"value": "2024-06-22-all-41.zip", "count": 10196}, {"value": "2024-06-22-all-33.zip", "count": 9976}, {"value": "2024-06-22-all-16.zip", "count": 9715}, {"value": "2024-06-22-all-7.zip", "count": 7817}, {"value": "2024-06-22-all-23.zip", "count": 7760}, {"value": "2024-06-22-all-19.zip", "count": 7028}, {"value": "2024-06-22-all-21.zip", "count": 6773}, {"value": "2024-06-22-all-38.zip", "count": 6523}, {"value": "2024-06-22-all-3.zip", "count": 4520}, {"value": "2024-06-22-all-8.zip", "count": 4398}, {"value": "sggmail-1.zip", "count": 3062}, {"value": "2024-06-22-all-34.zip", "count": 1314}, {"value": "2024-06-22-all-27.zip", "count": 176}, {"value": "2024-06-22-all-40.zip", "count": 122}, {"value": "leggmail-1.zip", "count": 2}]
+    mbox_source_groups: [{"value": "2024-06-22-all--patrick@rowboatcreative.com-bHTAA6.mbox", "count": 60663}, {"value": "2024-06-22-all--joe@rowboatcreative.com-BUeIrB.mbox", "count": 55507}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-RdNpap.mbox", "count": 36469}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-KqTV-Q.mbox", "count": 31248}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-1IaZg-.mbox", "count": 29159}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-djM-oZ.mbox", "count": 28711}, {"value": "2024-06-22-all--joe@rowboatcreative.com-RClpgY.mbox", "count": 27295}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-mWstks.mbox", "count": 26598}, {"value": "2024-06-22-all--info@rowboatcreative.com-aAllFJ.mbox", "count": 26546}, {"value": null, "count": 26471}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-SGqymo.mbox", "count": 26287}, {"value": "2024-06-22-all--joe@rowboatcreative.com-dEQiAz.mbox", "count": 25977}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-IEBmBS.mbox", "count": 25070}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-1q_evd.mbox", "count": 24687}, {"value": "2024-06-22-all--joe@rowboatcreative.com-9vjjwt.mbox", "count": 24377}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-es9V14.mbox", "count": 21810}, {"value": "2024-06-22-all--patrick@rowboatcreative.com-n6eOnz.mbox", "count": 20278}, {"value": "2024-06-22-all--lucas@rowboatcreative.com--bJ0UX.mbox", "count": 19870}, {"value": "2024-06-22-all--joe@rowboatcreative.com-0ar2PU.mbox", "count": 18956}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-GFELaK.mbox", "count": 18579}, {"value": "2024-06-22-all--jay@rowboatcreative.com-ZC6nIe.mbox", "count": 15601}, {"value": "2024-06-22-all--accounting@rowboatcreative.com-trQeA-.mbox", "count": 14892}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-N_Jgcu.mbox", "count": 14814}, {"value": "2024-06-22-all--joe@rowboatcreative.com-tuBvBP.mbox", "count": 14792}, {"value": "2024-06-22-all--joe@rowboatcreative.com-iMc1Zn.mbox", "count": 14363}, {"value": "2024-06-22-all--joe@rowboatcreative.com-DTwP0W.mbox", "count": 14045}, {"value": "2024-06-22-all--joe@rowboatcreative.com-Fc4dYi.mbox", "count": 13001}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-iN08Pb.mbox", "count": 12566}, {"value": "2024-06-22-all--jay@rowboatcreative.com-d_UYFR.mbox", "count": 12240}, {"value": "2024-06-22-all--jay@rowboatcreative.com-klAviG.mbox", "count": 11570}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-IS43M4.mbox", "count": 9976}, {"value": "2024-06-22-all--lucas@rowboatcreative.com-VhiGG3.mbox", "count": 9843}, {"value": "2024-06-22-all--joe@rowboatcreative.com-4jVrtL.mbox", "count": 9715}, {"value": "2024-06-22-all--jeff@rowboatcreative.com-oVmQU5.mbox", "count": 8902}, {"value": "2024-06-22-all--rob@rowboatcreative.com-qH9LBE.mbox", "count": 7815}, {"value": "2024-06-22-all--patrick@rowboatcreative.com-FsUE-N.mbox", "count": 7760}, {"value": "2024-06-22-all--orders@rowboatcreative.com-IbDYOB.mbox", "count": 7028}, {"value": "2024-06-22-all--fulfillment@rowboatcreative.com-GQMqtd.mbox", "count": 6998}, {"value": "2024-06-22-all--patrick@rowboatcreative.com-tD_90n.mbox", "count": 6773}, {"value": "2024-06-22-all--joe@rowboatcreative.com-8cr-r5.mbox", "count": 6523}, {"value": "2024-06-22-all--joe@rowboatcreative.com-Q-vCsr.mbox", "count": 4398}, {"value": "2024-06-22-all--embroidery@rowboatcreative.com-_Ar2B8.mbox", "count": 3264}, {"value": "2024-06-22-all--art@rowboatcreative.com-Wa5NFA.mbox", "count": 3069}, {"value": "sggmail--suzanne@rowboatcreative.com-YtFVqI.mbox", "count": 3062}, {"value": "2024-06-22-all--burner@rowboatcreative.com-dR8Lcb.mbox", "count": 1847}, {"value": "2024-06-22-all--rob@rowboatcreative.com-AArr8i.mbox", "count": 1314}, {"value": "2024-06-22-all--patrick@rowboatcreative.com-7Vq8dl.mbox", "count": 1256}, {"value": "2024-06-22-all--hayesr@rowboatcreative.com-AyhOpQ.mbox", "count": 684}, {"value": "2024-06-22-all--filiberto@rowboatcreative.com-qDl2HL.mbox", "count": 305}, {"value": "2024-06-22-all--alex@rowboatcreative.com-X7jaE9.mbox", "count": 302}]
+    top_duplicate_rfc822_id: [{"rfc822_id": "325A12D0-1685-4898-B813-D83495A3BFEF@rowboatcreative.com", "c": 9}, {"rfc822_id": "561C413C-F083-4E3B-A552-DE7B83141ED2@rowboatcreative.com", "c": 9}, {"rfc822_id": "CAA9PtOts+SjKEaQrUdySxx5kxFxY7LmHR91J8jt7Zgx=FWVUxA@mail.gmail.com", "c": 9}, {"rfc822_id": "CAA9PtOu3keR2FURm8x=RQ+9+99SKQ_wm_pzu5ekBsgD-jHxrnA@mail.gmail.com", "c": 9}, {"rfc822_id": "CADnusLySgkMOyQCOWci4U-bGNgkvPkGTgFJsrj8gSQBtdpJTXw@mail.gmail.com", "c": 9}, {"rfc822_id": "CADnusLyiNZh=vx=ktCmLZe90Y0XbDiMdfrV=Mpk10Jrd1+wFAg@mail.gmail.com", "c": 9}, {"rfc822_id": "CADnusLzOvt5NGPhZmoK1YBt9-nF1Ay-DJq=MVjwBQf=gQBrPSw@mail.gmail.com", "c": 9}, {"rfc822_id": "CD4CB0AB-F66E-45EA-A163-6491695297F5@rowboatcreative.com", "c": 9}, {"rfc822_id": "LO4P123MB4719312699AD541EF58C1D16F0DA9@LO4P123MB4719.GBRP123.PROD.OUTLOOK.COM", "c": 9}, {"rfc822_id": "LO4P123MB4719AA4748ECFE0FC3094713F0DA9@LO4P123MB4719.GBRP123.PROD.OUTLOOK.COM", "c": 9}, {"rfc822_id": "00000000000053533b0598b94c5a@google.com", "c": 8}, {"rfc822_id": "02CF28A9-0494-4015-9F0A-5A5ED614D197@rowboatcreative.com", "c": 8}, {"rfc822_id": "0A1249E4-4234-49B9-9530-59B8CF7020C1@rowboatcreative.com", "c": 8}, {"rfc822_id": "0BCFA115-EA05-4A4D-8DC6-2D9760A50C2E@rowboatcreative.com", "c": 8}, {"rfc822_id": "0DDA7BFF-3678-4F83-8805-BE390E8F4CC9@rowboatcreative.com", "c": 8}, {"rfc822_id": "10F16FF1-2D03-45B5-9DA5-8C1772ACCB8F@rowboatcreative.com", "c": 8}, {"rfc822_id": "1A0EF312-C237-4FCD-A944-47B103A8701B@rowboatcreative.com", "c": 8}, {"rfc822_id": "1E9AD99D-F7BD-461E-BDFA-7A0C4A84F2F7@rowboatcreative.com", "c": 8}, {"rfc822_id": "2053740965.3677865.1582149880799@emg-co-2-3.serverpod.net", "c": 8}, {"rfc822_id": "28E97D4E-54B2-48AF-A6C2-48AD23B02823@rowboatcreative.com", "c": 8}]
+    top_duplicate_gmail_id: []
+Database: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db
+  tables: emails, emails_fts, emails_fts_config, emails_fts_data, emails_fts_docsize, emails_fts_idx, sqlite_sequence
+  table emails: count=746346
+    columns: id INTEGER, zip_file TEXT, mbox_name TEXT, email_account TEXT, message_id TEXT, date TEXT, from_addr TEXT, to_addr TEXT, cc_addr TEXT, subject TEXT, body_snippet TEXT, thread_id TEXT, labels TEXT
+  table emails_fts: count=746346
+    columns: subject , body_snippet 
+  table emails_fts_config: count=1
+    columns: k , v 
+  table emails_fts_data: count=150449
+    columns: id INTEGER, block BLOB
+  table emails_fts_docsize: count=746346
+    columns: id INTEGER, sz BLOB
+  table emails_fts_idx: count=43933
+    columns: segid , term , pgno 
+  table sqlite_sequence: count=1
+    columns: name , seq 
+  email_counts:
+    total: 746346
+    subject_nonblank: 745514
+    from_addr_nonblank: 746346
+    to_addr_nonblank: 743332
+Database: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db
+  tables: chain_of_custody, sqlite_sequence
+  table chain_of_custody: count=226
+    columns: id INTEGER, source_path TEXT, source_type TEXT, sha256 TEXT, size_bytes INTEGER, case_id TEXT, notes TEXT, ingested_at TEXT
+  table sqlite_sequence: count=1
+    columns: name , seq 
+Preliminary EMAILS_LOCKER map: /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/email_reconnect/emails_locker_to_mbox_metadata_message_id_map.json
+  counts: {"eml_source": 478, "msgid_matched": 460, "msgid_present": 478, "msgid_unmatched": 18, "multi_match": 329, "no_msgid": 24, "pdf_source": 24, "total": 502}
+  unmatched_count: 42
+  unmatched_by_source_db: {"leonard_mayersky_locker": 24, "mayersky_smoking_gun": 18}
+  unmatched_by_extension: {".eml": 18, ".pdf": 24}

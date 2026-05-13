@@ -1,0 +1,38 @@
+{
+  "item_id": "tax-0082",
+  "exhibit_id": "EXH-TAX-0082",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/PKF UPLOAD 2020/4200 2020/2020 sept.pdf",
+  "sha256": "3c34fa551efc138b482e36bf810a0edda55b65df73661924b5b62499fecd46cf",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2020,
+    "form_type": null,
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 8,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "key_figures": {
+      "medicare_wh": 30900
+    },
+    "extracted_dates": [
+      "08/01/20",
+      "08/31/20",
+      "09/11/20"
+    ],
+    "signatories": [],
+    "notes": ""
+  },
+  "summary": "2020 None for Rowboat Creative, LLC. 8-page PDF extracted via fitz. Tax document from the Rowboat Creative business tax records.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:26:10Z",
+  "processed_by": "taxes_intake_01"
+}

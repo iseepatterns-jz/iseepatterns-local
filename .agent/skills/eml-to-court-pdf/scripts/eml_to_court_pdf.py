@@ -45,9 +45,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 # ─── Constants ────────────────────────────────────────────────────────────
 
-EML_DIR   = Path("/Volumes/batdrivetb5/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/eml")
-PDF_DIR   = Path("/Volumes/batdrivetb5/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/pdf_individual")
-THREAD_PDF = Path("/Volumes/batdrivetb5/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/ppp_fraud_email_thread.pdf")
+EML_DIR   = Path("/Volumes/iseepatterns-evidence/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/eml")
+PDF_DIR   = Path("/Volumes/iseepatterns-evidence/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/pdf_individual")
+THREAD_PDF = Path("/Volumes/iseepatterns-evidence/ANTIGRAVITY_LOCKER/FILE_HOLDING_TANK/PPP FRAUD/ppp_fraud_email_thread.pdf")
 
 CONVERSION_TS = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 TOOL_VERSION  = "eml_to_court_pdf v2.0 (cleaned)"

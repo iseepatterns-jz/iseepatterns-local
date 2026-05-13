@@ -1,0 +1,34 @@
+{
+  "item_id": "tax-0062",
+  "exhibit_id": "EXH-TAX-0062",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/2020 TAX PAYMENT AFTER BANK ACCOUNT CHANGE/501 IL witholding/piCO4ReZrYH0ywT99KOGvA__.pdf",
+  "sha256": "02d80a36521c0482543694b154ce7787cb1ba69c4cf546eae9c024e91031e426",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2020,
+    "form_type": "Unknown",
+    "entity": "Rowboat Creative, LLC",
+    "fein": "30-0793361",
+    "page_count": 1,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "2/5/2020"
+    ],
+    "signatories": [],
+    "notes": null
+  },
+  "summary": "2020 tax-related document (Unknown) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

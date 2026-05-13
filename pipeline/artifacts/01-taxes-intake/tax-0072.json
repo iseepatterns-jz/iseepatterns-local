@@ -1,0 +1,40 @@
+{
+  "item_id": "tax-0072",
+  "exhibit_id": "EXH-TAX-0072",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/OLD/UNEMPLOYMENT/FD_940_-2.pdf",
+  "sha256": "65676de3ce6f56a3758010c4291085b6aaed63520af0cbd1180e80cd3e00e66b",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2020,
+    "form_type": "940",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 3,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": true,
+    "key_figures": {},
+    "extracted_dates": [
+      "01/19/21",
+      "01/20/2021"
+    ],
+    "signatories": [
+      "has any knowledge.",
+      "Use Only",
+      "Use Only \nCheck if you are self"
+    ],
+    "notes": ""
+  },
+  "summary": "2020 940 for Rowboat Creative, LLC. 3-page PDF extracted via fitz. Tax document from the Rowboat Creative business tax records.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:26:10Z",
+  "processed_by": "taxes_intake_01"
+}

@@ -1,0 +1,47 @@
+{
+  "item_id": "tax-0013",
+  "exhibit_id": "EXH-TAX-0013",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/employees/sent/perez-clara.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "789f08ed9321a8171aa6cd00b0de4ab599304683deec4d97207cf39a39df90aa",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 173897,
+    "filename": "perez-clara.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "14\n11182",
+      "24\n11182",
+      "30\n11182",
+      "50\n11182",
+      "50 in 2024",
+      "AUSTIN\n11182",
+      "IL 60639"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_2": "24",
+      "box_3": "20",
+      "box_5": ""
+    }
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

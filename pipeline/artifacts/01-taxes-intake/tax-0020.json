@@ -1,0 +1,39 @@
+{
+  "item_id": "tax-0020",
+  "exhibit_id": "EXH-TAX-0020",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2016/6809_Rowboat_Creative__LLC_Federal_Form_1120S_2016.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "419362abd95839d9792552408efdf727fd153339851cb1dea0bccbfed07c2aa7",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 1432120,
+    "filename": "6809_Rowboat_Creative__LLC_Federal_Form_1120S_2016.pdf",
+    "page_count": 42,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": true,
+    "tax_year": 2016,
+    "form_type": "Form 1120S",
+    "entity": "ROWBOAT CREATIVE SERVICES, LLC",
+    "extracted_dates": [
+      "02/17/2017",
+      "05/29/2013",
+      "2013\n323100",
+      "FL 34120",
+      "IL 60639"
+    ],
+    "key_figures": null,
+    "notes": "Document is 42 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2016 Form 1120S tax return for ROWBOAT CREATIVE SERVICES, LLC. 42-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

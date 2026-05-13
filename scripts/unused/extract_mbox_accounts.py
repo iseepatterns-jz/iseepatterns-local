@@ -13,7 +13,7 @@ def extract_email(filename):
     return None
 
 def main():
-    base_dir = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/'
+    base_dir = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/'
     output_file = os.path.join(base_dir, 'mbox_accounts_mapping.csv')
     
     zip_files = glob.glob(os.path.join(base_dir, '2024-06-22-all-*.zip'))

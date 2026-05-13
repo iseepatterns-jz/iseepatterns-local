@@ -1,0 +1,48 @@
+{
+  "item_id": "tax-0006",
+  "exhibit_id": "EXH-TAX-0006",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/employees/sent/avila-maria.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "537b3a3ceff36a2ccf6505af970d61b27aeab86f589d6d454a99d80c6a0e507a",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 173115,
+    "filename": "avila-maria.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "219\n11152",
+      "48\n11152",
+      "50 in 2024",
+      "72\n11152",
+      "86\n11152",
+      "89\n11152",
+      "IL 60090",
+      "IL 60639"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_2": "89",
+      "box_3": "20",
+      "box_5": ""
+    }
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

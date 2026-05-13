@@ -1,0 +1,39 @@
+{
+  "item_id": "tax-0031",
+  "exhibit_id": "EXH-TAX-0031",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2020/Rowboat Creative, LLC 2020 e-file Authorization - Action Needed.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "25a6740029baacec1938a2a4705651eac898e1fd50dac4c4413cee1269cadc14",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 98522,
+    "filename": "Rowboat Creative, LLC 2020 e-file Authorization - Action Needed.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2020,
+    "form_type": "Form 1120S",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "05/12/2022",
+      "15190512 758883",
+      "21   \n\n019875",
+      "LLC     68996",
+      "LLP\n30079"
+    ],
+    "key_figures": null
+  },
+  "summary": " 2020 Form 1120S tax return for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

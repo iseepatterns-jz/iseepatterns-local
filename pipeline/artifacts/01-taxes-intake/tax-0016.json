@@ -1,0 +1,49 @@
+{
+  "item_id": "tax-0016",
+  "exhibit_id": "EXH-TAX-0016",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/employees/zangrilli-joseph.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "c432b90891961339038da51485ce3530fa669942b479abe0fbc59e560c1280b8",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 174099,
+    "filename": "zangrilli-joseph.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "00\n11538",
+      "38\n11538",
+      "45\n11538",
+      "50 in 2024",
+      "84\n12456",
+      "HAMLIN\n12456",
+      "IL 60639",
+      "IL 60647",
+      "OWNER\n12456"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_3": "20",
+      "box_5": "",
+      "box_6": "84"
+    }
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

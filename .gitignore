@@ -110,3 +110,6 @@ tools/pipeline/artifacts/
 tools/pipeline/work-queue/
 tools/pipeline/batches/
 tools/pipeline/state/
+
+# Large audit reports (>100MB, use LFS or keep local)
+reports/governance_audits/*.json

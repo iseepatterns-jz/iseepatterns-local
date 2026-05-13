@@ -1,0 +1,36 @@
+{
+  "item_id": "tax-0035",
+  "exhibit_id": "EXH-TAX-0035",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2021/Rowboat Creative, LLC 2021 Tax Return.pdf",
+  "sha256": "988e144286326bff88d7c77b94487da4088cf62fd447fb79e55dae5bd995d802",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "tax_year": 2021,
+    "form_type": "Unknown",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": null,
+    "page_count": 55,
+    "extraction_method": "pymupdf",
+    "key_figures": {
+      "total_income": 874185.0
+    },
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "04-01-21"
+    ],
+    "signatories": [],
+    "notes": null
+  },
+  "summary": "2021 Unknown tax return for ROWBOAT CREATIVE, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:19:54Z",
+  "processed_by": "taxes_intake_01"
+}

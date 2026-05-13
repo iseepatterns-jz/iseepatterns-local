@@ -1,0 +1,41 @@
+{
+  "item_id": "tax-0052",
+  "exhibit_id": "EXH-TAX-0052",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2013/Rowboat Creative Services, LLC Illinois Form IL1120ST 2013.pdf",
+  "sha256": "3161c9cf3208d9f059ea30975f97a5615ab894818c8f4ce775609a4541561008",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "tax_year": 2013,
+    "form_type": "1120S",
+    "entity": "ROWBOAT CREATIVE SERVICES, LLC",
+    "fein": "30-0793361",
+    "page_count": 18,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "04/30/13",
+      "05/29/13",
+      "06/28/13",
+      "09/30/13",
+      "12/31/13"
+    ],
+    "signatories": [
+      "Transmitted\nAccepted"
+    ],
+    "notes": "Contains Schedule K-1."
+  },
+  "summary": "2013 1120S tax return for ROWBOAT CREATIVE SERVICES, LLC (FEIN 30-0793361).",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

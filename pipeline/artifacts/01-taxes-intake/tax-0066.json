@@ -1,0 +1,31 @@
+{
+  "item_id": "tax-0066",
+  "exhibit_id": "EXH-TAX-0066",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/OLD/PAYROLL/RowboatCreative,LLC_PayrollDetails_03152022_1833_UPDATED.xls",
+  "sha256": "dd8e30d187dd8d58534cd6bd8febb6efd99662062c0df69b5fcbdab4bd762710",
+  "classification": "PAYROLL",
+  "metadata": {
+    "tax_year": null,
+    "form_type": null,
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "extraction_method": "failed",
+    "sheet_names": [],
+    "headers": [],
+    "row_count": 0,
+    "extracted_dates": [],
+    "key_figures": {},
+    "notes": ""
+  },
+  "summary": "2020 None spreadsheet for Rowboat Creative, LLC. Contains 0 sheet(s) with approximately 0 total rows. Extracted via failed from file RowboatCreative,LLC_PayrollDetails_03152022_1833_UPDATED.xls.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:26:10Z",
+  "processed_by": "taxes_intake_01"
+}

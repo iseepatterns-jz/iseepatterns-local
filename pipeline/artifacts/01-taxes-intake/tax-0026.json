@@ -1,0 +1,42 @@
+{
+  "item_id": "tax-0026",
+  "exhibit_id": "EXH-TAX-0026",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2019/2019 Illinois Tax Payment Voucher and Mailing Instructions.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "9e748c76326cd2e8ddb9acb1296f0d69ac2176fd8b42c264c133a4c90cc22009",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "file_size_bytes": 72593,
+    "filename": "2019 Illinois Tax Payment Voucher and Mailing Instructions.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2019,
+    "form_type": "IL-1120ST",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "extracted_dates": [
+      "9053\n\n949221",
+      "BOX 19053",
+      "Box 19053",
+      "DECEMBER 31, 2019",
+      "IL  60639",
+      "IL  62794",
+      "IL 60123",
+      "IL 62794",
+      "OCTOBER 15, 2020"
+    ],
+    "key_figures": null
+  },
+  "summary": " 2019 IL-1120ST for ROWBOAT CREATIVE, LLC. 2-page PDF (72,593 bytes).",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

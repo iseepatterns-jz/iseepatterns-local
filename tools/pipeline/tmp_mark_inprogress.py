@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Mark EXH-0148 as in_progress in Stage 03, and get its source info."""
 import json, shutil
 from datetime import datetime, timezone
 
@@ -9,41 +10,55 @@ shutil.copy2(state_path, state_path + '.bak')
 with open(state_path) as f:
     data = json.load(f)
 
-item_id = '2026-05-06T04-24-18.124212Z_EXH-0117'
+item_id = '2026-05-06T04-24-18.128032Z_EXH-0148'
 now = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
 
-stage_name = '03-email-attorney'
-if stage_name not in data['stages']:
-    data['stages'][stage_name] = {'items': []}
+stage_03_name = "03-email-attorney"
+stage_02_name = "02-email-paralegal"
 
-# Get the source item from stage 02 for metadata
-s2items = data['stages'].get('02-email-paralegal', {}).get('items', [])
-source_item = None
-for i in s2items:
-    if i['item_id'] == item_id:
-        source_item = i
+# Ensure stage exists
+if stage_03_name not in data['stages']:
+    data['stages'][stage_03_name] = {'items': []}
+
+# Find Stage 02 item for source info
+s2item = None
+for i in data['stages'][stage_02_name]['items']:
+    if isinstance(i, dict) and i.get('item_id') == item_id:
+        s2item = i
         break
 
-if not source_item:
-    print("ERROR: item not found in stage 02")
+# Check if already in Stage 03
+existing = None
+for i in data['stages'][stage_03_name]['items']:
+    if isinstance(i, dict) and i.get('item_id') == item_id:
+        existing = i
+        break
+
+if existing:
+    existing['status'] = 'in_progress'
+    existing['started_at'] = now
+    existing['processed_by'] = 'isp_hrm_cron_bot'
 else:
     new_item = {
-        'item_id': item_id,
-        'exhibit_id': source_item.get('exhibit_id', '?'),
-        'pipeline_stage': stage_name,
-        'source_type': source_item.get('source_type', 'email'),
-        'db_source': source_item.get('db_source', '?'),
-        'status': 'in_progress',
-        'artifact_path': f'artifacts/03-email-attorney/{item_id}_email_synthesis.md',
-        'source_path': source_item.get('artifact_path', source_item.get('paralegal_artifact', '?')),
-        'paralegal_artifact': source_item.get('artifact_path', source_item.get('paralegal_artifact', '?')),
-        'tags': source_item.get('tags', []),
-        'started_at': now,
-        'processed_at': now,
-        'processed_by': 'isp_hrm_cron_bot'
+        "item_id": item_id,
+        "exhibit_id": s2item.get('exhibit_id', 'EXH-0148') if s2item else 'EXH-0148',
+        "pipeline_stage": stage_03_name,
+        "source_type": s2item.get('source_type', 'email') if s2item else 'email',
+        "db_source": s2item.get('db_source', 'mayersky_smoking_gun') if s2item else 'mayersky_smoking_gun',
+        "status": "in_progress",
+        "started_at": now,
+        "processed_by": "isp_hrm_cron_bot",
+        "tags": s2item.get('tags', []) if s2item else []
     }
-    data['stages'][stage_name]['items'].append(new_item)
-    data['updated_at'] = now
-    with open(state_path, 'w') as f:
-        json.dump(data, f, indent=2, default=str)
-    print(f"Marked {item_id} as in_progress in {stage_name}")
+    data['stages'][stage_03_name]['items'].append(new_item)
+
+data['updated_at'] = now
+
+with open(state_path, 'w') as f:
+    json.dump(data, f, indent=2, default=str)
+
+print(f"Marked {item_id} as in_progress in {stage_03_name}")
+if s2item:
+    print(f"Source tags: {s2item.get('tags', [])}")
+    print(f"Source artifact: {s2item.get('artifact_path', '?')}")
+    print(f"Source exhibit_id: {s2item.get('exhibit_id', '?')}")

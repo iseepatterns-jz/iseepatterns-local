@@ -16,6 +16,7 @@ interface Transaction {
     amount: number;
     page_number: number;
     player_id: number | null;
+    user_label_override: string | null;
     player_name: string | null;
     final_account_id: string | null;
     notes: string | null;
@@ -276,17 +277,16 @@ export default function TransactionReviewPage() {
     }, [transactions, filter]);
 
     const displayPlayers = useMemo(() => {
-        const allowed = ["JZ", "LG", "PH"];
         return players.filter(p => {
-            if (p.id === 28) return true; // JZ
-            if (p.id === 25) return true; // LG
-            if (p.id === 45) return true; // PH
+            if (p.id === 51) return true; // JZ — Joseph Zangrilli
+            if (p.id === 20) return true; // LG — Lucas Guariglia
+            if (p.id === 29) return true; // PH — Patrick Houdek
             return false;
         }).map(p => {
             let initials = "";
-            if (p.id === 28) initials = "JZ";
-            if (p.id === 25) initials = "LG";
-            if (p.id === 45) initials = "PH";
+            if (p.id === 51) initials = "JZ";
+            if (p.id === 20) initials = "LG";
+            if (p.id === 29) initials = "PH";
             return { ...p, initials };
         });
     }, [players]);
@@ -515,14 +515,33 @@ export default function TransactionReviewPage() {
                                         />
                                     </td>
                                     <td style={{ padding: "10px" }}>
-                                        <select value={t.player_id || ""} onChange={(e) => handleUpdate([t.id], { player_id: e.target.value ? parseInt(e.target.value) : null })}
+                                        <select
+                                            value={t.user_label_override === "LG as JZ" ? "LG_AS_JZ" : (t.player_id || "")}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                if (val === "LG_AS_JZ") {
+                                                    handleUpdate([t.id], {
+                                                        player_id: 51,
+                                                        user_label_override: "LG as JZ"
+                                                    });
+                                                } else {
+                                                    handleUpdate([t.id], {
+                                                        player_id: val ? parseInt(val) : null,
+                                                        user_label_override: null
+                                                    });
+                                                }
+                                            }}
                                             style={{ 
                                                 width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid var(--glass-border)", 
                                                 borderRadius: 4, padding: "4px", color: "var(--text-primary)", fontSize: "0.8125rem"
                                             }}>
                                             <option value="">(Unmapped)</option>
+                                            <option value="LG_AS_JZ">LG as JZ - Lucas coded to Joseph</option>
                                             {displayPlayers.map(p => <option key={p.id} value={p.id}>{p.initials} - {p.display_name.split(' ')[0]}</option>)}
                                         </select>
+                                        {t.user_label_override === "LG as JZ" && (
+                                            <div style={{ marginTop: 4, fontSize: "0.65rem", color: "var(--accent-cyan)", fontWeight: 700 }}>Override: LG as JZ</div>
+                                        )}
                                     </td>
                                     <td style={{ padding: "10px", textAlign: "center" }}>
                                         {t.evidence_url ? (

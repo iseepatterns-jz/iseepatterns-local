@@ -1,0 +1,32 @@
+{
+  "item_id": "tax-0056",
+  "exhibit_id": "EXH-TAX-0056",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2016/IRS Regarding Form 940 Overpayment 2016.pdf",
+  "sha256": "d641ebbd26f278f422ac42d90d15e23dd51f56511ca50ba5acf86d16dfcfaedb",
+  "classification": "PAYROLL",
+  "metadata": {
+    "tax_year": 2016,
+    "form_type": "940",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 1,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": true,
+    "is_worksheet": false,
+    "extracted_dates": [],
+    "signatories": [],
+    "notes": "PDF appears to be scanned/image-based; OCR may be needed."
+  },
+  "summary": "2016 payroll tax document (940) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

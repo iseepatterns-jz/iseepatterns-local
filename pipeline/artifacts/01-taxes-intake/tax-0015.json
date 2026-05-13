@@ -1,0 +1,49 @@
+{
+  "item_id": "tax-0015",
+  "exhibit_id": "EXH-TAX-0015",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/employees/sent/perez-victoria.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "06a23036abb2c1da8d286693df98f0656150cd24f8b75126042afb175190ee23",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 173933,
+    "filename": "perez-victoria.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "20\n11186",
+      "40\n11186",
+      "45\n11186",
+      "50 in 2024",
+      "56\n11186",
+      "IL 60639",
+      "IL 60651",
+      "POTOMAC\n11186"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_2": "20",
+      "box_3": "20",
+      "box_5": "",
+      "box_6": "40"
+    }
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

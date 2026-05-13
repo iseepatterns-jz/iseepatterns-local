@@ -1,0 +1,47 @@
+{
+  "item_id": "tax-0087",
+  "exhibit_id": "EXH-TAX-0087",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/PKF UPLOAD 2020/PAYROLL/W-2_Copies_A_.pdf",
+  "sha256": "2ecefc6b46a9967a67c2230f40e8ee618bb73f216aaa74549a1b3a3160b52f7d",
+  "classification": "W2",
+  "metadata": {
+    "tax_year": null,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": null,
+    "page_count": 10,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "key_figures": {
+      "federal_wh": 10,
+      "ss_wages": 5,
+      "medicare_wages": 7
+    },
+    "extracted_dates": [
+      "00-72-4902",
+      "01/07/21",
+      "02-78-5491",
+      "04-06-0651",
+      "18-90-1080",
+      "20-40-0923",
+      "20-66-1897",
+      "71-72-6799",
+      "98-96-2735"
+    ],
+    "signatories": [],
+    "notes": ""
+  },
+  "summary": "2020 W-2 wage and tax statement for ROWBOAT CREATIVE, LLC. 10-page PDF extracted via fitz. Reports employee wage and withholding information for the 2020 tax year.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

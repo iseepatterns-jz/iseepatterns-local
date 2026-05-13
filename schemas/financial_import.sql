@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS statement_transactions (
     
     -- Human annotation fields
     player_id           INTEGER, -- Link to players table
+    user_label_override TEXT,    -- Explicit review label override, e.g. 'LG as JZ'
     final_account_id    TEXT,    -- Assigned card/account label
     notes               TEXT,
     tags                TEXT,    -- JSON array

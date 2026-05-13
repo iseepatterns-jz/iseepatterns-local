@@ -2,8 +2,8 @@
 import sqlite3
 import os
 
-SOURCE_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'
-TARGET_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_correspondence.db'
+SOURCE_DB = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'
+TARGET_DB = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/accountant_correspondence.db'
 
 ACCOUNTANTS = [
     'jdj0818@gmail.com', 'george.g@rudderservices.com',

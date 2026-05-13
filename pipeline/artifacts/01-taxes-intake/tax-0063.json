@@ -1,0 +1,39 @@
+{
+  "item_id": "tax-0063",
+  "exhibit_id": "EXH-TAX-0063",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/2020 TAX PAYMENT AFTER BANK ACCOUNT CHANGE/940/Welcome To EFTPS - Payments.pdf",
+  "sha256": "54edebabad8ada080e474893860d502f1ff3e25cdc6d39934eea136666c2397c",
+  "classification": "PAYROLL",
+  "metadata": {
+    "tax_year": 2020,
+    "form_type": "EFTPS Payment",
+    "entity": "ROWBOAT CREATIVE LLC",
+    "fein": null,
+    "page_count": 1,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "01/31/2020",
+      "1/31/2020"
+    ],
+    "signatories": [
+      "EIN\n xxxxx",
+      "TO FILE"
+    ],
+    "notes": null
+  },
+  "summary": "2020 payroll tax document (EFTPS Payment) for ROWBOAT CREATIVE LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

@@ -1,0 +1,33 @@
+{
+  "item_id": "tax-0060",
+  "exhibit_id": "EXH-TAX-0060",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2018/SBIF-Application-Form-RBC.pdf",
+  "sha256": "a474e687302e020941af6a2c8fb97bc455cac88b5e2ccdd97344f95cad8ebae3",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2018,
+    "form_type": "SBIF Application",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 5,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [],
+    "signatories": [
+      "of an"
+    ],
+    "notes": null
+  },
+  "summary": "SBIF Application for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

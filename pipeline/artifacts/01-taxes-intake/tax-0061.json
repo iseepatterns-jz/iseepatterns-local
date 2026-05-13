@@ -1,0 +1,40 @@
+{
+  "item_id": "tax-0061",
+  "exhibit_id": "EXH-TAX-0061",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2018/SIGNED_2018 E-FILE Signature Authorization Forms.pdf",
+  "sha256": "e145ec77ff481a054badcb1fd36176dfc898e204deb7329764735d04b8311354",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2018,
+    "form_type": "1120S",
+    "entity": "Rowboat Creative, LLC",
+    "fein": "30-0793361",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "12-20-18"
+    ],
+    "signatories": [
+      "Authorization for",
+      "Authorization of",
+      "for the",
+      "of the",
+      "on the"
+    ],
+    "notes": "Document is signed."
+  },
+  "summary": "2018 tax-related document (1120S) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

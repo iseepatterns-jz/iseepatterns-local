@@ -1,0 +1,31 @@
+{
+  "item_id": "tax-0037",
+  "exhibit_id": "EXH-TAX-0037",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2011/taxes_2011.xlsx",
+  "sha256": "ec9c3a62d838bb188222bdc37413e3d3e5c6c636d43d2bbcfcb20a74ee1e1436",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2011,
+    "form_type": "Spreadsheet",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 0,
+    "extraction_method": "openpyxl/xlrd (xlsx)",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [],
+    "signatories": [],
+    "notes": "Excel workbook with 2 sheet(s): Sheet1, 2012"
+  },
+  "summary": "2011 tax-related document (Spreadsheet) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:19:54Z",
+  "processed_by": "taxes_intake_01"
+}

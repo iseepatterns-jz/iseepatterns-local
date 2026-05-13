@@ -15,7 +15,7 @@ This document defines the core rules, architectural patterns, and quality standa
 ## 2. Project Root & Directory Standards
 
 ```
-/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/
+/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/
 ├── .agent/skills/          # Agent skills (including this governance skill)
 ├── app/                    # Next.js frontend (App Router)
 │   ├── app/                # Pages and API routes
@@ -173,4 +173,4 @@ Every financial session must conclude with:
 2.  **Human Review**: Manual confirmation of linked player identities.
 3.  **Segregation**: Finalizing verification to create the `-UNVERIFIED-DISCREPANCIES.csv` artifact for unmatched records.
 
-**RULE**: Every major task MUST conclude with an FIA. Consult [forensic_integrity_audit.md](file:///Volumes/batdrivetb5/AI_TRAINING/lawmodel1/docs/forensic_integrity_audit.md) for the full protocol.
+**RULE**: Every major task MUST conclude with an FIA. Consult [forensic_integrity_audit.md](file:///Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/docs/forensic_integrity_audit.md) for the full protocol.

@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 DB_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/accountant_correspondence.db'
-REPORT_PATH = '/Users/iseepatterns-ms-m4/.gemini/antigravity/brain/323a9b7c-c068-49df-9368-599b69fcd2d6/accountant_pattern_report.md'
+REPORT_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/accountant_pattern_report.md'
 
 def generate_report():
     conn = sqlite3.connect(DB_PATH)

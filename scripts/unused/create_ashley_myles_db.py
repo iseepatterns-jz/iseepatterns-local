@@ -2,8 +2,8 @@ import sqlite3
 import os
 
 # CONFIGURATION
-ALL_DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/accounting_all.db'
-ASHLEY_DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/accounting_ashley_myles.db'
+ALL_DB_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/accounting_all.db'
+ASHLEY_DB_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/accounting_ashley_myles.db'
 
 def setup_ashley_db():
     if os.path.exists(ASHLEY_DB_PATH):

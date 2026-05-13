@@ -1,0 +1,29 @@
+{
+  "item_id": "tax-0091",
+  "exhibit_id": "EXH-TAX-0091",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/tax-payment-credit-IMG_4571.jpeg",
+  "sha256": "6ce7f2ef17e8471fec01a6943be53e68bb8904cb0464a4d09506a48b0bdb59bf",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": null,
+    "form_type": "Tax Payment Credit Screenshot",
+    "entity": "Rowboat Creative, LLC",
+    "extraction_method": "file_info",
+    "image_type": ".jpeg",
+    "needs_ocr": true,
+    "extracted_dates": [],
+    "key_figures": {},
+    "notes": "Image file - requires OCR for text extraction",
+    "file_size_bytes": 405641
+  },
+  "summary": "Image file (.jpeg) related to Rowboat Creative, LLC tax matters for 2020. Filename suggests Tax Payment Credit Screenshot. Requires OCR for text extraction.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

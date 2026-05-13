@@ -34,21 +34,21 @@ graph TD
 
 ---
 
-## 2. iMessage (chat.db) Hierarchy
+## 2. iMessage (RMSF) Hierarchy
 
-The iMessage architecture solves the "Split History" problem by merging multiple forensic sources.
+The iMessage architecture uses RMSF as the canonical source-of-truth. iMessages only come from RMSF or are referred to from canonical RMSF-derived indexes/metadata. Raw SQLite/chat.db extraction is not primary iMessage evidence when RMSF or RMSF index coverage exists.
 
 | Tier | Component | Description |
 | :--- | :--- | :--- |
-| **Primary Source** | `chatdb_storage/` | Contains forensic roots from the iMac and M1 Studio. |
-| **Logic Layer** | `chat_master.db` | A unified database that deduplicates GUIDs across all sources and decodes `typedStream` blobs into readable text. |
-| **Evidence Path** | `forensic_root_translation` | Directs the Hub to resolve physical attachment paths (e.g., `~/Library/Messages/...`) to the corresponding external drive location. |
+| **Primary Source** | RMSF exports/indexes | Canonical iMessage source material and index references. |
+| **Reference Layer** | `chatdb_storage/` / `chat_master.db` | SQLite/chat.db-derived material is reference-only unless specifically tied back to RMSF or a canonical RMSF-derived index. |
+| **Evidence Path** | RMSF attachment/reference metadata | Directs the Hub to resolve physical attachment paths through canonical RMSF-derived references. |
 
 ---
 
 ## 3. MBOX (Email) & Vault Hierarchy
 
-The email architecture solves the "Broken Drive Link" problem by using Google Vault metadata as a bridge.
+The email architecture uses MBOX as the canonical source-of-truth. Emails only come from MBOX sources or are referred to from canonical MBOX-derived indexes/metadata. `.eml` files are derivative/export/reference material once the MBOX location is resolved.
 
 | Tier | Component | Description |
 | :--- | :--- | :--- |
@@ -66,10 +66,10 @@ The **Evidence Hub (`evidence_hub.db`)** is the final authority.
 > [!IMPORTANT]
 > To trace any piece of evidence back to its source:
 > 1. Check the `source_type` (email vs imessage).
-> 2. For **iMessage**, use the `original_guid` to find the record in `chat_master.db`.
-> 3. For **Email**, use the `local_vault_filename` in the `primary_ids` metadata to locate the physical file within the ZIP archives on `/Volumes/batdrivetb5/`.
-> 4. For **iMessage Attachments**, the `guid` from `chat_master.db` is cross-referenced against `chat_case_only.db` (via `message_attachment_join` → `attachment`) to resolve `~/Library/Messages/Attachments/...` paths to `data/IMESSAGE_LOCKER/Messages/Attachments/...`. Served via `/api/imessage-attachment?guid=<message-guid>`.
+> 2. For **iMessage**, trace to RMSF or the canonical RMSF-derived index/metadata reference.
+> 3. For **Email**, trace to MBOX or the canonical MBOX-derived index/metadata reference; disregard `.eml` as source-of-truth once MBOX location is resolved.
+> 4. For **attachments**, trace the attachment to the canonical parent communication source or canonical index reference before treating it as evidence.
 
 ---
-**Document Version**: 1.1.0  
-**Updated**: 2026-03-22
+**Document Version**: 1.2.0  
+**Updated**: 2026-05-10

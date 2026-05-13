@@ -1,0 +1,35 @@
+{
+  "item_id": "tax-0057",
+  "exhibit_id": "EXH-TAX-0057",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2017/2017 Return.pdf",
+  "sha256": "191cc3eac19b7844e61e7f8d2bc016a1a204effa5432f7cb49b64b3549beeb40",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "tax_year": 2017,
+    "form_type": "1120S",
+    "entity": "Rowboat Creative, LLC",
+    "fein": "30-0793361",
+    "page_count": 51,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "June 6, 2018"
+    ],
+    "signatories": [],
+    "notes": "Contains Schedule K-1."
+  },
+  "summary": "2017 1120S tax return for Rowboat Creative, LLC (FEIN 30-0793361).",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

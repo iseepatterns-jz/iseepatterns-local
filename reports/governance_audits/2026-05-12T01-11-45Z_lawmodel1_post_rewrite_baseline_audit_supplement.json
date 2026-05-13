@@ -1,0 +1,227 @@
+{
+  "created_utc": "2026-05-12T01:11:45Z",
+  "scope": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
+  "source_audit_json": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-11_20-03-49_lawmodel1_bounded_duplicate_stale_audit.json",
+  "source_audit_json_sha256": "c926c7f3cddcab3c75f1b341788d7d1b76c2be31f4a66cc8dc1d2ded94d011e4",
+  "source_audit_md": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-11_20-03-49_lawmodel1_bounded_duplicate_stale_audit.md",
+  "source_audit_md_sha256": "dd4fb682999bd5a3191671872d47c452f5c0b7b11a1b98b7188b5be0c5fe1b38",
+  "modification_statement": "Read-only audit interpretation; wrote only this supplement JSON/MD under reports/governance_audits.",
+  "raw_summary": {
+    "scope": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
+    "file_count": 1873168,
+    "directory_count": 207854,
+    "duplicate_filename_groups": 488602,
+    "same_size_hash_candidates": 8000,
+    "duplicate_content_hash_groups": 810,
+    "stale_temp_archive_items": 565536,
+    "external_reference_counts": {
+      "/Users/iseepatterns-ms-m4": 111,
+      "/Volumes/batdrivetb5": 2775047,
+      "AI_TRAINING": 2709094,
+      "/Volumes/iseepatterns-evidence/IGNORE": 1915,
+      "/Volumes/messageshd": 79,
+      "/Volumes/2026-iseepatterns-tb3": 87
+    },
+    "db_nonzero_duplicate_checks": 7,
+    "registry_info": {
+      "registered_ids": [
+        "gem-imessages",
+        "gem-gmail",
+        "gem-financial-txns",
+        "gem-tax-returns",
+        "gem-evidence-hub",
+        "gem-paralegal-exports",
+        "gem-ready-bag",
+        "gem-qb-forensic"
+      ],
+      "unregistered_dependencies": [
+        "gem-chain-of-custody",
+        "gem-evidence-cards",
+        "gem-players"
+      ]
+    },
+    "walk_errors": 0
+  },
+  "classified_external_reference_counts": {
+    "/Users/iseepatterns-ms-m4": {
+      "total_occurrences": 111,
+      "total_files": 22,
+      "occurrences_by_class": {
+        "archive_historical": 2,
+        "audit_tool_instrumentation_literal": 9,
+        "governance_report_or_sidecar": 98,
+        "pipeline_artifacts": 2
+      },
+      "files_by_class": {
+        "archive_historical": 1,
+        "audit_tool_instrumentation_literal": 5,
+        "governance_report_or_sidecar": 15,
+        "pipeline_artifacts": 1
+      },
+      "active_project_reference_candidate_occurrences": 0,
+      "active_project_reference_candidate_files": 0
+    },
+    "/Volumes/batdrivetb5": {
+      "total_occurrences": 2775047,
+      "total_files": 1491932,
+      "occurrences_by_class": {
+        "archive_historical": 112,
+        "audit_tool_instrumentation_literal": 10,
+        "data_historical_or_generated": 2537227,
+        "exports_generated": 231565,
+        "governance_backup_artifact": 22,
+        "governance_report_or_sidecar": 6108,
+        "other": 3
+      },
+      "files_by_class": {
+        "archive_historical": 20,
+        "audit_tool_instrumentation_literal": 4,
+        "data_historical_or_generated": 1339688,
+        "exports_generated": 152196,
+        "governance_backup_artifact": 9,
+        "governance_report_or_sidecar": 14,
+        "other": 1
+      },
+      "active_project_reference_candidate_occurrences": 0,
+      "active_project_reference_candidate_files": 0
+    },
+    "AI_TRAINING": {
+      "total_occurrences": 2709094,
+      "total_files": 1426157,
+      "occurrences_by_class": {
+        "archive_historical": 111,
+        "audit_tool_instrumentation_literal": 11,
+        "data_historical_or_generated": 2471455,
+        "exports_generated": 231561,
+        "governance_backup_artifact": 15,
+        "governance_report_or_sidecar": 5938,
+        "other": 3
+      },
+      "files_by_class": {
+        "archive_historical": 20,
+        "audit_tool_instrumentation_literal": 5,
+        "data_historical_or_generated": 1273916,
+        "exports_generated": 152193,
+        "governance_backup_artifact": 7,
+        "governance_report_or_sidecar": 15,
+        "other": 1
+      },
+      "active_project_reference_candidate_occurrences": 0,
+      "active_project_reference_candidate_files": 0
+    },
+    "/Volumes/iseepatterns-evidence/IGNORE": {
+      "total_occurrences": 1915,
+      "total_files": 62,
+      "occurrences_by_class": {
+        "active_project_reference_candidate": 38,
+        "audit_tool_instrumentation_literal": 8,
+        "governance_report_or_sidecar": 85,
+        "other": 157,
+        "pipeline_artifacts": 1627
+      },
+      "files_by_class": {
+        "active_project_reference_candidate": 1,
+        "audit_tool_instrumentation_literal": 4,
+        "governance_report_or_sidecar": 12,
+        "other": 7,
+        "pipeline_artifacts": 38
+      },
+      "active_project_reference_candidate_occurrences": 38,
+      "active_project_reference_candidate_files": 1
+    },
+    "/Volumes/messageshd": {
+      "total_occurrences": 79,
+      "total_files": 18,
+      "occurrences_by_class": {
+        "active_project_reference_candidate": 2,
+        "archive_historical": 1,
+        "audit_tool_instrumentation_literal": 8,
+        "governance_report_or_sidecar": 68
+      },
+      "files_by_class": {
+        "active_project_reference_candidate": 1,
+        "archive_historical": 1,
+        "audit_tool_instrumentation_literal": 4,
+        "governance_report_or_sidecar": 12
+      },
+      "active_project_reference_candidate_occurrences": 2,
+      "active_project_reference_candidate_files": 1
+    },
+    "/Volumes/2026-iseepatterns-tb3": {
+      "total_occurrences": 87,
+      "total_files": 19,
+      "occurrences_by_class": {
+        "active_project_reference_candidate": 3,
+        "audit_tool_instrumentation_literal": 8,
+        "governance_report_or_sidecar": 76
+      },
+      "files_by_class": {
+        "active_project_reference_candidate": 3,
+        "audit_tool_instrumentation_literal": 4,
+        "governance_report_or_sidecar": 12
+      },
+      "active_project_reference_candidate_occurrences": 3,
+      "active_project_reference_candidate_files": 3
+    }
+  },
+  "database_duplicate_checks": [
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db",
+      "table": "master_transactions",
+      "column": "forensic_hash",
+      "duplicate_groups": 1,
+      "duplicate_rows": 2
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+      "table": "emails",
+      "column": "rfc822_id",
+      "duplicate_groups": 127197,
+      "duplicate_rows": 330067
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+      "table": "drive_links",
+      "column": "rfc822_id",
+      "duplicate_groups": 8391,
+      "duplicate_rows": 31933
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+      "table": "chain_of_custody",
+      "column": "sha256",
+      "duplicate_groups": 1,
+      "duplicate_rows": 2
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_DATA_LOCKER/chat_case_only.db",
+      "table": "chat_message_join",
+      "column": "message_id",
+      "duplicate_groups": 28,
+      "duplicate_rows": 304
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/IMESSAGE_DATA_LOCKER/chat_case_only.db",
+      "table": "message_attachment_join",
+      "column": "message_id",
+      "duplicate_groups": 1744,
+      "duplicate_rows": 4476
+    },
+    {
+      "db": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/chat_master.db",
+      "table": "chat_message_join",
+      "column": "message_id",
+      "duplicate_groups": 8,
+      "duplicate_rows": 16
+    }
+  ],
+  "verification": {
+    "json_parsed": true,
+    "raw_report_exists": true,
+    "walk_errors": 0,
+    "approved_project_reference_old_strings_active_candidates": {
+      "/Volumes/batdrivetb5": 0,
+      "AI_TRAINING": 0
+    }
+  }
+}

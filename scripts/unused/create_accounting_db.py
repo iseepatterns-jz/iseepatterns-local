@@ -10,9 +10,9 @@ import html
 from bs4 import BeautifulSoup
 
 # CONFIGURATION
-ZIP_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-4.zip'
+ZIP_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-4.zip'
 MBOX_NAME = '2024-06-22-all--accounting@rowboatcreative.com-trQeA-.mbox'
-DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/accounting_all.db'
+DB_PATH = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/accounting_all.db'
 
 def setup_db():
     if os.path.exists(DB_PATH):

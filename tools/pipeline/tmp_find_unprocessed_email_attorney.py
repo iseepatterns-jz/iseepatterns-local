@@ -1,49 +1,66 @@
 #!/usr/bin/env python3
-"""Find items in Stage 02-email-paralegal with status=completed not yet in Stage 03-email-attorney."""
+"""Find email pipeline items completed in Stage 02 but not yet in Stage 03."""
 import json
 
 state_path = '/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/tools/pipeline/pipeline-state.json'
 
-with open(state_path) as f:
-    data = json.load(f)
+f = open(state_path)
+data = json.load(f)
 
-# Check all keys to find stage names
-stage_keys = list(data.get('stages', {}).keys())
-print(f"Available stages: {stage_keys}")
+stage_02_name = "02-email-paralegal"
+stage_03_name = "03-email-attorney"
 
-# Identify email paralegal and email attorney stages
-pg_name = None
-at_name = None
-for k in stage_keys:
-    if 'email' in k.lower() and ('paralegal' in k.lower() or 'attorney' in k.lower()):
-        if 'paralegal' in k.lower() or '02' in k:
-            pg_name = k
-        if 'attorney' in k.lower() or '03' in k:
-            at_name = k
+# Collect Stage 03 processed IDs
+s3items = data.get("stages", {}).get(stage_03_name, {}).get("items", [])
+s3_processed = set(i["item_id"] for i in s3items if isinstance(i, dict))
 
-print(f"Using Paralegal stage: {pg_name}")
-print(f"Using Attorney stage: {at_name}")
+# Stage 02 items
+s2items = data.get("stages", {}).get(stage_02_name, {}).get("items", [])
+# Filter to only dict items for counting
+s2_dicts = [i for i in s2items if isinstance(i, dict)]
+s2_strings = [i for i in s2items if isinstance(i, str)]
 
-if not pg_name:
-    print("No email paralegal stage found!")
-    exit(1)
+s2_completed = [i for i in s2_dicts if i.get("status") == "completed"]
+s2_in_prog = [i for i in s2_dicts if i.get("status") == "in_progress"]
+s2_failed = [i for i in s2_dicts if i.get("status") in ("failed", "error")]
 
-s2items = data['stages'].get(pg_name, {}).get('items', [])
-s3items = data['stages'].get(at_name, {}).get('items', []) if at_name else []
+unproc = [i for i in s2_completed if i["item_id"] not in s3_processed]
+unproc.sort(key=lambda x: x.get("processed_at", ""))
 
-s3_ids = set(i.get('item_id', '') for i in s3items)
-print(f"\nStage {pg_name}: {len(s2items)} total items")
-print(f"Stage {at_name}: {len(s3items)} already processed")
+s3_dicts = [i for i in s3items if isinstance(i, dict)]
+s3_strings = [i for i in s3items if isinstance(i, str)]
 
-unproc = [i for i in s2items if i.get('status') == 'completed' and i.get('item_id', '') not in s3_ids]
-unproc.sort(key=lambda x: x.get('completed_at', ''))
+print(f"=== Email Pipeline Stage Summary ===")
+print(f"Pipeline: {data.get('name','?')} | Status: {data.get('status','?')} | Updated: {data.get('updated_at','?')}")
+print()
 
-print(f"\nUnprocessed items ready for Stage 03: {len(unproc)}")
+for name, stage in data.get("stages", {}).items():
+    items = stage.get("items", [])
+    total = len(items)
+    d_items = [i for i in items if isinstance(i, dict)]
+    s_items = [i for i in items if isinstance(i, str)]
+    completed = sum(1 for i in d_items if i.get("status") == "completed")
+    in_prog = sum(1 for i in d_items if i.get("status") == "in_progress")
+    failed = sum(1 for i in d_items if i.get("status") in ("failed", "error"))
+    pending = len(d_items) - completed - in_prog - failed
+    strings_info = f" (+{len(s_items)} strings)" if s_items else ""
+    print(f"{name:25s} | {total:3d} items{strings_info} | {completed:3d} done | {in_prog:2d} prog | {failed:2d} fail | {pending:2d} pend")
+
+print()
+print(f"=== Unprocessed Items (Stage 02 done, Stage 03 not yet) ===")
+print(f"Stage 02 completed: {len(s2_completed)}")
+print(f"Stage 03 processed: {len(s3_processed)}")
+print(f"Total unprocessed: {len(unproc)}")
+
 for i in unproc:
-    print(f"  {i.get('item_id','?'):50s} | EXH={i.get('exhibit_id','?'):8s} | title={i.get('title','?')[:60]}")
+    exh = i.get("exhibit_id", "?")
+    tags = i.get("tags", [])
+    para_artifact = i.get("paralegal_artifact") or i.get("artifact_path", "?")
+    print(f"  item_id: {i['item_id']}")
+    print(f"    exhibit_id: {exh}")
+    print(f"    tags: {tags}")
+    print(f"    paralegal_artifact: {para_artifact}")
+    print()
 
-# Also show items already in attorney stage for reference
-if s3items:
-    print(f"\nItems already in {at_name}:")
-    for i in s3items:
-        print(f"  {i.get('item_id','?'):50s} | status={i.get('status','?'):15s}")
+if not unproc:
+    print("No unprocessed items found.")

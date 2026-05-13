@@ -1,0 +1,41 @@
+{
+  "item_id": "tax-0030",
+  "exhibit_id": "EXH-TAX-0030",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2020/Rowboat Creative, LLC 2020 Tax Return.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "a14e6a0130411c9138f7cd733c2272d80e0a9e4fd215b0861e91d33be7f60218",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 452583,
+    "filename": "Rowboat Creative, LLC 2020 Tax Return.pdf",
+    "page_count": 53,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2020,
+    "form_type": "Form 1120S",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "extracted_dates": [
+      "15190512 758883",
+      "21   \n\n012841",
+      "HIGHLAND\n\n012841",
+      "IL  60639",
+      "LLC     68996"
+    ],
+    "key_figures": {
+      "total_income": "1446626."
+    },
+    "notes": "Document is 53 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2020 Form 1120S tax return for ROWBOAT CREATIVE, LLC. 53-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

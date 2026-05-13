@@ -1,0 +1,49 @@
+{
+  "item_id": "tax-0012",
+  "exhibit_id": "EXH-TAX-0012",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/employees/sent/paolino-jeffrey.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "6ce8f0465a6c631e40f7068ab703572b70c3f9138d0944c623fd66326660fc89",
+  "classification": "W2",
+  "metadata": {
+    "file_size_bytes": 173953,
+    "filename": "paolino-jeffrey.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2024,
+    "form_type": "W-2",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "03\n12491",
+      "12\n12491",
+      "21\n12491",
+      "46\n12491",
+      "50 in 2024",
+      "IL 60622",
+      "IL 60639",
+      "STREET\n12491"
+    ],
+    "key_figures": {
+      "box_1": "2",
+      "box_3": "20",
+      "box_4": "46",
+      "box_5": "",
+      "box_6": "03"
+    }
+  },
+  "summary": " 2024 Form W-2 Wage and Tax Statement for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

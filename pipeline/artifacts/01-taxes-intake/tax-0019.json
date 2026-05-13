@@ -1,0 +1,38 @@
+{
+  "item_id": "tax-0019",
+  "exhibit_id": "EXH-TAX-0019",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2015/8435_Rowboat Creative, LLC Federal Form 1120S Tax Year 2015.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "ad00415051b2e7016c0332edbd077a881c9911de1f9ed9c7d68825d35c917551",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 847244,
+    "filename": "8435_Rowboat Creative, LLC Federal Form 1120S Tax Year 2015.pdf",
+    "page_count": 37,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": true,
+    "tax_year": 2015,
+    "form_type": "Form 1120S",
+    "entity": "ROWBOAT CREATIVE SERVICES, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "13\n323100",
+      "FL\n34120",
+      "IL\n60639"
+    ],
+    "key_figures": null,
+    "notes": "Document is 37 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2015 Form 1120S tax return for ROWBOAT CREATIVE SERVICES, LLC. 37-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

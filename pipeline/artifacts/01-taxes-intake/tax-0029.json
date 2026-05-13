@@ -1,0 +1,43 @@
+{
+  "item_id": "tax-0029",
+  "exhibit_id": "EXH-TAX-0029",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2020/Rowboat Creative, LLC 2020 Payments - Action Needed.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "6be1de1e87439dbd68f47205703b11f1993c419d3044a74a39ff18864f4b61aa",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "file_size_bytes": 125589,
+    "filename": "Rowboat Creative, LLC 2020 Payments - Action Needed.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2020,
+    "form_type": "IL-1120ST",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "extracted_dates": [
+      "9053\n\n049221",
+      "BOX 19053",
+      "Box 19053",
+      "DECEMBER 31, 2020",
+      "IL  60639",
+      "IL  62794",
+      "IL 60123",
+      "IL 62794",
+      "MAY 31, 2022"
+    ],
+    "key_figures": null
+  },
+  "summary": " 2020 IL-1120ST for ROWBOAT CREATIVE, LLC. 2-page PDF (125,589 bytes).",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

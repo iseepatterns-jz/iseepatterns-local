@@ -1,0 +1,2271 @@
+{
+  "databases": [
+    {
+      "counts": {
+        "chain_of_custody": 48,
+        "drive_links": 36318,
+        "emails": 813914,
+        "emails_fts": 813914,
+        "emails_fts_config": 1,
+        "emails_fts_data": 602761,
+        "emails_fts_docsize": 813914,
+        "emails_fts_idx": 125573,
+        "sqlite_sequence": 3
+      },
+      "email_counts": {
+        "account_groups": [
+          {
+            "count": 392037,
+            "value": "lucas@rowboatcreative.com"
+          },
+          {
+            "count": 217091,
+            "value": "joe@rowboatcreative.com"
+          },
+          {
+            "count": 55133,
+            "value": "patrick@rowboatcreative.com"
+          },
+          {
+            "count": 39091,
+            "value": "jay@rowboatcreative.com"
+          },
+          {
+            "count": 24278,
+            "value": "rob@rowboatcreative.com"
+          },
+          {
+            "count": 19636,
+            "value": "accounting@rowboatcreative.com"
+          },
+          {
+            "count": 19456,
+            "value": "orders@rowboatcreative.com"
+          },
+          {
+            "count": 17729,
+            "value": "info@rowboatcreative.com"
+          },
+          {
+            "count": 12274,
+            "value": "jeff@rowboatcreative.com"
+          },
+          {
+            "count": 4707,
+            "value": "suzanne@rowboatcreative.com"
+          },
+          {
+            "count": 4632,
+            "value": "fulfillment@rowboatcreative.com"
+          },
+          {
+            "count": 3913,
+            "value": "embroidery@rowboatcreative.com"
+          },
+          {
+            "count": 1466,
+            "value": "art@rowboatcreative.com"
+          },
+          {
+            "count": 1440,
+            "value": "burner@rowboatcreative.com"
+          },
+          {
+            "count": 342,
+            "value": "hayesr@rowboatcreative.com"
+          },
+          {
+            "count": 317,
+            "value": "filiberto@rowboatcreative.com"
+          },
+          {
+            "count": 172,
+            "value": "alex@rowboatcreative.com"
+          },
+          {
+            "count": 145,
+            "value": "employment@rowboatcreative.com"
+          },
+          {
+            "count": 42,
+            "value": "abel@rowboatcreative.com"
+          },
+          {
+            "count": 11,
+            "value": "legal@rowboatcreative.com"
+          },
+          {
+            "count": 2,
+            "value": "fidel@rowboatcreative.com"
+          }
+        ],
+        "account_nonblank": 813914,
+        "date_sent_nonblank": 813914,
+        "from_addr_nonblank": 813913,
+        "gmail_id_distinct_nonblank": 813914,
+        "gmail_id_duplicate_values": 0,
+        "gmail_id_nonblank": 813914,
+        "locker_source_groups": [
+          {
+            "count": 809196,
+            "value": "ALL"
+          },
+          {
+            "count": 4707,
+            "value": "SG"
+          },
+          {
+            "count": 11,
+            "value": "LEGAL"
+          }
+        ],
+        "locker_source_nonblank": 813914,
+        "mbox_source_groups": [
+          {
+            "count": 60663,
+            "value": "2024-06-22-all--patrick@rowboatcreative.com-bHTAA6.mbox"
+          },
+          {
+            "count": 55507,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-BUeIrB.mbox"
+          },
+          {
+            "count": 36469,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-RdNpap.mbox"
+          },
+          {
+            "count": 31248,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-KqTV-Q.mbox"
+          },
+          {
+            "count": 29159,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-1IaZg-.mbox"
+          },
+          {
+            "count": 28711,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-djM-oZ.mbox"
+          },
+          {
+            "count": 27295,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-RClpgY.mbox"
+          },
+          {
+            "count": 26598,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-mWstks.mbox"
+          },
+          {
+            "count": 26546,
+            "value": "2024-06-22-all--info@rowboatcreative.com-aAllFJ.mbox"
+          },
+          {
+            "count": 26471,
+            "value": null
+          },
+          {
+            "count": 26287,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-SGqymo.mbox"
+          },
+          {
+            "count": 25977,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-dEQiAz.mbox"
+          },
+          {
+            "count": 25070,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-IEBmBS.mbox"
+          },
+          {
+            "count": 24687,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-1q_evd.mbox"
+          },
+          {
+            "count": 24377,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-9vjjwt.mbox"
+          },
+          {
+            "count": 21810,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-es9V14.mbox"
+          },
+          {
+            "count": 20278,
+            "value": "2024-06-22-all--patrick@rowboatcreative.com-n6eOnz.mbox"
+          },
+          {
+            "count": 19870,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com--bJ0UX.mbox"
+          },
+          {
+            "count": 18956,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-0ar2PU.mbox"
+          },
+          {
+            "count": 18579,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-GFELaK.mbox"
+          },
+          {
+            "count": 15601,
+            "value": "2024-06-22-all--jay@rowboatcreative.com-ZC6nIe.mbox"
+          },
+          {
+            "count": 14892,
+            "value": "2024-06-22-all--accounting@rowboatcreative.com-trQeA-.mbox"
+          },
+          {
+            "count": 14814,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-N_Jgcu.mbox"
+          },
+          {
+            "count": 14792,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-tuBvBP.mbox"
+          },
+          {
+            "count": 14363,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-iMc1Zn.mbox"
+          },
+          {
+            "count": 14045,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-DTwP0W.mbox"
+          },
+          {
+            "count": 13001,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-Fc4dYi.mbox"
+          },
+          {
+            "count": 12566,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-iN08Pb.mbox"
+          },
+          {
+            "count": 12240,
+            "value": "2024-06-22-all--jay@rowboatcreative.com-d_UYFR.mbox"
+          },
+          {
+            "count": 11570,
+            "value": "2024-06-22-all--jay@rowboatcreative.com-klAviG.mbox"
+          },
+          {
+            "count": 9976,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-IS43M4.mbox"
+          },
+          {
+            "count": 9843,
+            "value": "2024-06-22-all--lucas@rowboatcreative.com-VhiGG3.mbox"
+          },
+          {
+            "count": 9715,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-4jVrtL.mbox"
+          },
+          {
+            "count": 8902,
+            "value": "2024-06-22-all--jeff@rowboatcreative.com-oVmQU5.mbox"
+          },
+          {
+            "count": 7815,
+            "value": "2024-06-22-all--rob@rowboatcreative.com-qH9LBE.mbox"
+          },
+          {
+            "count": 7760,
+            "value": "2024-06-22-all--patrick@rowboatcreative.com-FsUE-N.mbox"
+          },
+          {
+            "count": 7028,
+            "value": "2024-06-22-all--orders@rowboatcreative.com-IbDYOB.mbox"
+          },
+          {
+            "count": 6998,
+            "value": "2024-06-22-all--fulfillment@rowboatcreative.com-GQMqtd.mbox"
+          },
+          {
+            "count": 6773,
+            "value": "2024-06-22-all--patrick@rowboatcreative.com-tD_90n.mbox"
+          },
+          {
+            "count": 6523,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-8cr-r5.mbox"
+          },
+          {
+            "count": 4398,
+            "value": "2024-06-22-all--joe@rowboatcreative.com-Q-vCsr.mbox"
+          },
+          {
+            "count": 3264,
+            "value": "2024-06-22-all--embroidery@rowboatcreative.com-_Ar2B8.mbox"
+          },
+          {
+            "count": 3069,
+            "value": "2024-06-22-all--art@rowboatcreative.com-Wa5NFA.mbox"
+          },
+          {
+            "count": 3062,
+            "value": "sggmail--suzanne@rowboatcreative.com-YtFVqI.mbox"
+          },
+          {
+            "count": 1847,
+            "value": "2024-06-22-all--burner@rowboatcreative.com-dR8Lcb.mbox"
+          },
+          {
+            "count": 1314,
+            "value": "2024-06-22-all--rob@rowboatcreative.com-AArr8i.mbox"
+          },
+          {
+            "count": 1256,
+            "value": "2024-06-22-all--patrick@rowboatcreative.com-7Vq8dl.mbox"
+          },
+          {
+            "count": 684,
+            "value": "2024-06-22-all--hayesr@rowboatcreative.com-AyhOpQ.mbox"
+          },
+          {
+            "count": 305,
+            "value": "2024-06-22-all--filiberto@rowboatcreative.com-qDl2HL.mbox"
+          },
+          {
+            "count": 302,
+            "value": "2024-06-22-all--alex@rowboatcreative.com-X7jaE9.mbox"
+          }
+        ],
+        "mbox_source_nonblank": 787443,
+        "rfc822_id_distinct_nonblank": 611044,
+        "rfc822_id_duplicate_values": 127197,
+        "rfc822_id_nonblank": 813914,
+        "subject_nonblank": 812694,
+        "to_addr_nonblank": 809876,
+        "top_duplicate_gmail_id": [],
+        "top_duplicate_rfc822_id": [
+          {
+            "c": 9,
+            "rfc822_id": "325A12D0-1685-4898-B813-D83495A3BFEF@rowboatcreative.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "561C413C-F083-4E3B-A552-DE7B83141ED2@rowboatcreative.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CAA9PtOts+SjKEaQrUdySxx5kxFxY7LmHR91J8jt7Zgx=FWVUxA@mail.gmail.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CAA9PtOu3keR2FURm8x=RQ+9+99SKQ_wm_pzu5ekBsgD-jHxrnA@mail.gmail.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CADnusLySgkMOyQCOWci4U-bGNgkvPkGTgFJsrj8gSQBtdpJTXw@mail.gmail.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CADnusLyiNZh=vx=ktCmLZe90Y0XbDiMdfrV=Mpk10Jrd1+wFAg@mail.gmail.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CADnusLzOvt5NGPhZmoK1YBt9-nF1Ay-DJq=MVjwBQf=gQBrPSw@mail.gmail.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "CD4CB0AB-F66E-45EA-A163-6491695297F5@rowboatcreative.com"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "LO4P123MB4719312699AD541EF58C1D16F0DA9@LO4P123MB4719.GBRP123.PROD.OUTLOOK.COM"
+          },
+          {
+            "c": 9,
+            "rfc822_id": "LO4P123MB4719AA4748ECFE0FC3094713F0DA9@LO4P123MB4719.GBRP123.PROD.OUTLOOK.COM"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "00000000000053533b0598b94c5a@google.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "02CF28A9-0494-4015-9F0A-5A5ED614D197@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "0A1249E4-4234-49B9-9530-59B8CF7020C1@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "0BCFA115-EA05-4A4D-8DC6-2D9760A50C2E@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "0DDA7BFF-3678-4F83-8805-BE390E8F4CC9@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "10F16FF1-2D03-45B5-9DA5-8C1772ACCB8F@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "1A0EF312-C237-4FCD-A944-47B103A8701B@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "1E9AD99D-F7BD-461E-BDFA-7A0C4A84F2F7@rowboatcreative.com"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "2053740965.3677865.1582149880799@emg-co-2-3.serverpod.net"
+          },
+          {
+            "c": 8,
+            "rfc822_id": "28E97D4E-54B2-48AF-A6C2-48AD23B02823@rowboatcreative.com"
+          }
+        ],
+        "total": 813914,
+        "zip_source_groups": [
+          {
+            "count": 60663,
+            "value": "2024-06-22-all-18.zip"
+          },
+          {
+            "count": 55507,
+            "value": "2024-06-22-all-12.zip"
+          },
+          {
+            "count": 36469,
+            "value": "2024-06-22-all-10.zip"
+          },
+          {
+            "count": 31248,
+            "value": "2024-06-22-all-14.zip"
+          },
+          {
+            "count": 29159,
+            "value": "2024-06-22-all-30.zip"
+          },
+          {
+            "count": 28711,
+            "value": "2024-06-22-all-20.zip"
+          },
+          {
+            "count": 27295,
+            "value": "2024-06-22-all-13.zip"
+          },
+          {
+            "count": 26598,
+            "value": "2024-06-22-all-5.zip"
+          },
+          {
+            "count": 26546,
+            "value": "2024-06-22-all-2.zip"
+          },
+          {
+            "count": 26471,
+            "value": null
+          },
+          {
+            "count": 26287,
+            "value": "2024-06-22-all-15.zip"
+          },
+          {
+            "count": 25977,
+            "value": "2024-06-22-all-37.zip"
+          },
+          {
+            "count": 25070,
+            "value": "2024-06-22-all-43.zip"
+          },
+          {
+            "count": 24687,
+            "value": "2024-06-22-all-39.zip"
+          },
+          {
+            "count": 24377,
+            "value": "2024-06-22-all-29.zip"
+          },
+          {
+            "count": 23794,
+            "value": "2024-06-22-all-4.zip"
+          },
+          {
+            "count": 21810,
+            "value": "2024-06-22-all-26.zip"
+          },
+          {
+            "count": 20278,
+            "value": "2024-06-22-all-17.zip"
+          },
+          {
+            "count": 19870,
+            "value": "2024-06-22-all-44.zip"
+          },
+          {
+            "count": 18956,
+            "value": "2024-06-22-all-25.zip"
+          },
+          {
+            "count": 18579,
+            "value": "2024-06-22-all-36.zip"
+          },
+          {
+            "count": 15601,
+            "value": "2024-06-22-all-28.zip"
+          },
+          {
+            "count": 14814,
+            "value": "2024-06-22-all-24.zip"
+          },
+          {
+            "count": 14792,
+            "value": "2024-06-22-all-32.zip"
+          },
+          {
+            "count": 14363,
+            "value": "2024-06-22-all-11.zip"
+          },
+          {
+            "count": 14045,
+            "value": "2024-06-22-all-22.zip"
+          },
+          {
+            "count": 13188,
+            "value": "2024-06-22-all-9.zip"
+          },
+          {
+            "count": 13001,
+            "value": "2024-06-22-all-35.zip"
+          },
+          {
+            "count": 12566,
+            "value": "2024-06-22-all-42.zip"
+          },
+          {
+            "count": 12240,
+            "value": "2024-06-22-all-6.zip"
+          },
+          {
+            "count": 11570,
+            "value": "2024-06-22-all-1.zip"
+          },
+          {
+            "count": 10196,
+            "value": "2024-06-22-all-41.zip"
+          },
+          {
+            "count": 9976,
+            "value": "2024-06-22-all-33.zip"
+          },
+          {
+            "count": 9715,
+            "value": "2024-06-22-all-16.zip"
+          },
+          {
+            "count": 7817,
+            "value": "2024-06-22-all-7.zip"
+          },
+          {
+            "count": 7760,
+            "value": "2024-06-22-all-23.zip"
+          },
+          {
+            "count": 7028,
+            "value": "2024-06-22-all-19.zip"
+          },
+          {
+            "count": 6773,
+            "value": "2024-06-22-all-21.zip"
+          },
+          {
+            "count": 6523,
+            "value": "2024-06-22-all-38.zip"
+          },
+          {
+            "count": 4520,
+            "value": "2024-06-22-all-3.zip"
+          },
+          {
+            "count": 4398,
+            "value": "2024-06-22-all-8.zip"
+          },
+          {
+            "count": 3062,
+            "value": "sggmail-1.zip"
+          },
+          {
+            "count": 1314,
+            "value": "2024-06-22-all-34.zip"
+          },
+          {
+            "count": 176,
+            "value": "2024-06-22-all-27.zip"
+          },
+          {
+            "count": 122,
+            "value": "2024-06-22-all-40.zip"
+          },
+          {
+            "count": 2,
+            "value": "leggmail-1.zip"
+          }
+        ],
+        "zip_source_nonblank": 787443
+      },
+      "objects": [
+        {
+          "name": "idx_drive_account",
+          "sql": "CREATE INDEX idx_drive_account      ON drive_links(account)",
+          "type": "index"
+        },
+        {
+          "name": "idx_drive_rfc822",
+          "sql": "CREATE INDEX idx_drive_rfc822       ON drive_links(rfc822_id)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_account",
+          "sql": "CREATE INDEX idx_emails_account     ON emails(account)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_category",
+          "sql": "CREATE INDEX idx_emails_category    ON emails(category)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_date_sent",
+          "sql": "CREATE INDEX idx_emails_date_sent   ON emails(date_sent)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_from",
+          "sql": "CREATE INDEX idx_emails_from        ON emails(from_addr)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_has_body",
+          "sql": "CREATE INDEX idx_emails_has_body    ON emails(has_body)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_refs",
+          "sql": "CREATE INDEX idx_emails_refs ON emails(refs)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_reply_to",
+          "sql": "CREATE INDEX idx_emails_reply_to ON emails(in_reply_to)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_rfc822",
+          "sql": "CREATE INDEX idx_emails_rfc822      ON emails(rfc822_id)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_spam",
+          "sql": "CREATE INDEX idx_emails_spam        ON emails(is_spam)",
+          "type": "index"
+        },
+        {
+          "name": "idx_emails_subject",
+          "sql": "CREATE INDEX idx_emails_subject ON emails(subject)",
+          "type": "index"
+        },
+        {
+          "name": "sqlite_autoindex_emails_1",
+          "sql": null,
+          "type": "index"
+        },
+        {
+          "name": "chain_of_custody",
+          "sql": "CREATE TABLE chain_of_custody (\n    id              INTEGER PRIMARY KEY AUTOINCREMENT,\n    source_path     TEXT,\n    source_type     TEXT,\n    sha256          TEXT,\n    size_bytes      INTEGER,\n    case_id         TEXT,\n    notes           TEXT,\n    ingested_at     TEXT DEFAULT (datetime('now'))\n)",
+          "type": "table"
+        },
+        {
+          "name": "drive_links",
+          "sql": "CREATE TABLE drive_links (\n    id              INTEGER PRIMARY KEY AUTOINCREMENT,\n    rfc822_id       TEXT NOT NULL,\n    account         TEXT NOT NULL,\n    gmail_id        TEXT,\n    drive_url       TEXT NOT NULL,\n    drive_item_id   TEXT\n)",
+          "type": "table"
+        },
+        {
+          "name": "emails",
+          "sql": "CREATE TABLE emails (\n    id              INTEGER PRIMARY KEY AUTOINCREMENT,\n    rfc822_id       TEXT NOT NULL,\n    gmail_id        TEXT,\n    filename        TEXT,                   -- FileName from metadata CSV\n    account         TEXT NOT NULL,\n    labels_raw      TEXT,                   -- Raw comma-separated Gmail labels\n    category        TEXT,                   -- Derived: inbox/sent/draft/spam/trash/deleted/archived\n    from_addr       TEXT,\n    subject         TEXT,\n    to_addr         TEXT,\n    cc_addr         TEXT,\n    bcc_addr        TEXT,\n    date_sent       TEXT,\n    date_received   TEXT,\n    thread_count    INTEGER DEFAULT 0,\n    locker_source   TEXT NOT NULL,          -- ALL / LEGAL / SG\n    zip_source      TEXT,                   -- Which zip file contained the mbox\n    mbox_source     TEXT,                   -- Which .mbox file inside the zip\n    body            TEXT,                   -- Full body (Phase 2)\n    body_single     TEXT,                   -- First-message-only body (Phase 2)\n    has_body        INTEGER DEFAULT 0,\n    is_spam         INTEGER DEFAULT 0,\n    is_draft        INTEGER DEFAULT 0,\n    is_trash        INTEGER DEFAULT 0,\n    created_at      TEXT DEFAULT (datetime('now')), in_reply_to TEXT, refs TEXT,\n    UNIQUE(rfc822_id, account)\n)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts",
+          "sql": "CREATE VIRTUAL TABLE emails_fts USING fts5(\n    subject, body, from_addr, to_addr,\n    content='emails',\n    content_rowid='id'\n)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_config",
+          "sql": "CREATE TABLE 'emails_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_data",
+          "sql": "CREATE TABLE 'emails_fts_data'(id INTEGER PRIMARY KEY, block BLOB)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_docsize",
+          "sql": "CREATE TABLE 'emails_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_idx",
+          "sql": "CREATE TABLE 'emails_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID",
+          "type": "table"
+        },
+        {
+          "name": "sqlite_sequence",
+          "sql": "CREATE TABLE sqlite_sequence(name,seq)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_ad",
+          "sql": "CREATE TRIGGER emails_fts_ad AFTER DELETE ON emails BEGIN\n    INSERT INTO emails_fts(emails_fts, rowid, subject, body, from_addr, to_addr)\n    VALUES ('delete', old.id, old.subject, old.body, old.from_addr, old.to_addr);\nEND",
+          "type": "trigger"
+        },
+        {
+          "name": "emails_fts_ai",
+          "sql": "CREATE TRIGGER emails_fts_ai AFTER INSERT ON emails BEGIN\n    INSERT INTO emails_fts(rowid, subject, body, from_addr, to_addr)\n    VALUES (new.id, new.subject, new.body, new.from_addr, new.to_addr);\nEND",
+          "type": "trigger"
+        },
+        {
+          "name": "emails_fts_au",
+          "sql": "CREATE TRIGGER emails_fts_au AFTER UPDATE ON emails BEGIN\n    INSERT INTO emails_fts(emails_fts, rowid, subject, body, from_addr, to_addr)\n    VALUES ('delete', old.id, old.subject, old.body, old.from_addr, old.to_addr);\n    INSERT INTO emails_fts(rowid, subject, body, from_addr, to_addr)\n    VALUES (new.id, new.subject, new.body, new.from_addr, new.to_addr);\nEND",
+          "type": "trigger"
+        }
+      ],
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+      "samples": {
+        "chain_of_custody": [
+          {
+            "case_id": "rbc_v_lg",
+            "id": 1,
+            "ingested_at": "2026-03-08T06:03:14.231167Z",
+            "notes": "gmail_zip1 hist-test2",
+            "sha256": "6103422ef702dd31ef30d40e51c38f9e147697db79198398daf455cbcc475321",
+            "size_bytes": 3483878804,
+            "source_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-1.zip",
+            "source_type": "gmail_zip"
+          },
+          {
+            "case_id": "rbc_v_lg",
+            "id": 2,
+            "ingested_at": "2026-03-08T06:03:16.513287Z",
+            "notes": "",
+            "sha256": "cb391bb71988d50be3d01c597e9ed1cbf1975c92d489eb7734d6125281790e5b",
+            "size_bytes": 5688420984,
+            "source_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-2.zip",
+            "source_type": "gmail_zip"
+          },
+          {
+            "case_id": "rbc_v_lg",
+            "id": 3,
+            "ingested_at": "2026-03-08T06:03:18.547825Z",
+            "notes": null,
+            "sha256": "d33e35ef2954bca05eaedf660ac64a73367bb30fd375035aa8bb672372f0236b",
+            "size_bytes": 4969927724,
+            "source_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-3.zip",
+            "source_type": "gmail_zip"
+          }
+        ],
+        "drive_links": [
+          {
+            "account": "art@rowboatcreative.com",
+            "drive_item_id": "1rOg-5SbSChrVwUI63elDmuKR4qHaoedD4MYPeHjncGI",
+            "drive_url": "https://docs.google.com/spreadsheets/d/1rOg-5SbSChrVwUI63elDmuKR4qHaoedD4MYPeHjncGI/edit?usp=sharing_eil_m&ts=61e82b69",
+            "gmail_id": "1722396618580882333",
+            "id": 1,
+            "rfc822_id": "000000000000650f6b05d5f0e091@google.com"
+          },
+          {
+            "account": "art@rowboatcreative.com",
+            "drive_item_id": "1rOg-5SbSChrVwUI63elDmuKR4qHaoedD4MYPeHjncGI",
+            "drive_url": "https://docs.google.com/spreadsheets/d/1rOg-5SbSChrVwUI63elDmuKR4qHaoedD4MYPeHjncGI/edit?usp=sharing_eip_m&ts=61e82b69",
+            "gmail_id": "1722396618580882333",
+            "id": 2,
+            "rfc822_id": "000000000000650f6b05d5f0e091@google.com"
+          },
+          {
+            "account": "art@rowboatcreative.com",
+            "drive_item_id": "1t1jYg6mDC-6M_WoitzBuUbFn1PHWqNK0",
+            "drive_url": "https://drive.google.com/a/secondcityprints.com/file/d/1t1jYg6mDC-6M_WoitzBuUbFn1PHWqNK0/view?usp=drive_web",
+            "gmail_id": "1652728455818730452",
+            "id": 3,
+            "rfc822_id": "CALVLyujkPE6k8QZ7pF3xQ2T61=j4df0TstMXDZH6+8rQzH4H+w@mail.gmail.com"
+          }
+        ],
+        "emails": [
+          {
+            "account": "fidel@rowboatcreative.com",
+            "bcc_addr": "",
+            "body": "Tips for using your new inbox\r\n[image: Gmail]\r\n\r\nWelcome to your inbox\r\n[image: Search]\r\nFind emails fast\r\nWith the power of Google Search in your inbox, you can archive\r\n<https://support.google.com/mail/answer/6576?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nall your email and find it\r\n<https://support.google.com/mail/answer/6593?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nlater in a flash. Your inbox stays tidy, and you never need to worry about\r\nwhat to keep.\r\n[image: Personalize]\r\nPersonalize rowboat creative Mail\r\nCustomize inbox backgrounds, email signatures, and other options in rowboat\r\ncreative Mail settings\r\n<https://support.google.com/mail/answer/6562?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>.\r\nReview and adjust your privacy and security settings at My Account\r\n<https://myaccount.google.com/>.\r\n[image: Organize]\r\nOrganize your email\r\nYou can organize email with labels\r\n<https://support.google.com/mail/answer/118708?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>,\r\nwhich are like folders, but you can add more than one label to a message.\r\nYou can also use filters\r\n<https://support.google.com/mail/answer/6579?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nto automatically sort and categorize messages as they come in.\r\n[image: Social]\r\nChat and meet from your inbox\r\nChat with contacts and start video meetings with up to 25 people in Google\r\nHangouts\r\n<https://support.google.com/hangouts/answer/3115176?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n.\r\n\r\nGet training and tips\r\nFind Gmail guides, tips, cheat sheets, help switching from Microsoft\u00ae\r\nOutlook\u00ae, and more at the Google Workspace Learning Center\r\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n.\r\nVisit the Learning Center\r\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n\r\nHappy emailing,\r\nThe Gmail Team\r\n[image: Google Cloud]\r\n\r\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\r\n\r\n*You\u2019re receiving this mandatory email service announcement to update you\r\nabout important changes to your Google Cloud product or account.*",
+            "body_single": "Tips for using your new inbox\n[image: Gmail]\n\nWelcome to your inbox\n[image: Search]\nFind emails fast\nWith the power of Google Search in your inbox, you can archive\n<https://support.google.com/mail/answer/6576?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\nall your email and find it\n<https://support.google.com/mail/answer/6593?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\nlater in a flash. Your inbox stays tidy, and you never need to worry about\nwhat to keep.\n[image: Personalize]\nPersonalize rowboat creative Mail\nCustomize inbox backgrounds, email signatures, and other options in rowboat\ncreative Mail settings\n<https://support.google.com/mail/answer/6562?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>.\nReview and adjust your privacy and security settings at My Account\n<https://myaccount.google.com/>.\n[image: Organize]\nOrganize your email\nYou can organize email with labels\n<https://support.google.com/mail/answer/118708?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>,\nwhich are like folders, but you can add more than one label to a message.\nYou can also use filters\n<https://support.google.com/mail/answer/6579?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\nto automatically sort and categorize messages as they come in.\n[image: Social]\nChat and meet from your inbox\nChat with contacts and start video meetings with up to 25 people in Google\nHangouts\n<https://support.google.com/hangouts/answer/3115176?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\n.\n\nGet training and tips\nFind Gmail guides, tips, cheat sheets, help switching from Microsoft\u00ae\nOutlook\u00ae, and more at the Google Workspace Learning Center\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\n.\nVisit the Learning Center\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\n\nHappy emailing,\nThe Gmail Team\n[image: Google Cloud]\n\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\n\n*You\u2019re receiving this mandatory email service announcement to update you\nabout important changes to your Google Cloud product or account.*",
+            "category": "inbox",
+            "cc_addr": "",
+            "created_at": "2026-03-11 16:48:52",
+            "date_received": "2022-05-25T12:28:32.234Z",
+            "date_sent": "2022-05-25T12:28:32.000Z",
+            "filename": "1733801239835448710-1653481712000",
+            "from_addr": "mail-noreply@google.com",
+            "gmail_id": "1733801239835448710",
+            "has_body": 1,
+            "id": 1,
+            "in_reply_to": "",
+            "is_draft": 0,
+            "is_spam": 0,
+            "is_trash": 0,
+            "labels_raw": "^INBOX,^UNREAD",
+            "locker_source": "ALL",
+            "mbox_source": "2024-06-22-all--fidel@rowboatcreative.com-ZjTTuU.mbox",
+            "refs": "",
+            "rfc822_id": "CAGkNU-bSbO8+qB1TUt7V69eS6tJRGvqOnNE5WxJsTrCcnrXy=g@mail.gmail.com",
+            "subject": "Tips for using your new inbox",
+            "thread_count": 0,
+            "to_addr": "fidel@rowboatcreative.com",
+            "zip_source": "2024-06-22-all-7.zip"
+          },
+          {
+            "account": "fidel@rowboatcreative.com",
+            "bcc_addr": "",
+            "body": "Get the official Gmail app\r\n[image: Gmail]\r\n\r\nGet the official Gmail app\r\nThe best features of rowboat creative Mail are only available on your phone\r\nand tablet with the official Gmail app. Download the app or go to gmail.com\r\non your computer or mobile device to get started.\r\n\r\n[image: Get it on Google Play]\r\n<https://play.google.com/store/apps/details?id=com.google.android.gm&hl=en>\r\n[image:\r\nApple App Store]\r\n<https://apps.apple.com/app/gmail-email-by-google/id422689480?l=en>\r\n\r\nHappy emailing,\r\nThe Gmail Team\r\n[image: Google Cloud]\r\n\r\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\r\n\r\n*You\u2019re receiving this mandatory email service announcement to update you\r\nabout important changes to your Google Cloud product or account.*",
+            "body_single": "Get the official Gmail app\n[image: Gmail]\n\nGet the official Gmail app\nThe best features of rowboat creative Mail are only available on your phone\nand tablet with the official Gmail app. Download the app or go to gmail.com\non your computer or mobile device to get started.\n\n[image: Get it on Google Play]\n<https://play.google.com/store/apps/details?id=com.google.android.gm&hl=en>\n[image:\nApple App Store]\n<https://apps.apple.com/app/gmail-email-by-google/id422689480?l=en>\n\nHappy emailing,\nThe Gmail Team\n[image: Google Cloud]\n\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\n\n*You\u2019re receiving this mandatory email service announcement to update you\nabout important changes to your Google Cloud product or account.*",
+            "category": "inbox",
+            "cc_addr": "",
+            "created_at": "2026-03-11 16:48:52",
+            "date_received": "2022-05-25T12:28:30.303Z",
+            "date_sent": "2022-05-25T12:28:30.000Z",
+            "filename": "1733801238104333871-1653481710000",
+            "from_addr": "mail-noreply@google.com",
+            "gmail_id": "1733801238104333871",
+            "has_body": 1,
+            "id": 2,
+            "in_reply_to": "",
+            "is_draft": 0,
+            "is_spam": 0,
+            "is_trash": 0,
+            "labels_raw": "^INBOX,^UNREAD",
+            "locker_source": "ALL",
+            "mbox_source": "2024-06-22-all--fidel@rowboatcreative.com-ZjTTuU.mbox",
+            "refs": "",
+            "rfc822_id": "CAGkNU-bMq71H2uGepbkwQ8x=84co+_-y8qzDFLwH91x_jR+xKw@mail.gmail.com",
+            "subject": "Get the official Gmail app",
+            "thread_count": 0,
+            "to_addr": "fidel@rowboatcreative.com",
+            "zip_source": "2024-06-22-all-7.zip"
+          },
+          {
+            "account": "rob@rowboatcreative.com",
+            "bcc_addr": "",
+            "body": "96\r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n  \r\n    \r\n    \r\n    \r\n  \r\n  \r\n    \r\n    \r\n      \r\n        \r\n      \r\n      \r\n    \r\n      \r\n      \r\n        \r\n        \r\n          \r\n            \r\n              \r\n                \r\n            \r\n      \r\n        \r\n      \r\n        \r\n          \r\n              \r\n                \r\n                  \r\n      $0.99/pcs Folding Chair\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Hi Morning\nI want to share with you a very useful product.\nThis folding chair has an ergonomic handle that folds and is easy to carry. Simply lift the handle, and you can fold it easily with one hand in an instant. Portable chair quickly and easily folds for simple storage and transportation.\nDesigned with many excellent characteristics, such as high stability, strong load-bearing and sturdy, our folding chair can with stand the weight of an adult, and no need to worry about deformation. Perfect for all outdoor adventures.\nIt is constructed of plastic material. And there are 2 models to choose from. This product is perfectly suitable for camping, hiking,travelling, fishing, and more\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n        \r\n          \r\n      \r\n    \r\n        \r\n      \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Unit Price:\nUS$0.99/PCS \u00a0Small Size :23*19*18CM\nUS$1.49/PCS \u00a0Big Size :25*31*22.3CM\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n      \r\n    \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Unit Price:\nUS$1.97/PCS \t\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n      \r\n    \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n        \r\n      \r\n    \r\n      \n\r\n    \r\n          \n\r\n              \r\n            \n\r\n          \r\n        \r\n        \r\n      \n\r\n    \r\n      \r\n      \n\r\n    \r\n    \r\n      \n\r\n    \r\n  \r\n\n\r\nunsubscribe",
+            "body_single": "96\n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n  \n    \n    \n    \n  \n  \n    \n    \n      \n        \n      \n      \n    \n      \n      \n        \n        \n          \n            \n              \n                \n            \n      \n        \n      \n        \n          \n              \n                \n                  \n      $0.99/pcs Folding Chair\n\n\n    \n                \n              \n\n            \n              \n                \n                  \n      Hi Morning\nI want to share with you a very useful product.\nThis folding chair has an ergonomic handle that folds and is easy to carry. Simply lift the handle, and you can fold it easily with one hand in an instant. Portable chair quickly and easily folds for simple storage and transportation.\nDesigned with many excellent characteristics, such as high stability, strong load-bearing and sturdy, our folding chair can with stand the weight of an adult, and no need to worry about deformation. Perfect for all outdoor adventures.\nIt is constructed of plastic material. And there are 2 models to choose from. This product is perfectly suitable for camping, hiking,travelling, fishing, and more\n\n\n    \n                \n              \n\n            \n              \n                \n                  \n      \n        \n          \n            \n              \n        \n          \n      \n    \n        \n      \n            \n          \n\n        \n      \n    \n                \n              \n\n            \n              \n                \n                  \n      Unit Price:\nUS$0.99/PCS \u00a0Small Size :23*19*18CM\nUS$1.49/PCS \u00a0Big Size :25*31*22.3CM\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\n    \n                \n              \n\n            \n              \n                \n                  \n      \n        \n          \n            \n              \n      \n    \n            \n          \n\n        \n      \n    \n                \n              \n\n            \n              \n                \n                  \n      Unit Price:\nUS$1.97/PCS \t\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\n    \n                \n              \n\n            \n              \n                \n                  \n      \n        \n          \n            \n              \n      \n    \n            \n          \n\n        \n      \n    \n                \n              \n\n            \n        \n      \n    \n      \n\n    \n          \n\n              \n            \n\n          \n        \n        \n      \n\n    \n      \n      \n\n    \n    \n      \n\n    \n  \n\n\nunsubscribe",
+            "category": "spam",
+            "cc_addr": "",
+            "created_at": "2026-03-11 16:48:52",
+            "date_received": "2024-05-31T23:02:41.043Z",
+            "date_sent": "2024-05-31T23:02:37.000Z",
+            "filename": "1800611101541724580-1717196557000",
+            "from_addr": "postmaster@24dm.oriphe.net",
+            "gmail_id": "1800611101541724580",
+            "has_body": 1,
+            "id": 3,
+            "in_reply_to": "",
+            "is_draft": 0,
+            "is_spam": 1,
+            "is_trash": 0,
+            "labels_raw": "^SPAM,^UNREAD",
+            "locker_source": "ALL",
+            "mbox_source": "2024-06-22-all--joe@rowboatcreative.com-BUeIrB.mbox",
+            "refs": "",
+            "rfc822_id": "20240531230236.1.6C13C9F4EA4A9C02@24dm.oriphe.net",
+            "subject": "$0.99/pcs Folding Chair",
+            "thread_count": 0,
+            "to_addr": "orders@rowboatcreative.com",
+            "zip_source": "2024-06-22-all-12.zip"
+          }
+        ],
+        "emails_fts": [
+          {
+            "body": "Tips for using your new inbox\r\n[image: Gmail]\r\n\r\nWelcome to your inbox\r\n[image: Search]\r\nFind emails fast\r\nWith the power of Google Search in your inbox, you can archive\r\n<https://support.google.com/mail/answer/6576?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nall your email and find it\r\n<https://support.google.com/mail/answer/6593?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nlater in a flash. Your inbox stays tidy, and you never need to worry about\r\nwhat to keep.\r\n[image: Personalize]\r\nPersonalize rowboat creative Mail\r\nCustomize inbox backgrounds, email signatures, and other options in rowboat\r\ncreative Mail settings\r\n<https://support.google.com/mail/answer/6562?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>.\r\nReview and adjust your privacy and security settings at My Account\r\n<https://myaccount.google.com/>.\r\n[image: Organize]\r\nOrganize your email\r\nYou can organize email with labels\r\n<https://support.google.com/mail/answer/118708?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>,\r\nwhich are like folders, but you can add more than one label to a message.\r\nYou can also use filters\r\n<https://support.google.com/mail/answer/6579?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\nto automatically sort and categorize messages as they come in.\r\n[image: Social]\r\nChat and meet from your inbox\r\nChat with contacts and start video meetings with up to 25 people in Google\r\nHangouts\r\n<https://support.google.com/hangouts/answer/3115176?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n.\r\n\r\nGet training and tips\r\nFind Gmail guides, tips, cheat sheets, help switching from Microsoft\u00ae\r\nOutlook\u00ae, and more at the Google Workspace Learning Center\r\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n.\r\nVisit the Learning Center\r\n<https://support.google.com/a/users/answer/9259748?hl=en&utm_source=gmailwelcomeemail&utm_medium=email&utm_campaign=gmailwelcome>\r\n\r\nHappy emailing,\r\nThe Gmail Team\r\n[image: Google Cloud]\r\n\r\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\r\n\r\n*You\u2019re receiving this mandatory email service announcement to update you\r\nabout important changes to your Google Cloud product or account.*",
+            "from_addr": "mail-noreply@google.com",
+            "subject": "Tips for using your new inbox",
+            "to_addr": "fidel@rowboatcreative.com"
+          },
+          {
+            "body": "Get the official Gmail app\r\n[image: Gmail]\r\n\r\nGet the official Gmail app\r\nThe best features of rowboat creative Mail are only available on your phone\r\nand tablet with the official Gmail app. Download the app or go to gmail.com\r\non your computer or mobile device to get started.\r\n\r\n[image: Get it on Google Play]\r\n<https://play.google.com/store/apps/details?id=com.google.android.gm&hl=en>\r\n[image:\r\nApple App Store]\r\n<https://apps.apple.com/app/gmail-email-by-google/id422689480?l=en>\r\n\r\nHappy emailing,\r\nThe Gmail Team\r\n[image: Google Cloud]\r\n\r\n\u00a9 2022 Google LLC 1600 Amphitheatre Parkway, Mountain View, CA 94043\r\n\r\n*You\u2019re receiving this mandatory email service announcement to update you\r\nabout important changes to your Google Cloud product or account.*",
+            "from_addr": "mail-noreply@google.com",
+            "subject": "Get the official Gmail app",
+            "to_addr": "fidel@rowboatcreative.com"
+          },
+          {
+            "body": "96\r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n    \r\n  \r\n    \r\n    \r\n    \r\n  \r\n  \r\n    \r\n    \r\n      \r\n        \r\n      \r\n      \r\n    \r\n      \r\n      \r\n        \r\n        \r\n          \r\n            \r\n              \r\n                \r\n            \r\n      \r\n        \r\n      \r\n        \r\n          \r\n              \r\n                \r\n                  \r\n      $0.99/pcs Folding Chair\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Hi Morning\nI want to share with you a very useful product.\nThis folding chair has an ergonomic handle that folds and is easy to carry. Simply lift the handle, and you can fold it easily with one hand in an instant. Portable chair quickly and easily folds for simple storage and transportation.\nDesigned with many excellent characteristics, such as high stability, strong load-bearing and sturdy, our folding chair can with stand the weight of an adult, and no need to worry about deformation. Perfect for all outdoor adventures.\nIt is constructed of plastic material. And there are 2 models to choose from. This product is perfectly suitable for camping, hiking,travelling, fishing, and more\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n        \r\n          \r\n      \r\n    \r\n        \r\n      \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Unit Price:\nUS$0.99/PCS \u00a0Small Size :23*19*18CM\nUS$1.49/PCS \u00a0Big Size :25*31*22.3CM\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n      \r\n    \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      Unit Price:\nUS$1.97/PCS \t\nMaterial: \u00a0Plastic\u00a0\nPacking: Polybag\nQuotation based on EXWork\nLogo: Free for 1color\nProduction time: 18-21work days\nAbove prices base on 10000pcs\n\n\r\n    \r\n                \r\n              \n\r\n            \r\n              \r\n                \r\n                  \r\n      \r\n        \r\n          \r\n            \r\n              \r\n      \r\n    \r\n            \r\n          \n\r\n        \r\n      \r\n    \r\n                \r\n              \n\r\n            \r\n        \r\n      \r\n    \r\n      \n\r\n    \r\n          \n\r\n              \r\n            \n\r\n          \r\n        \r\n        \r\n      \n\r\n    \r\n      \r\n      \n\r\n    \r\n    \r\n      \n\r\n    \r\n  \r\n\n\r\nunsubscribe",
+            "from_addr": "postmaster@24dm.oriphe.net",
+            "subject": "$0.99/pcs Folding Chair",
+            "to_addr": "orders@rowboatcreative.com"
+          }
+        ],
+        "emails_fts_config": [
+          {
+            "k": "version",
+            "v": 4
+          }
+        ],
+        "emails_fts_data": [
+          {
+            "block": {
+              "bytes_hex_prefix": "b1d65a82b7a04882838ef73281a3e81181b7bc12",
+              "bytes_len": 20
+            },
+            "id": 1
+          },
+          {
+            "block": {
+              "bytes_hex_prefix": "000000000a1181c0b85800080701010901010b01010c01010d01010e01010f01011001010001190104000106011500010a01810b0002040187740501862f0000",
+              "bytes_len": 90
+            },
+            "id": 10
+          },
+          {
+            "block": {
+              "bytes_hex_prefix": "00000fd1023030e20b090101852f02090101844f83360f01018e51816220330f010188708162200613010183381f1e1e0a7802130101826f1f1e1e0a78814e09",
+              "bytes_len": 4050
+            },
+            "id": 137438953473
+          }
+        ],
+        "emails_fts_docsize": [
+          {
+            "id": 1,
+            "sz": {
+              "bytes_hex_prefix": "06826b0403",
+              "bytes_len": 5
+            }
+          },
+          {
+            "id": 2,
+            "sz": {
+              "bytes_hex_prefix": "057c0403",
+              "bytes_len": 4
+            }
+          },
+          {
+            "id": 3,
+            "sz": {
+              "bytes_hex_prefix": "0581420403",
+              "bytes_len": 5
+            }
+          }
+        ],
+        "emails_fts_idx": [
+          {
+            "pgno": 3,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "",
+              "bytes_len": 0
+            }
+          },
+          {
+            "pgno": 277,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "303030",
+              "bytes_len": 3
+            }
+          },
+          {
+            "pgno": 575,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "30303030",
+              "bytes_len": 4
+            }
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "name": "emails",
+            "seq": 814065
+          },
+          {
+            "name": "drive_links",
+            "seq": 36318
+          },
+          {
+            "name": "chain_of_custody",
+            "seq": 48
+          }
+        ]
+      },
+      "table_info": {
+        "chain_of_custody": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "source_path",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "source_type",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "sha256",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 4,
+            "dflt_value": null,
+            "name": "size_bytes",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 5,
+            "dflt_value": null,
+            "name": "case_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 6,
+            "dflt_value": null,
+            "name": "notes",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 7,
+            "dflt_value": "datetime('now')",
+            "name": "ingested_at",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ],
+        "drive_links": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "rfc822_id",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "account",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "gmail_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 4,
+            "dflt_value": null,
+            "name": "drive_url",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 5,
+            "dflt_value": null,
+            "name": "drive_item_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ],
+        "emails": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "rfc822_id",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "gmail_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "filename",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 4,
+            "dflt_value": null,
+            "name": "account",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 5,
+            "dflt_value": null,
+            "name": "labels_raw",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 6,
+            "dflt_value": null,
+            "name": "category",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 7,
+            "dflt_value": null,
+            "name": "from_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 8,
+            "dflt_value": null,
+            "name": "subject",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 9,
+            "dflt_value": null,
+            "name": "to_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 10,
+            "dflt_value": null,
+            "name": "cc_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 11,
+            "dflt_value": null,
+            "name": "bcc_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 12,
+            "dflt_value": null,
+            "name": "date_sent",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 13,
+            "dflt_value": null,
+            "name": "date_received",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 14,
+            "dflt_value": "0",
+            "name": "thread_count",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 15,
+            "dflt_value": null,
+            "name": "locker_source",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 16,
+            "dflt_value": null,
+            "name": "zip_source",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 17,
+            "dflt_value": null,
+            "name": "mbox_source",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 18,
+            "dflt_value": null,
+            "name": "body",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 19,
+            "dflt_value": null,
+            "name": "body_single",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 20,
+            "dflt_value": "0",
+            "name": "has_body",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 21,
+            "dflt_value": "0",
+            "name": "is_spam",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 22,
+            "dflt_value": "0",
+            "name": "is_draft",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 23,
+            "dflt_value": "0",
+            "name": "is_trash",
+            "notnull": 0,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 24,
+            "dflt_value": "datetime('now')",
+            "name": "created_at",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 25,
+            "dflt_value": null,
+            "name": "in_reply_to",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 26,
+            "dflt_value": null,
+            "name": "refs",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ],
+        "emails_fts": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "subject",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "body",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "from_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "to_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "emails_fts_config": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "k",
+            "notnull": 1,
+            "pk": 1,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "v",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "emails_fts_data": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "block",
+            "notnull": 0,
+            "pk": 0,
+            "type": "BLOB"
+          }
+        ],
+        "emails_fts_docsize": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "sz",
+            "notnull": 0,
+            "pk": 0,
+            "type": "BLOB"
+          }
+        ],
+        "emails_fts_idx": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "segid",
+            "notnull": 1,
+            "pk": 1,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "term",
+            "notnull": 1,
+            "pk": 2,
+            "type": ""
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "pgno",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "name",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "seq",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ]
+      },
+      "tables": [
+        "chain_of_custody",
+        "drive_links",
+        "emails",
+        "emails_fts",
+        "emails_fts_config",
+        "emails_fts_data",
+        "emails_fts_docsize",
+        "emails_fts_idx",
+        "sqlite_sequence"
+      ]
+    },
+    {
+      "counts": {
+        "emails": 746346,
+        "emails_fts": 746346,
+        "emails_fts_config": 1,
+        "emails_fts_data": 150449,
+        "emails_fts_docsize": 746346,
+        "emails_fts_idx": 43933,
+        "sqlite_sequence": 1
+      },
+      "email_counts": {
+        "from_addr_nonblank": 746346,
+        "subject_nonblank": 745514,
+        "to_addr_nonblank": 743332,
+        "total": 746346
+      },
+      "objects": [
+        {
+          "name": "idx_emails_message_id",
+          "sql": "CREATE INDEX idx_emails_message_id ON emails(message_id)",
+          "type": "index"
+        },
+        {
+          "name": "emails",
+          "sql": "CREATE TABLE emails (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            zip_file TEXT,\n            mbox_name TEXT,\n            email_account TEXT,\n            message_id TEXT,\n            date TEXT,\n            from_addr TEXT,\n            to_addr TEXT,\n            cc_addr TEXT,\n            subject TEXT,\n            body_snippet TEXT,\n            thread_id TEXT\n        , labels TEXT)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts",
+          "sql": "CREATE VIRTUAL TABLE emails_fts USING fts5(\n            subject,\n            body_snippet,\n            content='emails',\n            content_rowid='id'\n        )",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_config",
+          "sql": "CREATE TABLE 'emails_fts_config'(k PRIMARY KEY, v) WITHOUT ROWID",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_data",
+          "sql": "CREATE TABLE 'emails_fts_data'(id INTEGER PRIMARY KEY, block BLOB)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_docsize",
+          "sql": "CREATE TABLE 'emails_fts_docsize'(id INTEGER PRIMARY KEY, sz BLOB)",
+          "type": "table"
+        },
+        {
+          "name": "emails_fts_idx",
+          "sql": "CREATE TABLE 'emails_fts_idx'(segid, term, pgno, PRIMARY KEY(segid, term)) WITHOUT ROWID",
+          "type": "table"
+        },
+        {
+          "name": "sqlite_sequence",
+          "sql": "CREATE TABLE sqlite_sequence(name,seq)",
+          "type": "table"
+        },
+        {
+          "name": "emails_ai",
+          "sql": "CREATE TRIGGER emails_ai AFTER INSERT ON emails BEGIN\n            INSERT INTO emails_fts(rowid, subject, body_snippet)\n            VALUES (new.id, new.subject, new.body_snippet);\n        END",
+          "type": "trigger"
+        }
+      ],
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db",
+      "samples": {
+        "emails": [
+          {
+            "body_snippet": "Hey Jay -\r\n\r\nEverything good on your end?? We've been worried!\r\n\r\nBunch of outstanding items:\r\n\r\n*FOUR - *\r\n-Need pricing on UV shirts\r\n-UV design -- want big gold flag on back (reflective is possible or screen\r\nprint metallic) - so the whole shirt changes color but the gold outline\r\nflat stays gold, but the inside of the stripes and stars should still\r\nUV -- *does\r\nthis work / make sense?*\r\n-Need input on the jackets (in your possession)\r\n-Need to redo the jackets with the 3m gold reflective (or comparable\r\nmaterial)\r\n\r\nAs mentioned, there are some very high profile Chicagoans who are\r\ninterested in gear, and would love to get jackets (at a minimum) in\r\ntheir possession so that we can strike while the iron is hot.\r\n\r\n*Hunt Club - *\r\nNeed a quote on a ton of hats & shirts (dad hats) -- have a new logo we are\r\nlaunching soon and want to get in front of this.\r\n\r\nI can send you a higher res logo but here is the attached - teal'ish key\r\nwith white HUNT CLUB font next to it.  Will want to put this one a navy\r\nshirt, and across a dad hat.\r\n\r\n*2 questions -- *\r\n\r\n*1) will this fit across a dad hat? Is the key too intricate to embroider\r\n(to note, the teeth of the key is like a computer chip so its got some\r\ndetail) -- otherwise we may just go Key like last time on front, and Hunt\r\nClub across the back*\r\n\r\n*2) what colors of navy shirts could look good? We did bella canvas navy --\r\nthe soft ones -- open to suggestions.*\r\n\r\n*3) you guys dont do other products right..like water bottles etc?*\r\n\r\n*On all of the above would love to save cost where we can so will defer to\r\nyou on whats best. *\r\n\r\nMuch appreciated,\r\nSami",
+            "cc_addr": "RYAN OHALLORAN <rmohalloran@icloud.com>",
+            "date": "Tue, 3 Sep 2019 10:10:34 -0500",
+            "email_account": "jay@rowboatcreative.com",
+            "from_addr": "Sami Ahmed <samiahme@gmail.com>",
+            "id": 1,
+            "labels": "^INBOX,^OPENED",
+            "mbox_name": "2024-06-22-all--jay@rowboatcreative.com-klAviG.mbox",
+            "message_id": "<CAA_R2omfbMJ4tnR_3K1qdWCCRGVTHvSt5rUxdz_tQxwSPwhfQQ@mail.gmail.com>",
+            "subject": "Checking in /// FOUR /// Hunt Club -- **Time Sensitive**",
+            "thread_id": "",
+            "to_addr": "Jay Goebel <jay@rowboatcreative.com>",
+            "zip_file": "2024-06-22-all-1.zip"
+          },
+          {
+            "body_snippet": "Hi Lucas,\r\n\r\nJust to let you know the tracking shows estimate delivery today.\r\n\r\nThank you again for the order,\r\n\r\nThanks\r\nAdam\r\n\r\n[cid:image002.png@01D55E4A.957066A0]\r\n\r\n\r\n\r\n\r\nAdam Meehan\r\nInternal Sales Executive - ROW\r\nRalawise Ltd\r\n[http://www.promotional-store.com/eshot/ralalert/Ralawise_Signature_2015.jpg]<https://shop.ralawise.com/topic/237-social-media.aspx>\r\n<http://twitter.com/#%21/ralawise><http://www.youtube.com/user/RalawiseTV><https://plus.google.com/113050944286330074348#113050944286330074348/posts><https://shop.ralawise.com/>\r\nEmail: Adam.Meehan@ralawise.com<mailto:Adam.Meehan@ralawise.com>\r\nDDI: +44 1244 283268\r\nMobile:\r\nFax:\r\nWeb: www.ralawise.com<http://www.ralawise.com>\r\nMobile Web: m.ralawise.com\r\nSkype:\r\n\r\nP Please consider the environment before printing\r\n\r\nRegistered in England & Wales No 1362849\r\nRegistered Office : Unit 112, Tenth Avenue, Zone 3, Deeside Industrial Park,\r\nDeeside, Flintshire, CH5 2UA\r\n________________________________\r\nAny statements and opinions expressed in this e-mail or its attachments are purely those of the sender and may not represent those of Ralawise Ltd. This e-mail and its attachments are intended for the named recipient only and may be confidential. If you are not the named recipient any copying, forwarding or printing of this message is unauthorised and may be unlawful. If you have received this e-mail in error please inform the sender immediately.  When addressed to our customers any information provided in this e-mail is subject to Ralawise's terms and conditions of sale.  A copy of these terms can be obtained from our website by clicking here<https://shop.ralawise.com/topic/137-terms-and-conditions-of-sale-ralawise.aspx>. To the best of our knowledge this e-mail and its attachments are free from any virus, however we would advise the recipient to ensure the email is virus-free as Ralawise Ltd cannot accept responsibility for loss or damage arising from the use of this e-mail or it's attachments.\r\n\r\nFrom: Elen",
+            "cc_addr": "Martin Harvey <martin.harvey@ralawise.com>",
+            "date": "Thu, 29 Aug 2019 08:17:31 +0000",
+            "email_account": "jay@rowboatcreative.com",
+            "from_addr": "Adam Meehan <adam.meehan@ralawise.com>",
+            "id": 2,
+            "labels": "^INBOX,^OPENED",
+            "mbox_name": "2024-06-22-all--jay@rowboatcreative.com-klAviG.mbox",
+            "message_id": "<ff63425fb98f4538a2cd8c33b9ef5098@ralawise.com>",
+            "subject": "RE: Ralawise # 191660 -  RO454",
+            "thread_id": "AdVeQjOIB2cF6Ja4TByVoFCFhfaO7g==",
+            "to_addr": "Lucas Guariglia <lucas@rowboatcreative.com>,\r\n        Jay Goebel\r\n\t<jay@rowboatcreative.com>,\r\n        Joe Zangrilli <joe@rowboatcreative.com>",
+            "zip_file": "2024-06-22-all-1.zip"
+          },
+          {
+            "body_snippet": "hi Lucas,\r\n\r\nthanks for the rundown below. a few questions based off these possible\r\nchanges:\r\n\r\n\r\n   - how would this change in machinery change the quantity output?\r\n   - if you could still break this down for me a bit based off each line\r\n   item that would be great\r\n\r\nalso, i received a few renderings of what we are looking to build out. take\r\na look and let me know what you need in order to price out. there might be\r\na few updates to the renderings when i get the final ones on monday and i\r\nwill send through for viz. If possible, can i get top line costs by\r\nthursday of next week? For pricing, are you able to list out individual\r\ncosts for each piece?\r\n\r\nthanks!\r\ndestiny greco-ramirez\r\n1640 wilcox ave\r\nlos angeles, ca 90028\r\n<https://maps.google.com/?q=1640+Wilcox+Ave,+Los+Angeles,+CA+90028,+USA>\r\nc. 661 877 7785 o. 323 843 4294\r\nwww.narrativemediagroup.com\r\ninstagram: @narrativegroup <https://www.instagram.com/narrativegroup/>\r\n\r\nnew york | los angeles | chicago\r\n\r\nThis email and any files transmitted are confidential and intended solely\r\nfor the use of the individual or entity to which they are addressed.If you\r\nhave received this email by error, please notify us immediately and\r\npermanently delete it from your computer.\r\n\r\n\r\nOn Thu, Aug 29, 2019 at 6:43 AM Lucas Guariglia <lucas@rowboatcreative.com>\r\nwrote:\r\n\r\n> Morning Destiny!\r\n> Happy to work on scope to keep closer to intended budget. One immediate\r\n> solve might be to reduce to 1qty screen printing press and then couple that\r\n> with the 2 heat press stations where consumers can pick from pre-printed\r\n> transfers of different designs and color ways to layer onto the tee prints.\r\n> This would still make a strong visual impact with the actual printing press\r\n> and heat presses, however we could cut back on staffing as well as\r\n> machinery. This would also consolidate the footprint if that is also\r\n> concern.\r\n>\r\n> Let me know initial thoughts on the above and we can keep working together\r\n> to align on ide",
+            "cc_addr": "Jay Goebel <jay@rowboatcreative.com>, Joe Zangrilli <joe@rowboatcreative.com>",
+            "date": "Thu, 29 Aug 2019 16:14:50 -0700",
+            "email_account": "jay@rowboatcreative.com",
+            "from_addr": "Destiny Greco <destiny.greco@narrativemediagroup.com>",
+            "id": 3,
+            "labels": "^INBOX,^OPENED",
+            "mbox_name": "2024-06-22-all--jay@rowboatcreative.com-klAviG.mbox",
+            "message_id": "<CAPqL=ZoOoWkJ_uhujB6Vi26kda5K1Lu98i+EtT=koGwr3W84Lg@mail.gmail.com>",
+            "subject": "Re: Onsite Screen printing 10/17",
+            "thread_id": "<CAPqL=ZqQJjZ6Xx-A2ga_sxvQLBGVshnv4zgf_prG4KkEDaJdJw@mail.gmail.com>",
+            "to_addr": "Lucas Guariglia <lucas@rowboatcreative.com>",
+            "zip_file": "2024-06-22-all-1.zip"
+          }
+        ],
+        "emails_fts": [
+          {
+            "body_snippet": "Hey Jay -\r\n\r\nEverything good on your end?? We've been worried!\r\n\r\nBunch of outstanding items:\r\n\r\n*FOUR - *\r\n-Need pricing on UV shirts\r\n-UV design -- want big gold flag on back (reflective is possible or screen\r\nprint metallic) - so the whole shirt changes color but the gold outline\r\nflat stays gold, but the inside of the stripes and stars should still\r\nUV -- *does\r\nthis work / make sense?*\r\n-Need input on the jackets (in your possession)\r\n-Need to redo the jackets with the 3m gold reflective (or comparable\r\nmaterial)\r\n\r\nAs mentioned, there are some very high profile Chicagoans who are\r\ninterested in gear, and would love to get jackets (at a minimum) in\r\ntheir possession so that we can strike while the iron is hot.\r\n\r\n*Hunt Club - *\r\nNeed a quote on a ton of hats & shirts (dad hats) -- have a new logo we are\r\nlaunching soon and want to get in front of this.\r\n\r\nI can send you a higher res logo but here is the attached - teal'ish key\r\nwith white HUNT CLUB font next to it.  Will want to put this one a navy\r\nshirt, and across a dad hat.\r\n\r\n*2 questions -- *\r\n\r\n*1) will this fit across a dad hat? Is the key too intricate to embroider\r\n(to note, the teeth of the key is like a computer chip so its got some\r\ndetail) -- otherwise we may just go Key like last time on front, and Hunt\r\nClub across the back*\r\n\r\n*2) what colors of navy shirts could look good? We did bella canvas navy --\r\nthe soft ones -- open to suggestions.*\r\n\r\n*3) you guys dont do other products right..like water bottles etc?*\r\n\r\n*On all of the above would love to save cost where we can so will defer to\r\nyou on whats best. *\r\n\r\nMuch appreciated,\r\nSami",
+            "subject": "Checking in /// FOUR /// Hunt Club -- **Time Sensitive**"
+          },
+          {
+            "body_snippet": "Hi Lucas,\r\n\r\nJust to let you know the tracking shows estimate delivery today.\r\n\r\nThank you again for the order,\r\n\r\nThanks\r\nAdam\r\n\r\n[cid:image002.png@01D55E4A.957066A0]\r\n\r\n\r\n\r\n\r\nAdam Meehan\r\nInternal Sales Executive - ROW\r\nRalawise Ltd\r\n[http://www.promotional-store.com/eshot/ralalert/Ralawise_Signature_2015.jpg]<https://shop.ralawise.com/topic/237-social-media.aspx>\r\n<http://twitter.com/#%21/ralawise><http://www.youtube.com/user/RalawiseTV><https://plus.google.com/113050944286330074348#113050944286330074348/posts><https://shop.ralawise.com/>\r\nEmail: Adam.Meehan@ralawise.com<mailto:Adam.Meehan@ralawise.com>\r\nDDI: +44 1244 283268\r\nMobile:\r\nFax:\r\nWeb: www.ralawise.com<http://www.ralawise.com>\r\nMobile Web: m.ralawise.com\r\nSkype:\r\n\r\nP Please consider the environment before printing\r\n\r\nRegistered in England & Wales No 1362849\r\nRegistered Office : Unit 112, Tenth Avenue, Zone 3, Deeside Industrial Park,\r\nDeeside, Flintshire, CH5 2UA\r\n________________________________\r\nAny statements and opinions expressed in this e-mail or its attachments are purely those of the sender and may not represent those of Ralawise Ltd. This e-mail and its attachments are intended for the named recipient only and may be confidential. If you are not the named recipient any copying, forwarding or printing of this message is unauthorised and may be unlawful. If you have received this e-mail in error please inform the sender immediately.  When addressed to our customers any information provided in this e-mail is subject to Ralawise's terms and conditions of sale.  A copy of these terms can be obtained from our website by clicking here<https://shop.ralawise.com/topic/137-terms-and-conditions-of-sale-ralawise.aspx>. To the best of our knowledge this e-mail and its attachments are free from any virus, however we would advise the recipient to ensure the email is virus-free as Ralawise Ltd cannot accept responsibility for loss or damage arising from the use of this e-mail or it's attachments.\r\n\r\nFrom: Elen",
+            "subject": "RE: Ralawise # 191660 -  RO454"
+          },
+          {
+            "body_snippet": "hi Lucas,\r\n\r\nthanks for the rundown below. a few questions based off these possible\r\nchanges:\r\n\r\n\r\n   - how would this change in machinery change the quantity output?\r\n   - if you could still break this down for me a bit based off each line\r\n   item that would be great\r\n\r\nalso, i received a few renderings of what we are looking to build out. take\r\na look and let me know what you need in order to price out. there might be\r\na few updates to the renderings when i get the final ones on monday and i\r\nwill send through for viz. If possible, can i get top line costs by\r\nthursday of next week? For pricing, are you able to list out individual\r\ncosts for each piece?\r\n\r\nthanks!\r\ndestiny greco-ramirez\r\n1640 wilcox ave\r\nlos angeles, ca 90028\r\n<https://maps.google.com/?q=1640+Wilcox+Ave,+Los+Angeles,+CA+90028,+USA>\r\nc. 661 877 7785 o. 323 843 4294\r\nwww.narrativemediagroup.com\r\ninstagram: @narrativegroup <https://www.instagram.com/narrativegroup/>\r\n\r\nnew york | los angeles | chicago\r\n\r\nThis email and any files transmitted are confidential and intended solely\r\nfor the use of the individual or entity to which they are addressed.If you\r\nhave received this email by error, please notify us immediately and\r\npermanently delete it from your computer.\r\n\r\n\r\nOn Thu, Aug 29, 2019 at 6:43 AM Lucas Guariglia <lucas@rowboatcreative.com>\r\nwrote:\r\n\r\n> Morning Destiny!\r\n> Happy to work on scope to keep closer to intended budget. One immediate\r\n> solve might be to reduce to 1qty screen printing press and then couple that\r\n> with the 2 heat press stations where consumers can pick from pre-printed\r\n> transfers of different designs and color ways to layer onto the tee prints.\r\n> This would still make a strong visual impact with the actual printing press\r\n> and heat presses, however we could cut back on staffing as well as\r\n> machinery. This would also consolidate the footprint if that is also\r\n> concern.\r\n>\r\n> Let me know initial thoughts on the above and we can keep working together\r\n> to align on ide",
+            "subject": "Re: Onsite Screen printing 10/17"
+          }
+        ],
+        "emails_fts_config": [
+          {
+            "k": "version",
+            "v": 4
+          }
+        ],
+        "emails_fts_data": [
+          {
+            "block": {
+              "bytes_hex_prefix": "adc66a829cfe1cc8b0d928",
+              "bytes_len": 11
+            },
+            "id": 1
+          },
+          {
+            "block": {
+              "bytes_hex_prefix": "00000000090eadc540000000031b01021c0102100101000106010400020d010a0e010c00020401816c0501814f0000000103019a7c00030801e9210b01e11a07",
+              "bytes_len": 79
+            },
+            "id": 10
+          },
+          {
+            "block": {
+              "bytes_hex_prefix": "00000fd102303090894d180101760f100b130b0e0f0a1d010a0101740a1d240601016e020a0101816009020c0101510303031f1001013a4850292727290a0101",
+              "bytes_len": 4050
+            },
+            "id": 137438953473
+          }
+        ],
+        "emails_fts_docsize": [
+          {
+            "id": 1,
+            "sz": {
+              "bytes_hex_prefix": "078228",
+              "bytes_len": 3
+            }
+          },
+          {
+            "id": 2,
+            "sz": {
+              "bytes_hex_prefix": "04823b",
+              "bytes_len": 3
+            }
+          },
+          {
+            "id": 3,
+            "sz": {
+              "bytes_hex_prefix": "068254",
+              "bytes_len": 3
+            }
+          }
+        ],
+        "emails_fts_idx": [
+          {
+            "pgno": 3,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "",
+              "bytes_len": 0
+            }
+          },
+          {
+            "pgno": 57,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "303030",
+              "bytes_len": 3
+            }
+          },
+          {
+            "pgno": 121,
+            "segid": 1,
+            "term": {
+              "bytes_hex_prefix": "30303030",
+              "bytes_len": 4
+            }
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "name": "emails",
+            "seq": 746346
+          }
+        ]
+      },
+      "table_info": {
+        "emails": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "zip_file",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "mbox_name",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "email_account",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 4,
+            "dflt_value": null,
+            "name": "message_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 5,
+            "dflt_value": null,
+            "name": "date",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 6,
+            "dflt_value": null,
+            "name": "from_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 7,
+            "dflt_value": null,
+            "name": "to_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 8,
+            "dflt_value": null,
+            "name": "cc_addr",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 9,
+            "dflt_value": null,
+            "name": "subject",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 10,
+            "dflt_value": null,
+            "name": "body_snippet",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 11,
+            "dflt_value": null,
+            "name": "thread_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 12,
+            "dflt_value": null,
+            "name": "labels",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ],
+        "emails_fts": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "subject",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "body_snippet",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "emails_fts_config": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "k",
+            "notnull": 1,
+            "pk": 1,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "v",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "emails_fts_data": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "block",
+            "notnull": 0,
+            "pk": 0,
+            "type": "BLOB"
+          }
+        ],
+        "emails_fts_docsize": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "sz",
+            "notnull": 0,
+            "pk": 0,
+            "type": "BLOB"
+          }
+        ],
+        "emails_fts_idx": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "segid",
+            "notnull": 1,
+            "pk": 1,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "term",
+            "notnull": 1,
+            "pk": 2,
+            "type": ""
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "pgno",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "name",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "seq",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ]
+      },
+      "tables": [
+        "emails",
+        "emails_fts",
+        "emails_fts_config",
+        "emails_fts_data",
+        "emails_fts_docsize",
+        "emails_fts_idx",
+        "sqlite_sequence"
+      ]
+    },
+    {
+      "counts": {
+        "chain_of_custody": 226,
+        "sqlite_sequence": 1
+      },
+      "email_counts": {},
+      "objects": [
+        {
+          "name": "chain_of_custody",
+          "sql": "CREATE TABLE chain_of_custody (\n            id INTEGER PRIMARY KEY AUTOINCREMENT,\n            source_path TEXT NOT NULL,\n            source_type TEXT NOT NULL,\n            sha256 TEXT NOT NULL,\n            size_bytes INTEGER NOT NULL,\n            case_id TEXT,\n            notes TEXT,\n            ingested_at TEXT NOT NULL\n        )",
+          "type": "table"
+        },
+        {
+          "name": "sqlite_sequence",
+          "sql": "CREATE TABLE sqlite_sequence(name,seq)",
+          "type": "table"
+        }
+      ],
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
+      "samples": {
+        "chain_of_custody": [
+          {
+            "case_id": "rbc_v_lg",
+            "id": 1,
+            "ingested_at": "2026-03-30T16:10:35.182683+00:00",
+            "notes": "Extracted from sms.db for Jose (Aburto, Niky's Embroidery). 1,113 messages, 2017-11-21 21:23:27 to 2023-02-21 17:23:57. Source sms.db SHA-256: 4a4ff66565c69f663a5f5c8bcf45f5eb17845623d656b799754b20b570acb8eb",
+            "sha256": "f94f57486e98c5362f6e0c8d2deaa455d784c489708e5e2ab9ccb6d71aa08eab",
+            "size_bytes": 1978368,
+            "source_path": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER/jz_jose_imessage.db",
+            "source_type": "imessage_per_contact_extract"
+          },
+          {
+            "case_id": "rbc_v_lg",
+            "id": 2,
+            "ingested_at": "2026-03-30T16:10:35.182683+00:00",
+            "notes": "Extracted from sms.db for John (Azara, IMEC). 171 messages, 2018-06-27 11:16:00 to 2020-12-07 10:16:44. Source sms.db SHA-256: 4a4ff66565c69f663a5f5c8bcf45f5eb17845623d656b799754b20b570acb8eb",
+            "sha256": "e69695ebb5a123a2b245becc410900e753326af70bb4e9896623b9957f86eb90",
+            "size_bytes": 438272,
+            "source_path": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER/jz_john_imessage.db",
+            "source_type": "imessage_per_contact_extract"
+          },
+          {
+            "case_id": "rbc_v_lg",
+            "id": 3,
+            "ingested_at": "2026-03-30T16:10:35.182683+00:00",
+            "notes": "Extracted from sms.db for Henry (Badani, Excel Screenprinting & Embroidery). 1,647 messages, 2018-06-14 13:14:47 to 2023-02-13 10:09:38. Source sms.db SHA-256: 4a4ff66565c69f663a5f5c8bcf45f5eb17845623d656b799754b20b570acb8eb",
+            "sha256": "d3274b2514f0baf623122cfa25df828a3323f277ace10a647633a86e1e6ec222",
+            "size_bytes": 2265088,
+            "source_path": "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/IMESSAGE_LOCKER/WHITELIST_DB_EXPORT_LOCKER/jz_henry_imessage.db",
+            "source_type": "imessage_per_contact_extract"
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "name": "chain_of_custody",
+            "seq": 226
+          }
+        ]
+      },
+      "table_info": {
+        "chain_of_custody": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "id",
+            "notnull": 0,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "source_path",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 2,
+            "dflt_value": null,
+            "name": "source_type",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 3,
+            "dflt_value": null,
+            "name": "sha256",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 4,
+            "dflt_value": null,
+            "name": "size_bytes",
+            "notnull": 1,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "cid": 5,
+            "dflt_value": null,
+            "name": "case_id",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 6,
+            "dflt_value": null,
+            "name": "notes",
+            "notnull": 0,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "cid": 7,
+            "dflt_value": null,
+            "name": "ingested_at",
+            "notnull": 1,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ],
+        "sqlite_sequence": [
+          {
+            "cid": 0,
+            "dflt_value": null,
+            "name": "name",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          },
+          {
+            "cid": 1,
+            "dflt_value": null,
+            "name": "seq",
+            "notnull": 0,
+            "pk": 0,
+            "type": ""
+          }
+        ]
+      },
+      "tables": [
+        "chain_of_custody",
+        "sqlite_sequence"
+      ]
+    }
+  ],
+  "emails_locker_preliminary_map": {
+    "counts": {
+      "eml_source": 478,
+      "msgid_matched": 460,
+      "msgid_present": 478,
+      "msgid_unmatched": 18,
+      "multi_match": 329,
+      "no_msgid": 24,
+      "pdf_source": 24,
+      "total": 502
+    },
+    "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/email_reconnect/emails_locker_to_mbox_metadata_message_id_map.json",
+    "unmatched_by_extension": {
+      ".eml": 18,
+      ".pdf": 24
+    },
+    "unmatched_by_source_db": {
+      "leonard_mayersky_locker": 24,
+      "mayersky_smoking_gun": 18
+    },
+    "unmatched_count": 42
+  },
+  "index_files_found": [
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-drive-links.csv",
+      "size_bytes": 8684492
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-errors.xml",
+      "size_bytes": 602
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-metadata.csv",
+      "size_bytes": 267226721
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-result-counts.csv",
+      "size_bytes": 922
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all.md5",
+      "size_bytes": 2661
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30 lg.md5",
+      "size_bytes": 299
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-drive-links.csv",
+      "size_bytes": 2283
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-errors.xml",
+      "size_bytes": 602
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-metadata.csv",
+      "size_bytes": 122200
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-30_lg-result-counts.csv",
+      "size_bytes": 124
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/ATTACHMENTS_UNZIPPED/JPG/RBC Multi Garment Manual Template With Metadata_1-x9_gvN99Ua-aqKdfsdww1ISDKt5Mfpp.jpg",
+      "size_bytes": 1164359
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/2024-06-22-all Drive Link Export.md5",
+      "size_bytes": 482
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/2024-06-22-all_Drive_Link_Export-metadata.xml",
+      "size_bytes": 1774198
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/attachments/error.csv",
+      "size_bytes": 101765
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db",
+      "size_bytes": 2952327168
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db-shm",
+      "size_bytes": 32768
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/gmail_master_index.db-wal",
+      "size_bytes": 0
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-errors.xml",
+      "size_bytes": 442
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-metadata.csv",
+      "size_bytes": 5498
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail-result-counts.csv",
+      "size_bytes": 122
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/leggmail.md5",
+      "size_bytes": 216
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/mbox_accounts_mapping.csv",
+      "size_bytes": 2685
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/mbox_metadata.db",
+      "size_bytes": 0
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-errors.xml",
+      "size_bytes": 442
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-metadata.csv",
+      "size_bytes": 1393414
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail-result-counts.csv",
+      "size_bytes": 128
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/sggmail.md5",
+      "size_bytes": 212
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/attachments/RBC Multi Garment Manual Template With Metadata_1-x9_gvN99Ua-aqKdfsdww1ISDKt5Mfpp.jpg",
+      "size_bytes": 1164359
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30 lg.md5.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg--lucas@rowboatcreative.com-Gns93T.mbox.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-1.zip.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-drive-links.csv.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-errors.xml.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-metadata.csv.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/2024-06-30_lg-result-counts.csv.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/attachments.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2024-06-30_GMAIL_MBOX_LG_MBOX_LOCKER/2024-06-30 lg.sbd/mbox2csv export.msf",
+      "size_bytes": 1410
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db",
+      "size_bytes": 126976
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+      "size_bytes": 10306514944
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db-shm",
+      "size_bytes": 32768
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db-wal",
+      "size_bytes": 0
+    }
+  ],
+  "root": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER",
+  "sql_used": [
+    "SELECT name, type, sql FROM sqlite_master WHERE type IN ('table','index','view','trigger') ORDER BY type, name;",
+    "PRAGMA table_info(<table>);",
+    "SELECT COUNT(*) FROM <table>;",
+    "SELECT COUNT(*) FROM emails;",
+    "SELECT COUNT(*) FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '';",
+    "SELECT COUNT(DISTINCT rfc822_id) FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '';",
+    "SELECT locker_source, COUNT(*) FROM emails GROUP BY locker_source ORDER BY COUNT(*) DESC, locker_source;",
+    "SELECT zip_source, COUNT(*) FROM emails GROUP BY zip_source ORDER BY COUNT(*) DESC, zip_source;",
+    "SELECT mbox_source, COUNT(*) FROM emails GROUP BY mbox_source ORDER BY COUNT(*) DESC, mbox_source;",
+    "SELECT account, COUNT(*) FROM emails GROUP BY account ORDER BY COUNT(*) DESC, account;",
+    "SELECT gmail_id, COUNT(*) c FROM emails WHERE gmail_id IS NOT NULL AND TRIM(gmail_id) <> '' GROUP BY gmail_id HAVING c > 1 ORDER BY c DESC, gmail_id LIMIT 20;",
+    "SELECT rfc822_id, COUNT(*) c FROM emails WHERE rfc822_id IS NOT NULL AND TRIM(rfc822_id) <> '' GROUP BY rfc822_id HAVING c > 1 ORDER BY c DESC, rfc822_id LIMIT 20;"
+  ]
+}

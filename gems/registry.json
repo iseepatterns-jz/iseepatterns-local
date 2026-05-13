@@ -3,7 +3,7 @@
   "case_id": "RC-2026",
   "client_id": "rowboat-creative",
   "project_root": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
-  "updated_at": "2026-03-23T11:42:00-05:00",
+  "updated_at": "2026-05-12T01:22:39Z",
   "gems": [
     {
       "id": "gem-imessages",
@@ -20,13 +20,20 @@
           "data/IMESSAGE_LOCKER/Attachments"
         ],
         "metadata_dirs": [],
-        "file_types": [".db", ".csv"]
+        "file_types": [
+          ".db",
+          ".csv"
+        ]
       },
       "outputs": {
         "databases": {
           "chat_case_only.db": {
             "location": "data/IMESSAGE_LOCKER/Messages/chat_case_only.db",
-            "tables": ["message", "handle", "chat"],
+            "tables": [
+              "message",
+              "handle",
+              "chat"
+            ],
             "access": "read-only",
             "notes": "Pruned to 48 case-relevant handles. iMac Late 2013, Catalina 10.15.7. Use m.text directly — no decodedBody column."
           }
@@ -68,13 +75,22 @@
           "data/MBOX_LOCKER/mbox_metadata.db",
           "data/ROWBOAT_CREATIVE_LOCKER/2024-06-22-all-metadata.csv"
         ],
-        "file_types": [".db", ".csv", ".mbox"]
+        "file_types": [
+          ".db",
+          ".csv",
+          ".mbox"
+        ]
       },
       "outputs": {
         "databases": {
           "mbox_metadata.db": {
             "location": "data/MBOX_LOCKER/mbox_metadata.db",
-            "tables": ["emails", "labels", "chain_of_custody", "drive_links"],
+            "tables": [
+              "emails",
+              "labels",
+              "chain_of_custody",
+              "drive_links"
+            ],
             "access": "read-only"
           }
         }
@@ -113,13 +129,26 @@
           "data/DRAWS_LOCKER/",
           "data/OWNER_CASH_INFUSION_LOCKER/"
         ],
-        "file_types": [".csv", ".xlsx", ".pdf"]
+        "file_types": [
+          ".csv",
+          ".xlsx",
+          ".pdf"
+        ]
       },
       "outputs": {
         "databases": {
           "workbench.db": {
             "location": "data/rowboat-creative/RC-2026/db/workbench.db",
-            "tables": ["master_transactions", "statement_transactions", "accounts", "import_sessions", "statement_files", "automatch_audit", "automatch_debug", "master_audit_log"],
+            "tables": [
+              "master_transactions",
+              "statement_transactions",
+              "accounts",
+              "import_sessions",
+              "statement_files",
+              "automatch_audit",
+              "automatch_debug",
+              "master_audit_log"
+            ],
             "schema": "schemas/financial_import.sql",
             "access": "read-write"
           }
@@ -137,7 +166,10 @@
           "scripts/ingest_flights_to_evidence_hub.py"
         ]
       },
-      "schemas": ["schemas/financials.sql", "schemas/forensic_audit.sql"],
+      "schemas": [
+        "schemas/financials.sql",
+        "schemas/forensic_audit.sql"
+      ],
       "canonical_id_format": "txn_{source}_{id} (e.g., txn_RBC_2020-05-26-001)",
       "evidence_source_type": "financial",
       "dependencies": [],
@@ -165,13 +197,18 @@
         "raw_files": [
           "data/TAXES_LOCKER/"
         ],
-        "file_types": [".pdf"]
+        "file_types": [
+          ".pdf"
+        ]
       },
       "outputs": {
         "databases": {
           "workbench.db": {
             "location": "data/rowboat-creative/RC-2026/db/workbench.db",
-            "tables": ["tax_returns", "tax_k1_details"],
+            "tables": [
+              "tax_returns",
+              "tax_k1_details"
+            ],
             "schema": "schemas/tax_returns.sql",
             "access": "read-write"
           }
@@ -185,10 +222,15 @@
           "ingest/link_taxes_to_emails.py"
         ]
       },
-      "schemas": ["schemas/tax_returns.sql"],
+      "schemas": [
+        "schemas/tax_returns.sql"
+      ],
       "canonical_id_format": "tax_{year}_{entity}_{id}",
       "evidence_source_type": "tax",
-      "dependencies": ["gem-financial-txns", "gem-gmail"],
+      "dependencies": [
+        "gem-financial-txns",
+        "gem-gmail"
+      ],
       "api_routes": [
         "app/app/api/taxes/"
       ],
@@ -203,14 +245,26 @@
       "status": "active",
       "description": "The unified interface for cross-source evidence correlation. Links emails, messages, and transactions by canonical_id.",
       "inputs": {
-        "raw_files": ["data/evidence_hub.db"],
-        "file_types": [".db"]
+        "raw_files": [
+          "data/evidence_hub.db"
+        ],
+        "file_types": [
+          ".db"
+        ]
       },
       "outputs": {
         "databases": {
           "evidence_hub.db": {
             "location": "data/evidence_hub.db",
-            "tables": ["evidence", "evidence_origins", "evidence_participants", "participants", "entities", "participant_entities", "evidence_fts"],
+            "tables": [
+              "evidence",
+              "evidence_origins",
+              "evidence_participants",
+              "participants",
+              "entities",
+              "participant_entities",
+              "evidence_fts"
+            ],
             "access": "read-only"
           }
         }
@@ -225,7 +279,11 @@
       },
       "canonical_id_format": "nexus_uuid",
       "evidence_source_type": "meta",
-      "dependencies": ["gem-imessages", "gem-gmail", "gem-financial-txns"],
+      "dependencies": [
+        "gem-imessages",
+        "gem-gmail",
+        "gem-financial-txns"
+      ],
       "api_routes": [
         "app/app/api/evidence-hub/"
       ],
@@ -234,6 +292,140 @@
         "app/app/dashboard/"
       ],
       "db_accessor": "getEvidenceHubDb()"
+    },
+    {
+      "id": "gem-chain-of-custody",
+      "name": "Chain of Custody Registry",
+      "status": "active",
+      "description": "Tracks provenance and audit state for MBOX-derived evidence using the existing chain_of_custody table and update utility.",
+      "inputs": {
+        "databases": [
+          "data/MBOX_LOCKER/mbox_metadata.db"
+        ],
+        "documentation": [
+          "docs/chain_of_custody_architecture.md"
+        ]
+      },
+      "outputs": {
+        "databases": {
+          "mbox_metadata.db": {
+            "location": "data/MBOX_LOCKER/mbox_metadata.db",
+            "tables": [
+              "chain_of_custody"
+            ],
+            "access": "read-only"
+          }
+        }
+      },
+      "scripts": {
+        "utility": [
+          "scripts/update_chain_of_custody.py"
+        ]
+      },
+      "schemas": [],
+      "canonical_id_format": "source_path or message_id mapped in chain_of_custody records",
+      "evidence_source_type": "provenance",
+      "dependencies": [
+        "gem-gmail"
+      ],
+      "api_routes": [],
+      "ui_pages": [],
+      "db_accessor": "getCommDb() (read-only)"
+    },
+    {
+      "id": "gem-evidence-cards",
+      "name": "Evidence Cards",
+      "status": "active",
+      "description": "Normalizes evidence records into EvidenceCard structures and attorney-package card exports using existing ingest and paralegal export utilities.",
+      "inputs": {
+        "databases": [
+          "data/evidence_hub.db"
+        ],
+        "modules": [
+          "ingest/evidence_card.py"
+        ],
+        "directories": [
+          "data/evidence_cards"
+        ]
+      },
+      "outputs": {
+        "directories": {
+          "evidence_cards": {
+            "location": "data/evidence_cards",
+            "access": "read-only"
+          },
+          "attorney_evidence_cards": {
+            "location": "exports/attorney_package/04_evidence_cards",
+            "access": "read-only (attorney-facing export)"
+          }
+        }
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/generate_evidence_cards.py"
+        ],
+        "utility": [
+          "scripts/generate_paralegal_exports.py"
+        ]
+      },
+      "schemas": [],
+      "canonical_id_format": "EvidenceCard.id / evidence_id",
+      "evidence_source_type": "normalized_card",
+      "dependencies": [
+        "gem-evidence-hub",
+        "gem-gmail",
+        "gem-imessages",
+        "gem-financial-txns",
+        "gem-players"
+      ],
+      "api_routes": [],
+      "ui_pages": [],
+      "db_accessor": "getEvidenceHubDb() (read-only)"
+    },
+    {
+      "id": "gem-players",
+      "name": "Players and Entities",
+      "status": "active",
+      "description": "Maintains person and entity profiles in players.db and bridges player references to the Evidence Hub and legal documents using existing scripts.",
+      "inputs": {
+        "databases": [
+          "data/players.db"
+        ],
+        "schemas": [
+          "schemas/players.sql"
+        ]
+      },
+      "outputs": {
+        "databases": {
+          "players.db": {
+            "location": "data/players.db",
+            "tables": [
+              "players",
+              "player_files"
+            ],
+            "schema": "schemas/players.sql",
+            "access": "read-only"
+          }
+        }
+      },
+      "scripts": {
+        "ingest": [
+          "ingest/bridge_players_to_hub.py"
+        ],
+        "utility": [
+          "scripts/link_players_to_legal.py",
+          "scripts/generate_paralegal_exports.py"
+        ]
+      },
+      "schemas": [
+        "schemas/players.sql"
+      ],
+      "canonical_id_format": "players.slug",
+      "evidence_source_type": "player_profile",
+      "dependencies": [],
+      "api_routes": [],
+      "ui_pages": [],
+      "db_accessor": "getDb('players') (read-only)"
     },
     {
       "id": "gem-paralegal-exports",
@@ -265,7 +457,11 @@
       "schemas": [],
       "canonical_id_format": "exhibit_{category}_{seq} (e.g., exhibit_wire_fraud_001)",
       "evidence_source_type": "export",
-      "dependencies": ["gem-evidence-cards", "gem-players", "gem-chain-of-custody"],
+      "dependencies": [
+        "gem-evidence-cards",
+        "gem-players",
+        "gem-chain-of-custody"
+      ],
       "api_routes": [],
       "ui_pages": [],
       "db_accessor": "getEvidenceHubDb() + getDb('players') (read-only)"
@@ -303,7 +499,10 @@
       "schemas": [],
       "canonical_id_format": "N/A (manifest-level, not record-level)",
       "evidence_source_type": "export",
-      "dependencies": ["gem-paralegal-exports", "gem-evidence-hub"],
+      "dependencies": [
+        "gem-paralegal-exports",
+        "gem-evidence-hub"
+      ],
       "api_routes": [],
       "ui_pages": [],
       "verification": {
@@ -322,16 +521,50 @@
       "status": "active",
       "description": "QBO OAuth API backup (June 2025) — 41 tables, 520K+ rows including 19.8K purchases ($15.7M), 7.5K invoices, 753 transfers, 437 journal entries. Cross-referenced against workbench master_transactions: 4,082 matches ($4.89M), 15,741 QB-only ($10.82M).",
       "inputs": {
-        "raw_files": ["data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER/qbo-acct/"],
-        "file_types": [".csv", ".xls", ".xlsx"]
+        "raw_files": [
+          "data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER/qbo-acct/"
+        ],
+        "file_types": [
+          ".csv",
+          ".xls",
+          ".xlsx"
+        ]
       },
       "outputs": {
         "databases": {
           "qb_forensic.db": {
             "location": "data/FINANCIAL_LOCKER/ROWBOAT_CREATIVE_QUICKBOOKS_ADDITIONAL_DOCUMENTATION_LOCKER/qb_forensic.db",
-            "tables": ["Purchase", "Invoice", "Payment", "Bill", "Deposit", "Transfer", "JournalEntry", "Vendor", "Customer", "Account", "Employee", "Estimate", "Attachable"],
-            "views": ["v_vendor_risk_matrix", "v_journal_entry_forensics", "v_transfer_tracing", "v_deposit_analysis", "v_account_summary", "v_customer_invoice_summary"],
-            "registers": ["reg_BankRegister_1452", "reg_CC_Register_1190_joes_card", "reg_CCRegister_lucas_card", "reg_CCRegister_patricks_card", "reg_Register_distributions", "reg_Register_undeposited_funds"],
+            "tables": [
+              "Purchase",
+              "Invoice",
+              "Payment",
+              "Bill",
+              "Deposit",
+              "Transfer",
+              "JournalEntry",
+              "Vendor",
+              "Customer",
+              "Account",
+              "Employee",
+              "Estimate",
+              "Attachable"
+            ],
+            "views": [
+              "v_vendor_risk_matrix",
+              "v_journal_entry_forensics",
+              "v_transfer_tracing",
+              "v_deposit_analysis",
+              "v_account_summary",
+              "v_customer_invoice_summary"
+            ],
+            "registers": [
+              "reg_BankRegister_1452",
+              "reg_CC_Register_1190_joes_card",
+              "reg_CCRegister_lucas_card",
+              "reg_CCRegister_patricks_card",
+              "reg_Register_distributions",
+              "reg_Register_undeposited_funds"
+            ],
             "access": "read-only"
           }
         }
@@ -354,13 +587,19 @@
         "qb_only_total": "$10,824,092.77",
         "date_range_gap": "QB has 2013-2015 data not in workbench; workbench has more 2019-2023 bank entries not in QB"
       },
-      "dependencies": ["gem-financial-txns"],
-      "api_routes": ["app/app/api/financials/ (view=qb_forensic)"],
-      "ui_pages": ["app/app/financials/"],
+      "dependencies": [
+        "gem-financial-txns"
+      ],
+      "api_routes": [
+        "app/app/api/financials/ (view=qb_forensic)"
+      ],
+      "ui_pages": [
+        "app/app/financials/"
+      ],
       "db_accessor": "N/A (standalone read-only DB)"
     }
   ],
-  "registry_version": "1.6.0",
+  "registry_version": "1.7.0",
   "project_id": "lawmodel1-RC-2026",
   "data_root_structure": {
     "data_locker": "data/",
@@ -369,4 +608,3 @@
     "central_db": "data/rowboat-creative/RC-2026/db/workbench.db"
   }
 }
-

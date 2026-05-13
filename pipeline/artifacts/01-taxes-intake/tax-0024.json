@@ -1,0 +1,44 @@
+{
+  "item_id": "tax-0024",
+  "exhibit_id": "EXH-TAX-0024",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2019/2019 1120S Tax Return_Rowboat Creative, LLC.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "3c2584f3771a7866aa5df2da5d6af4fa1c286c8a554e5860313689aa4470cc47",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 463530,
+    "filename": "2019 1120S Tax Return_Rowboat Creative, LLC.pdf",
+    "page_count": 47,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2019,
+    "form_type": "Schedule K-1 (Form 1120-S)",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "extracted_dates": [
+      "19091014 758883",
+      "DECEMBER 31, 2019",
+      "IL  60639",
+      "IL 60123",
+      "LLC     68996",
+      "OCTOBER 15, 2020"
+    ],
+    "key_figures": {
+      "total_income": "1159845."
+    },
+    "k1_reference": true,
+    "notes": "Document is 47 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2019 Schedule K-1 (Form 1120-S) for ROWBOAT CREATIVE, LLC. 47-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

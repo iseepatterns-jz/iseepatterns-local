@@ -1,0 +1,130 @@
+{
+  "timestamp_utc": "2026-05-12T01:19:02Z",
+  "scope": "read-only gem registry remediation plan; report artifacts only",
+  "registry_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/gems/registry.json",
+  "registered_gem_ids": [
+    "gem-imessages",
+    "gem-gmail",
+    "gem-financial-txns",
+    "gem-tax-returns",
+    "gem-evidence-hub",
+    "gem-paralegal-exports",
+    "gem-ready-bag",
+    "gem-qb-forensic"
+  ],
+  "dependency_ids": [
+    "gem-chain-of-custody",
+    "gem-evidence-cards",
+    "gem-evidence-hub",
+    "gem-financial-txns",
+    "gem-gmail",
+    "gem-imessages",
+    "gem-paralegal-exports",
+    "gem-players"
+  ],
+  "unresolved_dependency_ids": [
+    "gem-chain-of-custody",
+    "gem-evidence-cards",
+    "gem-players"
+  ],
+  "references_excerpt": "README.md:59:| `gem-players` | Profiles \u2192 players.db | \u2014 |\nREADME.md:62:| `gem-evidence-cards` | All sources \u2192 evidence_hub.db | email, imessage, financial, players |\nREADME.md:64:| `gem-chain-of-custody` | Provenance + audit trails | email, imessage, financial |\nreports/governance_audits/2026-05-12T01-11-45Z_lawmodel1_post_rewrite_baseline_audit_supplement.json:38:        \"gem-chain-of-custody\",\nreports/governance_audits/2026-05-12T01-11-45Z_lawmodel1_post_rewrite_baseline_audit_supplement.json:39:        \"gem-evidence-cards\",\nreports/governance_audits/2026-05-12T01-11-45Z_lawmodel1_post_rewrite_baseline_audit_supplement.json:40:        \"gem-players\"\nreports/governance_audits/2026-05-10_lawmodel1_governance_coc_audit.md:60:- gem-chain-of-custody\nreports/governance_audits/2026-05-10_lawmodel1_governance_coc_audit.md:61:- gem-evidence-cards\nreports/governance_audits/2026-05-10_lawmodel1_governance_coc_audit.md:62:- gem-players\nreports/governance_audits/2026-05-10_lawmodel1_governance_coc_audit.md:131:4. Register or intentionally retire the unregistered gem dependency IDs: gem-chain-of-custody, gem-evidence-cards, gem-players.\ngems/README.md:13:| `gem-players` | LinkedIn/profiles \u2192 players.db | \u2014 |\ngems/README.md:16:| `gem-evidence-cards` | All sources \u2192 evidence_hub.db | email, imessage, financial, players |\ngems/README.md:18:| `gem-chain-of-custody` | Provenance + audit tracking | email, imessage, financial |\ngems/registry.json:268:      \"dependencies\": [\"gem-evidence-cards\", \"gem-players\", \"gem-chain-of-custody\"],",
+  "implementation_evidence": {
+    "gem-chain-of-custody": [
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/docs/chain_of_custody_architecture.md",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/update_chain_of_custody.py",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+        "exists": true,
+        "type": "file"
+      }
+    ],
+    "gem-evidence-cards": [
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/ingest/evidence_card.py",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/ingest/generate_evidence_cards.py",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_cards",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/exports/attorney_package/04_evidence_cards",
+        "exists": true,
+        "type": "dir"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/generate_paralegal_exports.py",
+        "exists": true,
+        "type": "file"
+      }
+    ],
+    "gem-players": [
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/players.db",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/schemas/players.sql",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/ingest/bridge_players_to_hub.py",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/link_players_to_legal.py",
+        "exists": true,
+        "type": "file"
+      },
+      {
+        "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/generate_paralegal_exports.py",
+        "exists": true,
+        "type": "file"
+      }
+    ]
+  },
+  "db_counts": {
+    "data/players.db": {
+      "exists": true,
+      "tables": {
+        "players": 51,
+        "player_files": 0
+      },
+      "error": null
+    },
+    "data/MBOX_LOCKER/mbox_metadata.db": {
+      "exists": true,
+      "tables": {
+        "chain_of_custody": 48
+      },
+      "error": null
+    }
+  },
+  "files_to_modify_if_register_approved": [
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/gems/registry.json",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/gems/README.md",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/README.md"
+  ],
+  "files_modified_by_this_run": [
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01:19:02Z_lawmodel1_gem_registry_remediation_plan.md",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01:19:02Z_lawmodel1_gem_registry_remediation_plan.json"
+  ]
+}

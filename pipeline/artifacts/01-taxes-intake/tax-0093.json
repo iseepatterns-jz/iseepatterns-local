@@ -1,0 +1,34 @@
+{
+  "item_id": "tax-0093",
+  "exhibit_id": "EXH-TAX-0093",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2021/CORPORATE TAX OVERPAYMENT/ViewFile.pdf",
+  "sha256": "c780b63d8f6b002b02418464bad95191498769ce683acb7903043a6ca79a602b",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": null,
+    "form_type": null,
+    "entity": "ROWBOAT CREATIVE SERVICES LLC\nROWBOAT CREATIVE LLC",
+    "fein": "30-0793361",
+    "page_count": 2,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "key_figures": {},
+    "extracted_dates": [
+      "03/17/21"
+    ],
+    "signatories": [],
+    "notes": ""
+  },
+  "summary": "2021 None for ROWBOAT CREATIVE SERVICES LLC\nROWBOAT CREATIVE LLC. 2-page PDF extracted via fitz. Tax document from the Rowboat Creative business tax records.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

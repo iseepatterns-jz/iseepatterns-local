@@ -1,0 +1,41 @@
+{
+  "item_id": "tax-0022",
+  "exhibit_id": "EXH-TAX-0022",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2018/2018 1120S Tax Return_Rowboat Creative, LLC.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "069acf13358c8410a5ea60bc4ab49af93d8099623110843aceddafb3b7e377d6",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 491173,
+    "filename": "2018 1120S Tax Return_Rowboat Creative, LLC.pdf",
+    "page_count": 45,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2015,
+    "form_type": "Schedule K-1 (Form 1120-S)",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "extracted_dates": [
+      "COPY\n800084",
+      "DECEMBER 31, 2018",
+      "IL  60639",
+      "IL 60606",
+      "SEPTEMBER 16, 2019"
+    ],
+    "key_figures": null,
+    "k1_reference": true,
+    "notes": "Document is 45 pages; only first 3 pages were extracted for intake metadata."
+  },
+  "summary": " 2015 Schedule K-1 (Form 1120-S) for ROWBOAT CREATIVE, LLC. 45-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ]
+}

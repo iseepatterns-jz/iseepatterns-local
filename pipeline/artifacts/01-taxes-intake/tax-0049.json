@@ -1,0 +1,36 @@
+{
+  "item_id": "tax-0049",
+  "exhibit_id": "EXH-TAX-0049",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2013/RI_Crt-61 - Orbus.pdf",
+  "sha256": "98b794acf7156de227f841b125eaf9fb5e1e9dcfa9351f9bf18c7c33d624c68d",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2013,
+    "form_type": "Unknown",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 1,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [],
+    "signatories": [
+      "Date  \nNote",
+      "The purchaser",
+      "and date",
+      "by the"
+    ],
+    "notes": null
+  },
+  "summary": "2013 tax-related document (Unknown) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:19:55Z",
+  "processed_by": "taxes_intake_01"
+}

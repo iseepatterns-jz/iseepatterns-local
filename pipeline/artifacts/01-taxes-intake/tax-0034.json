@@ -1,0 +1,38 @@
+{
+  "item_id": "tax-0034",
+  "exhibit_id": "EXH-TAX-0034",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2021/Rowboat Creative, LLC 2021 Payment - Action Needed.pdf",
+  "sha256": "73d1d963567f4c21c840e4b210c4d476cab815868dfe9eb4b8267b0dd23ac563",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2021,
+    "form_type": "1120S",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": "30-0793361",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "10-28-21",
+      "DECEMBER 31, 2021",
+      "OCTOBER 17, 2022"
+    ],
+    "signatories": [
+      "AND DATED"
+    ],
+    "notes": "Document indicates action is needed (unsigned/incomplete)."
+  },
+  "summary": "2021 tax-related document (1120S) for ROWBOAT CREATIVE, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ],
+  "processed_at": "2026-05-07T16:19:54Z",
+  "processed_by": "taxes_intake_01"
+}

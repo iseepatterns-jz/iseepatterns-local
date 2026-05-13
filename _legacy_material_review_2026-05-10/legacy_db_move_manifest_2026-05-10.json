@@ -1,0 +1,51 @@
+{
+  "created_at_local": "2026-05-10T13:41:24.775493",
+  "legacy_folder": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/_legacy_material_review_2026-05-10",
+  "moved": [
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/workbench.db",
+      "size_bytes": 0,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/_legacy_material_review_2026-05-10/data/workbench.db",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "moved"
+    },
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/evidence_hub.db",
+      "size_bytes": 110592,
+      "sha256_before": "58c9d01d07100bf981ed3bd280df2ac07762a2769183a0b42bd5491115aa2c4b",
+      "destination": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/_legacy_material_review_2026-05-10/data/rowboat-creative/RC-2026/db/evidence_hub.db",
+      "sha256_after": "58c9d01d07100bf981ed3bd280df2ac07762a2769183a0b42bd5491115aa2c4b",
+      "status": "moved"
+    },
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/mbox_metadata.db",
+      "size_bytes": 0,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/_legacy_material_review_2026-05-10/data/mbox_metadata.db",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "moved"
+    },
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/mbox_metadata.db",
+      "size_bytes": 0,
+      "sha256_before": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "destination": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/_legacy_material_review_2026-05-10/data/rowboat-creative/RC-2026/db/mbox_metadata.db",
+      "sha256_after": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "moved"
+    }
+  ],
+  "kept_canonical": [
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/rowboat-creative/RC-2026/db/workbench.db",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/mbox_index.db"
+  ],
+  "notes": [
+    "Moved only non-canonical listed DB files identified by LawModel1 governance and read-only inventory.",
+    "Canonical workbench remains data/rowboat-creative/RC-2026/db/workbench.db.",
+    "Canonical evidence hub remains data/evidence_hub.db.",
+    "Canonical MBOX metadata/index remain data/MBOX_LOCKER/mbox_metadata.db and data/MBOX_LOCKER/mbox_index.db.",
+    "Original directory structure preserved under legacy folder."
+  ]
+}

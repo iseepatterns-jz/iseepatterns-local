@@ -1,0 +1,498 @@
+{
+  "created_utc": "2026-05-12T01-00-59Z",
+  "workspace": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER",
+  "lawmodel1_root": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
+  "approval_scope": {
+    "approved_mappings": [
+      {
+        "old": "/Volumes/batdrivetb5",
+        "new": "/Volumes/iseepatterns-evidence"
+      },
+      {
+        "old": "/AI_TRAINING/",
+        "new": "/ISEEPATTERNS_LOCKER/"
+      }
+    ],
+    "do_not_modify_original_evidence_files": true,
+    "leave_preserve_classified_untouched": true,
+    "leave_unresolved_references_untouched": true,
+    "project_reference_safe_scope_exclusions": [
+      "/data/",
+      "/chatdb_storage/",
+      "/exports/",
+      "/artifacts/",
+      "/reports/",
+      "/_archive/",
+      "/archive/",
+      "_archive",
+      "_bak",
+      "/backup",
+      "backup",
+      "/ready_bag/",
+      "/attorney_package/"
+    ]
+  },
+  "input_files": [
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.json",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.json",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-44-57Z_lawmodel1_candidate_rewrite_dry_run_map.json"
+  ],
+  "input_sha256": {
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.json": "b1ba749ecd756f8e4821322f8dd6275ac3236f35d44fce3e6e5e626a57c60741",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.json": "377f14697968f038d863c9e7ecd74023dad4e655abb82823617d337c4e63c55f",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-44-57Z_lawmodel1_candidate_rewrite_dry_run_map.json": "b9cddb84d307edd141132727d2851ffb5be956c63a98fef05d27ec67fb40a7fd"
+  },
+  "git_status_count_before": 360,
+  "git_status_count_after": 368,
+  "candidate_files_considered": 9,
+  "modified_files_count": 9,
+  "skipped_files_count": 1491908,
+  "modified_files": [
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/eml-to-court-pdf/scripts/eml_to_court_pdf.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 3
+      },
+      "occurrences": 3,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/.agent/skills/eml-to-court-pdf/scripts/eml_to_court_pdf.py",
+      "before_sha256": "943bcaf97b041e72ae126dacb521e008f9412097c3db7c6aa857c81fa9107df2",
+      "backup_sha256": "943bcaf97b041e72ae126dacb521e008f9412097c3db7c6aa857c81fa9107df2",
+      "after_sha256": "468b32aa14b4440f4d40029ef22c15fa2129f5f6c727a3b32fd8cb29cb692b60",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 0
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 0
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/lawmodel1-governance/SKILL.md",
+      "terms": {
+        "/Volumes/batdrivetb5": 2,
+        "AI_TRAINING": 2
+      },
+      "occurrences": 4,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/.agent/skills/lawmodel1-governance/SKILL.md",
+      "before_sha256": "d3b45fc7effa03e2484ea176ef46360a8c5b94a14f1235993a7bfc21fc508844",
+      "backup_sha256": "d3b45fc7effa03e2484ea176ef46360a8c5b94a14f1235993a7bfc21fc508844",
+      "after_sha256": "5663016d48213a162ac4d4e20374e6cfa97e27fa01a85588b77747a50934da95",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.github/workflows/notebooklm_deepdive.yml",
+      "terms": {
+        "/Volumes/batdrivetb5": 3,
+        "AI_TRAINING": 3
+      },
+      "occurrences": 6,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/.github/workflows/notebooklm_deepdive.yml",
+      "before_sha256": "fd1f4a436069d0f75b6dfecba65fd9ecb3fe07a368966fb546c0f6d94861cee5",
+      "backup_sha256": "fd1f4a436069d0f75b6dfecba65fd9ecb3fe07a368966fb546c0f6d94861cee5",
+      "after_sha256": "ff1b97718dd5c45fdadb0623ad68f4c727acab52dd1fe16f9ad8208b629651a7",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 3
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 3
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 4
+      },
+      "occurrences": 4,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/parse_vault_xml_full.py",
+      "before_sha256": "aa5c3ad33d7b0d0b85a6b48d9aa2a7e3457a511eddaf659b3d2d4ed58a1c339f",
+      "backup_sha256": "aa5c3ad33d7b0d0b85a6b48d9aa2a7e3457a511eddaf659b3d2d4ed58a1c339f",
+      "after_sha256": "d0f02f4e8628d117d8cea2d81efc22aba6487cffecc842cc8bfd63f83b3fb417",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 4,
+        "/AI_TRAINING/": 0
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 4,
+        "/AI_TRAINING/": 0
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 2,
+        "AI_TRAINING": 2
+      },
+      "occurrences": 4,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/unused/create_accounting_db.py",
+      "before_sha256": "41a2ac98e144ade6004d4ccfd5a88ab872b18f38a49e1d31bcd0d3112b9318b7",
+      "backup_sha256": "41a2ac98e144ade6004d4ccfd5a88ab872b18f38a49e1d31bcd0d3112b9318b7",
+      "after_sha256": "ca988024dcf5c854c7b9f2afba147377f052d737ac4b73d8df4d8f7240a8729b",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_ashley_myles_db.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 2,
+        "AI_TRAINING": 2
+      },
+      "occurrences": 4,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/unused/create_ashley_myles_db.py",
+      "before_sha256": "003c92490d4a3fc672786541a099d4eeb05ed8f4ca73965dfcf578fa733a2a71",
+      "backup_sha256": "003c92490d4a3fc672786541a099d4eeb05ed8f4ca73965dfcf578fa733a2a71",
+      "after_sha256": "50e6268bd27257b02ad7f18a98671886c336136fe40a95b0bac2a94adca39d61",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 2,
+        "AI_TRAINING": 2
+      },
+      "occurrences": 4,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/unused/extract_accountant_emails.py",
+      "before_sha256": "c37e7d7fb5b738dab7c091e468109a6f7f98345973e904fc5780b62c2bc3cfa3",
+      "backup_sha256": "c37e7d7fb5b738dab7c091e468109a6f7f98345973e904fc5780b62c2bc3cfa3",
+      "after_sha256": "dbe46f01ad0cbd5d3c1c178d2b484ad6856c17af468f46859687dde1c3ab1080",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 2,
+        "/AI_TRAINING/": 2
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_mbox_accounts.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 1,
+        "AI_TRAINING": 1
+      },
+      "occurrences": 2,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/unused/extract_mbox_accounts.py",
+      "before_sha256": "96cc641a9dba31c94d027605d3a36161d1405832d73e0ae37860333cb18d4109",
+      "backup_sha256": "96cc641a9dba31c94d027605d3a36161d1405832d73e0ae37860333cb18d4109",
+      "after_sha256": "07dab25b872bb03ca9cd178b1a4a61e18c4853c1651de52ea7aaa81252f4ced7",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 1,
+        "/AI_TRAINING/": 1
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 1,
+        "/AI_TRAINING/": 1
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+      "terms": {
+        "/Volumes/batdrivetb5": 3,
+        "AI_TRAINING": 3
+      },
+      "occurrences": 6,
+      "class": "source_or_config_candidate_rewrite",
+      "action": "candidate_rewrite",
+      "backup_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups/scripts/unused/extract_side_business_emails.py",
+      "before_sha256": "4f36c668a15a99179514beb367c8ce9f38b3daf28bb5652b4081a7a1c4cba302",
+      "backup_sha256": "4f36c668a15a99179514beb367c8ce9f38b3daf28bb5652b4081a7a1c4cba302",
+      "after_sha256": "e8c87509e7106f71ed4b484090d13e0318531eea98aa77bd5bf61e9c95c56996",
+      "before_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 3
+      },
+      "after_counts": {
+        "/Volumes/batdrivetb5": 0,
+        "/AI_TRAINING/": 0
+      },
+      "replaced_counts": {
+        "/Volumes/batdrivetb5": 3,
+        "/AI_TRAINING/": 3
+      },
+      "unresolved_before": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      },
+      "unresolved_after": {
+        "/Volumes/2026-iseepatterns-tb3": 0,
+        "/Volumes/messageshd": 0,
+        "/Users/iseepatterns-ms-m4": 0,
+        "/Volumes/iseepatterns-evidence/IGNORE": 0
+      }
+    }
+  ],
+  "skipped_summary_occurrences_by_reason": {
+    "outside_project_reference_safe_scope_or_evidence_generated_archive_report_path": 5008682,
+    "action_label=preserve": 463360
+  },
+  "skipped_summary_occurrences_by_action": {
+    "candidate_rewrite": 5008682,
+    "preserve": 463360
+  },
+  "approved_mapping_counts_in_modified_files_before": {
+    "/Volumes/batdrivetb5": 22,
+    "/AI_TRAINING/": 15
+  },
+  "approved_mapping_counts_in_modified_files_after": {
+    "/Volumes/batdrivetb5": 0,
+    "/AI_TRAINING/": 0
+  },
+  "approved_mapping_counts_in_candidate_files_after": {
+    "/Volumes/batdrivetb5": 0,
+    "/AI_TRAINING/": 0
+  },
+  "unresolved_counts_in_modified_files_before": {
+    "/Volumes/2026-iseepatterns-tb3": 0,
+    "/Volumes/messageshd": 0,
+    "/Users/iseepatterns-ms-m4": 0,
+    "/Volumes/iseepatterns-evidence/IGNORE": 0
+  },
+  "unresolved_counts_in_modified_files_after": {
+    "/Volumes/2026-iseepatterns-tb3": 0,
+    "/Volumes/messageshd": 0,
+    "/Users/iseepatterns-ms-m4": 0,
+    "/Volumes/iseepatterns-evidence/IGNORE": 0
+  },
+  "unresolved_counts_in_candidate_files_after": {
+    "/Volumes/2026-iseepatterns-tb3": 0,
+    "/Volumes/messageshd": 0,
+    "/Users/iseepatterns-ms-m4": 0,
+    "/Volumes/iseepatterns-evidence/IGNORE": 0
+  },
+  "syntax_checks": [
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/eml-to-court-pdf/scripts/eml_to_court_pdf.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/eml-to-court-pdf/scripts/eml_to_court_pdf.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/lawmodel1-governance/SKILL.md",
+      "command": "not_applicable",
+      "exit_code": 0,
+      "stdout": "not applicable",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.github/workflows/notebooklm_deepdive.yml",
+      "command": "not_applicable",
+      "exit_code": 0,
+      "stdout": "not applicable",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_ashley_myles_db.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_ashley_myles_db.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_mbox_accounts.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_mbox_accounts.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+      "command": "/Users/iseepatterns-ms-m4/.hermes/hermes-agent/venv/bin/python3 -m py_compile /Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "backup_dir": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T01-00-59Z_controlled_stale_reference_rewrite_backups",
+  "original_evidence_files_modified": false,
+  "errors": []
+}

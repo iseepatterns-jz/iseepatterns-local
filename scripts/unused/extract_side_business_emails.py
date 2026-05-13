@@ -5,9 +5,9 @@ import re
 from datetime import datetime
 from email.utils import parsedate_to_datetime
 
-DB_PATH = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/side_business_correspondence.db"
-MBOX_SUZANNE = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2023-06-08_GMAIL_MBOX_SG_LOCKER/2023-06-08_GMAIL_MBOX_SG_ZIPPED/sggmail--suzanne@rowboatcreative.com-YtFVqI.mbox"
-EXISTING_DB = "/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/emails_LG_SM_SH_JZ.db"
+DB_PATH = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/side_business_correspondence.db"
+MBOX_SUZANNE = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/2023-06-08_GMAIL_MBOX_SG_LOCKER/2023-06-08_GMAIL_MBOX_SG_ZIPPED/sggmail--suzanne@rowboatcreative.com-YtFVqI.mbox"
+EXISTING_DB = "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/MBOX_LOCKER/emails_LG_SM_SH_JZ.db"
 
 DOMAINS = ["mosaic.com", "cbrands.com", "legacymarketing.com", "engageresonate.com"]
 SPECIFIC_EMAILS = ["suzanne_ronayne@yahoo.com", "suzanne@rowboatcreative.com"]

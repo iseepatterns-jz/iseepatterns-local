@@ -1,0 +1,35 @@
+{
+  "item_id": "tax-0090",
+  "exhibit_id": "EXH-TAX-0090",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2020/Rowboat Creative, LLC 2020 Payments - Action Needed.pdf",
+  "sha256": "6be1de1e87439dbd68f47205703b11f1993c419d3044a74a39ff18864f4b61aa",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "tax_year": 2020,
+    "form_type": "IL-1120ST",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": null,
+    "page_count": 2,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": true,
+    "key_figures": {},
+    "extracted_dates": [
+      "09-21-20"
+    ],
+    "signatories": [],
+    "notes": ""
+  },
+  "summary": "2020 IL-1120ST for ROWBOAT CREATIVE, LLC. 2-page PDF extracted via fitz. Tax document from the Rowboat Creative business tax records.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

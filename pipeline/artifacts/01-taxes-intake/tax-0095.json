@@ -1,0 +1,31 @@
+{
+  "item_id": "tax-0095",
+  "exhibit_id": "EXH-TAX-0095",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2022/5349660917.pdf",
+  "sha256": "5123f7634c98bfff9332f52ca50f81c11fd53185f28ccb12bf046e6e7195af75",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": null,
+    "form_type": null,
+    "entity": "Rowboat Creative LLC",
+    "fein": null,
+    "page_count": 1,
+    "extraction_method": "fitz",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "key_figures": {},
+    "extracted_dates": [],
+    "signatories": [],
+    "notes": ""
+  },
+  "summary": "2022 None for Rowboat Creative LLC. 1-page PDF extracted via fitz. Tax document from the Rowboat Creative business tax records.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:26:11Z",
+  "processed_by": "taxes_intake_01"
+}

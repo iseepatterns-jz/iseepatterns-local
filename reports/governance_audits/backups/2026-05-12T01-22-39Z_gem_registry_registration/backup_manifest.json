@@ -1,0 +1,20 @@
+{
+  "timestamp_utc": "2026-05-12T01:22:39Z",
+  "backup_records": [
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/gems/registry.json",
+      "backup": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/backups/2026-05-12T01-22-39Z_gem_registry_registration/gems__registry.json.bak",
+      "sha256_before": "e490be624f4f227948e33798cf181c41f78bb14b4d5a894864d84b3d805f4f28"
+    },
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/gems/README.md",
+      "backup": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/backups/2026-05-12T01-22-39Z_gem_registry_registration/gems__README.md.bak",
+      "sha256_before": "f0c91e32ac57791b00ec326a77e21b9f2ee81e7e7a151ae87cd04781ff819f88"
+    },
+    {
+      "source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/README.md",
+      "backup": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/backups/2026-05-12T01-22-39Z_gem_registry_registration/README.md.bak",
+      "sha256_before": "983bee472839d1050de93d1acb3dccf85de572dde0785775930e9155eb3c9a9e"
+    }
+  ]
+}

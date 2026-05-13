@@ -31,3 +31,12 @@ Gems are modular evidence pipeline definitions. Each gem declares its inputs, ou
 2. Register any new schemas in `schemas/`
 3. Update the governance SKILL.md database/schema registry
 4. Update `docs/evidence_flow.html` with the new pipeline node
+## Registration Verification Notes
+
+2026-05-12: `gem-chain-of-custody`, `gem-evidence-cards`, and `gem-players` are registered in `gems/registry.json` using existing implementation paths only.
+
+| Gem | Registry implementation paths |
+|:----|:------------------------------|
+| `gem-chain-of-custody` | `docs/chain_of_custody_architecture.md`; `scripts/update_chain_of_custody.py`; `data/MBOX_LOCKER/mbox_metadata.db` table `chain_of_custody` |
+| `gem-evidence-cards` | `ingest/evidence_card.py`; `ingest/generate_evidence_cards.py`; `data/evidence_cards`; `exports/attorney_package/04_evidence_cards`; `scripts/generate_paralegal_exports.py` |
+| `gem-players` | `data/players.db`; `schemas/players.sql`; `ingest/bridge_players_to_hub.py`; `scripts/link_players_to_legal.py`; `scripts/generate_paralegal_exports.py` |

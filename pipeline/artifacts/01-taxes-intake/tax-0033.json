@@ -1,0 +1,38 @@
+{
+  "item_id": "tax-0033",
+  "exhibit_id": "EXH-TAX-0033",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2021/Rowboat Creative, LLC 2021 K-1.pdf",
+  "sha256": "97d5c629c8bcf0644c21431cdfe3162b61a56fa1b1d08cd6d668fa6d76ea1399",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "tax_year": 2021,
+    "form_type": "1120S",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "fein": null,
+    "page_count": 25,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "extracted_dates": [
+      "11-18-21"
+    ],
+    "signatories": [
+      "FIRM OF",
+      "OR CORRESPONDENT"
+    ],
+    "notes": "Contains Schedule K-1."
+  },
+  "summary": "2021 1120S tax return for ROWBOAT CREATIVE, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE",
+    "FIDUCIARY"
+  ],
+  "processed_at": "2026-05-07T16:19:54Z",
+  "processed_by": "taxes_intake_01"
+}

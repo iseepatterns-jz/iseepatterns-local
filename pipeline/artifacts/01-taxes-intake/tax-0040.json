@@ -1,0 +1,31 @@
+{
+  "item_id": "tax-0040",
+  "exhibit_id": "EXH-TAX-0040",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/TAX_RELATED_BY_YEAR/2012/RI_cpsw9.pdf",
+  "sha256": "099cecec10384a06d7aa80d5c0cf2918e0183a872d392768498e15508f42004f",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "tax_year": 2012,
+    "form_type": "Unknown",
+    "entity": "Rowboat Creative, LLC",
+    "fein": null,
+    "page_count": 3,
+    "extraction_method": "pymupdf",
+    "key_figures": null,
+    "needs_ocr": true,
+    "is_worksheet": false,
+    "extracted_dates": [],
+    "signatories": [],
+    "notes": "PDF appears to be scanned/image-based; OCR may be needed."
+  },
+  "summary": "2012 tax-related document (Unknown) for Rowboat Creative, LLC.",
+  "tags": [
+    "TAX",
+    "FINANCIAL"
+  ],
+  "processed_at": "2026-05-07T16:19:54Z",
+  "processed_by": "taxes_intake_01"
+}

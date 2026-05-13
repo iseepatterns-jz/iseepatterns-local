@@ -1,0 +1,48 @@
+{
+  "item_id": "tax-0001",
+  "exhibit_id": "EXH-TAX-0001",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/2024 RBC W2/RowboatCreative,LLC_EmployeeDirectory_02192025_1634.xls",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "5d1f213b329de587a6e66043baf7f82f6f7d1c458c916f69110f3a1cd4b64bf7",
+  "classification": "TAX_DOCUMENT",
+  "metadata": {
+    "file_size_bytes": 17920,
+    "filename": "RowboatCreative,LLC_EmployeeDirectory_02192025_1634.xls",
+    "sheet_names": [
+      "Employee directory report"
+    ],
+    "total_rows": 18,
+    "sheets": [
+      {
+        "name": "Employee directory report",
+        "rows": 18,
+        "cols": 9,
+        "headers": [
+          "Rowboat Creative, LLC",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ]
+      }
+    ],
+    "file_type": "xls",
+    "tax_year": 2024,
+    "entity": "Rowboat Creative, LLC",
+    "extraction_method": "xlrd"
+  },
+  "summary": "Excel spreadsheet 'RowboatCreative,LLC_EmployeeDirectory_02192025_1634.xls' with 1 sheet(s) and 18 total rows. Sheets: Employee directory report.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}

@@ -1,0 +1,306 @@
+{
+  "candidate_rewrite_filter": {
+    "action_label": "candidate_rewrite",
+    "classifier_source": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/create_stale_reference_triage_report.py",
+    "included_remediation_class": "source_or_config_candidate_rewrite"
+  },
+  "created_utc": "2026-05-12T00-44-00Z",
+  "dry_run_only": true,
+  "errors_log": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-44-00Z_lawmodel1_candidate_rewrite_dry_run_map.errors.log",
+  "input_files": [
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.json",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.md",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.cleanup_queue_sample.csv",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.json",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.md"
+  ],
+  "input_sha256": {
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.json": "b1ba749ecd756f8e4821322f8dd6275ac3236f35d44fce3e6e5e626a57c60741",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-10_15-31-48_lawmodel1_bounded_duplicate_stale_audit.md": "f5dc0316a7b73823c0abe7bdcf1dd7b02fd0cea443ecf27081cdd191d0d323a0",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.cleanup_queue_sample.csv": "0130cdedc18111b71d1efbce8a4eac512d8e8b772a7839b37f156aa44f25beae",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.json": "377f14697968f038d863c9e7ecd74023dad4e655abb82823617d337c4e63c55f",
+    "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/reports/governance_audits/2026-05-12T00-37-02Z_lawmodel1_stale_reference_triage_cleanup_queue.md": "1871b24af0dc1f6a2f653a803edc51e95854c0898a9e0cea24cff2441e177ce6"
+  },
+  "lawmodel1_root": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1",
+  "original_evidence_files_modified": false,
+  "rewrite_map": [
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 1339697,
+      "mapping_key": "prefix:/Volumes/batdrivetb5",
+      "match_term": "/Volumes/batdrivetb5",
+      "match_type": "literal_prefix_or_substring",
+      "occurrence_count": 2537249,
+      "old_path": "/Volumes/batdrivetb5",
+      "proposed_new_path": "/Volumes/iseepatterns-evidence",
+      "sample_affected_files": [
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_mbox_accounts.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_ashley_myles_db.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.github/workflows/notebooklm_deepdive.yml",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/lawmodel1-governance/SKILL.md",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/eml-to-court-pdf/scripts/eml_to_court_pdf.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/DRAWS_LOCKER/draws_emails_all.csv"
+      ],
+      "sample_line_hits": [
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+          "line": 11,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "\"/Volumes/batdrivetb5/GDRIVE_LOCKER/2023-11-22_GDRIVE_LG_LOCKER/2023-11-22_GDRIVE_LG_ZIPPED/datach-metadata.xml\","
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/parse_vault_xml_full.py",
+          "line": 12,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "\"/Volumes/batdrivetb5/GDRIVE_LOCKER/2023-11-22_GDRIVE_LG_LOCKER/2023-11-22_GDRIVE_LG_ZIPPED/112223-metadata.xml\","
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+          "line": 13,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "ZIP_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-4.zip'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+          "line": 15,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/accounting_all.db'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+          "line": 5,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "SOURCE_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+          "line": 6,
+          "terms": [
+            "/Volumes/batdrivetb5"
+          ],
+          "text": "TARGET_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_correspondence.db'"
+        }
+      ],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "exists_directory",
+      "unresolved_mapping_reason": ""
+    },
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 1273923,
+      "mapping_key": "segment:/AI_TRAINING/",
+      "match_term": "AI_TRAINING",
+      "match_type": "path_segment",
+      "occurrence_count": 2471470,
+      "old_path": "/AI_TRAINING/",
+      "proposed_new_path": "/ISEEPATTERNS_LOCKER/",
+      "sample_affected_files": [
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_mbox_accounts.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_ashley_myles_db.py",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.github/workflows/notebooklm_deepdive.yml",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/.agent/skills/lawmodel1-governance/SKILL.md",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/DRAWS_LOCKER/draws_emails_all.csv",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_cards/imsg_CHAT_DB_IMAC_109084.json",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_cards/imsg_CHAT_DB_IMAC_328114.json"
+      ],
+      "sample_line_hits": [
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+          "line": 13,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "ZIP_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2024-06-22_GMAIL_MBOX_ALL_LOCKER/2024-06-22_GMAIL_ALL_MBOX_ZIPPED/2024-06-22-all-4.zip'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/create_accounting_db.py",
+          "line": 15,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "DB_PATH = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/accounting_all.db'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+          "line": 5,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "SOURCE_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/mbox_metadata.db'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_accountant_emails.py",
+          "line": 6,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "TARGET_DB = '/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/accountant_correspondence.db'"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+          "line": 8,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "DB_PATH = \"/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/side_business_correspondence.db\""
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/unused/extract_side_business_emails.py",
+          "line": 9,
+          "terms": [
+            "AI_TRAINING"
+          ],
+          "text": "MBOX_SUZANNE = \"/Volumes/batdrivetb5/AI_TRAINING/lawmodel1/data/MBOX_LOCKER/2023-06-08_GMAIL_MBOX_SG_LOCKER/2023-06-08_GMAIL_MBOX_SG_ZIPPED/sggmail--suzanne@rowboatcreative.com-YtFVqI.mbox\""
+        }
+      ],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "missing",
+      "unresolved_mapping_reason": ""
+    },
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 3,
+      "mapping_key": "unmapped:/Volumes/2026-iseepatterns-tb3",
+      "match_term": "/Volumes/2026-iseepatterns-tb3",
+      "match_type": "literal_prefix_or_substring",
+      "occurrence_count": 3,
+      "old_path": "/Volumes/2026-iseepatterns-tb3",
+      "proposed_new_path": "",
+      "sample_affected_files": [
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/route.ts",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/complaints/route.ts",
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/document/route.ts"
+      ],
+      "sample_line_hits": [
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/route.ts",
+          "line": 7,
+          "terms": [
+            "/Volumes/2026-iseepatterns-tb3"
+          ],
+          "text": "const COURT_ROOT = \"/Volumes/2026-iseepatterns-tb3/COURT_LOCKER\";"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/complaints/route.ts",
+          "line": 7,
+          "terms": [
+            "/Volumes/2026-iseepatterns-tb3"
+          ],
+          "text": "\"/Volumes/2026-iseepatterns-tb3/COURT_LOCKER/zDataStorage - Complaints.csv\";"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/app/app/api/legal/document/route.ts",
+          "line": 7,
+          "terms": [
+            "/Volumes/2026-iseepatterns-tb3"
+          ],
+          "text": "const COURT_ROOT = \"/Volumes/2026-iseepatterns-tb3/COURT_LOCKER\";"
+        }
+      ],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "not_checked_unresolved_mapping",
+      "unresolved_mapping_reason": "No controlled replacement supplied in task context for candidate_rewrite references."
+    },
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 1,
+      "mapping_key": "unmapped:/Volumes/messageshd",
+      "match_term": "/Volumes/messageshd",
+      "match_type": "literal_prefix_or_substring",
+      "occurrence_count": 2,
+      "old_path": "/Volumes/messageshd",
+      "proposed_new_path": "",
+      "sample_affected_files": [
+        "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/imazing_forensic_audit.py"
+      ],
+      "sample_line_hits": [
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/imazing_forensic_audit.py",
+          "line": 16,
+          "terms": [
+            "/Volumes/messageshd"
+          ],
+          "text": "python3 imazing_forensic_audit.py /Volumes/messageshd/imazing-export-1/showgoat"
+        },
+        {
+          "file": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/scripts/imazing_forensic_audit.py",
+          "line": 759,
+          "terms": [
+            "/Volumes/messageshd"
+          ],
+          "text": "help=\"Path to the iMazing raw export root directory (e.g., /Volumes/messageshd/imazing-export-1/showgoat)\","
+        }
+      ],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "not_checked_unresolved_mapping",
+      "unresolved_mapping_reason": "No controlled replacement supplied in task context for candidate_rewrite references."
+    },
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 0,
+      "mapping_key": "unmapped:/Users/iseepatterns-ms-m4",
+      "match_term": "/Users/iseepatterns-ms-m4",
+      "match_type": "literal_prefix_or_substring",
+      "occurrence_count": 0,
+      "old_path": "/Users/iseepatterns-ms-m4",
+      "proposed_new_path": "",
+      "sample_affected_files": [],
+      "sample_line_hits": [],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "not_checked_unresolved_mapping",
+      "unresolved_mapping_reason": "No controlled replacement supplied in task context for candidate_rewrite references."
+    },
+    {
+      "action_label": "candidate_rewrite",
+      "affected_file_count": 0,
+      "mapping_key": "unmapped:/Volumes/iseepatterns-evidence/IGNORE",
+      "match_term": "/Volumes/iseepatterns-evidence/IGNORE",
+      "match_type": "literal_prefix_or_substring",
+      "occurrence_count": 0,
+      "old_path": "/Volumes/iseepatterns-evidence/IGNORE",
+      "proposed_new_path": "",
+      "sample_affected_files": [],
+      "sample_line_hits": [],
+      "source_filter": "existing audit external_references filtered through triage classification action_label=candidate_rewrite",
+      "target_existence_status": "not_checked_unresolved_mapping",
+      "unresolved_mapping_reason": "No controlled replacement supplied in task context for candidate_rewrite references."
+    }
+  ],
+  "summary": {
+    "candidate_file_term_pairs_counted_by_rule": 2613624,
+    "candidate_occurrences_counted_by_rule": 5008724,
+    "counts_by_mapping_status_occurrences": {
+      "mapped_target_exists": 2537249,
+      "mapped_target_missing": 2471470,
+      "unresolved_no_controlled_mapping": 5
+    },
+    "counts_by_proposed_mapping_occurrences": {
+      "/AI_TRAINING/ -> /ISEEPATTERNS_LOCKER/": 2471470,
+      "/Users/iseepatterns-ms-m4 -> [unresolved]": 0,
+      "/Volumes/2026-iseepatterns-tb3 -> [unresolved]": 3,
+      "/Volumes/batdrivetb5 -> /Volumes/iseepatterns-evidence": 2537249,
+      "/Volumes/iseepatterns-evidence/IGNORE -> [unresolved]": 0,
+      "/Volumes/messageshd -> [unresolved]": 2
+    },
+    "rules_total": 6,
+    "rules_with_candidate_hits": 4
+  },
+  "workspace": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER"
+}

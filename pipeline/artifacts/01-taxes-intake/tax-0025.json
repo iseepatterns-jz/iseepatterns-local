@@ -1,0 +1,38 @@
+{
+  "item_id": "tax-0025",
+  "exhibit_id": "EXH-TAX-0025",
+  "pipeline_stage": "01-taxes-intake",
+  "source_type": "tax_document",
+  "status": "completed",
+  "full_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/TAXES_LOCKER/ROWBOAT_CREATIVE_BUSINESS_TAXES/RETURNS_BY_YEAR/2019/2019 E-FILE Signature Authorization Forms.pdf",
+  "processed_at": "2026-05-07T16:20:13Z",
+  "processed_by": "taxes_intake_01",
+  "sha256": "dc2f7d9f0a376ab033928d56b3632c7cbcd32be47393476aaab824a9f124bd90",
+  "classification": "TAX_RETURN",
+  "metadata": {
+    "file_size_bytes": 106416,
+    "filename": "2019 E-FILE Signature Authorization Forms.pdf",
+    "page_count": 2,
+    "extraction_method": "pymupdf",
+    "needs_ocr": false,
+    "is_worksheet": false,
+    "is_amended": false,
+    "tax_year": 2019,
+    "form_type": "E-File Signature Authorization",
+    "entity": "ROWBOAT CREATIVE, LLC",
+    "extracted_dates": [
+      "10/14/2020",
+      "19091014 758883",
+      "21   \n\n919875",
+      "LLC     68996",
+      "LLP\n30079"
+    ],
+    "key_figures": null
+  },
+  "summary": " 2019 E-File Signature Authorization tax return for ROWBOAT CREATIVE, LLC. 2-page PDF.",
+  "tags": [
+    "TAX",
+    "FINANCIAL",
+    "TIMELINE"
+  ]
+}
