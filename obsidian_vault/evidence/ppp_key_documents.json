@@ -1,0 +1,170 @@
+{
+  "generated": "2026-05-18",
+  "source": "evidence_hub.db (FTS on evidence_fts table)",
+  "database_path": "/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/data/evidence_hub.db",
+  "loans": {
+    "ppp1": {
+      "amount": 195805.00,
+      "deposit_date": "2020-04-20",
+      "lender": "Fifth Third Bank",
+      "receiving_account": "Fifth Third CK #2845",
+      "transferred_to_9710": "2020-05-06",
+      "forgiveness_status": "100% forgiven",
+      "forgiveness_evidence_id": [316897, 299795],
+      "sba_loan_number": "146073 (from forgiveness notice)",
+      "forgiveness_documents": [
+        "146073_sba_forgiveness_payment_notice.pdf",
+        "Paycheck_Protection_Program_documents_for_ROW-2.pdf"
+      ]
+    },
+    "ppp2": {
+      "amount": 108145.00,
+      "deposit_date_approx": "2021-03-12",
+      "term_start": "2021-03-11",
+      "term_end": "2021-08-26",
+      "term_length_weeks": 24,
+      "lender": "Fifth Third Bank",
+      "forgiveness_status": "100% forgiven",
+      "forgiveness_evidence_id": [316897]
+    },
+    "eidl": {
+      "amount": 10000.00,
+      "deposit_date": "2020-04-21",
+      "type": "EIDL Advance"
+    }
+  },
+  "total_ppp_funding": 303950.00,
+  "total_all_funding": 313950.00,
+  "key_events": {
+    "ppp1_deposit": {
+      "date": "2020-04-20",
+      "amount": 195805.00,
+      "account": "Fifth Third CK #2845",
+      "description": "PPP1 first draw deposited",
+      "evidence_ids": [316897]
+    },
+    "eidl_deposit": {
+      "date": "2020-04-21",
+      "amount": 10000.00,
+      "account": "Fifth Third CK #2845",
+      "description": "EIDL Advance deposited (1 day after PPP1)",
+      "evidence_ids": [316897]
+    },
+    "transfer_to_9710": {
+      "date": "2020-05-06",
+      "amount": 195805.00,
+      "from_account": "Fifth Third CK #2845",
+      "to_account": "Fifth Third #9710 (5/3 BUS ELITE CKG)",
+      "description": "Full PPP1 balance transferred from deposit account to disbursement account. #9710 balance was $0.00 before transfer, had overdrafted $0.80 on 5/5/2020."
+    },
+    "transfer_to_lg_chase": {
+      "date": "2020-05-26",
+      "amount": "70000.00",
+      "from_account": "Fifth Third CK #4700 (ROWBOATCREA4700)",
+      "to_account": "LG personal Chase Savings #5657",
+      "description": "Lucas Guariglia transferred $70K to personal Chase Savings account 5657. 36 days after PPP1 deposit. Characterized as 'loan repayment' in mortgage correspondence. Used for 1768 Dunkirk Drive down payment.",
+      "key_evidence_ids": [669687, 669686, 670175, 670054],
+      "mortgage_lender_quote": "There is a large deposit of $70,000 into your Chase savings account on 5/26. We will need to document where these funds came from." ,
+      "lucas_response": "The $70 was transferred out of my business, Rowboat Creative, as loan repayment. I have attached screenshots of the ACH transfers out of the business, as well screen shots of the multiple transfers OUT of my personal account into the business totaling $70k.",
+      "statement_gap": "The $70K transfer does NOT appear on account #9710 statements. #4700 statements are absent from evidence collection. The transfer likely occurred from Fifth Third account #4700."
+    },
+    "cash_disb_67522": {
+      "date": "2020-05-26",
+      "amount": 67522.00,
+      "from_account": "Fifth Third CK #4700 (ROWBOATCREA4700)",
+      "to": "Theater Workers Relief Fund, Account #291003189070, Bank of America",
+      "description": "ACH payment to Theater Workers Relief Fund. Processed same day as $70K transfer to LG Chase. ACH company: ROWBOATCREA4700.",
+      "reversal": {
+        "date": "2020-05-27",
+        "reason": "Returned due to account routing info issue"
+      },
+      "resent": {
+        "date": "2020-05-29",
+        "note": "ACH re-sent after routing correction"
+      },
+      "key_evidence_ids": [436389, 436367, 436362]
+    },
+    "dunkirk_down_payment": {
+      "date": "July 2020",
+      "property": "1768 Dunkirk Drive",
+      "location": "Waxhaw, NC (Charlotte area)",
+      "purchase_price": "unknown",
+      "lender": "DHL Mortgage (Direct Home Loans)",
+      "loan_processor": "Amber Letteer",
+      "loan_officer": "Michael Loeffler",
+      "source_of_funds": "$70K transfer from Fifth Third #4700 to LG Chase Savings #5657 on 5/26/2020",
+      "key_evidence_ids": [669687, 669686, 670175, 670054, 671253]
+    },
+    "ppp2_deposit": {
+      "date": "2021-03-11",
+      "amount": 108145.00,
+      "description": "PPP2 second draw started",
+      "evidence_ids": [316897]
+    }
+  },
+  "bank_accounts": {
+    "fifth_third_2845": {
+      "bank": "Fifth Third Bank",
+      "last_4": "2845",
+      "type": "Checking",
+      "role": "PPP1 initial deposit account",
+      "notes": "Appears only in 5/6/2020 transfer memo. Statements absent from evidence."
+    },
+    "fifth_third_9710": {
+      "bank": "Fifth Third Bank",
+      "last_4": "9710",
+      "type": "5/3 BUS ELITE CKG",
+      "role": "PPP1 disbursement account (statements provided May 2020 - Jan 2021)",
+      "notes": "Overdrafted $0.80 on 5/5/2020. $70K transfer to LG Chase Savings does NOT appear on this account."
+    },
+    "fifth_third_4700": {
+      "bank": "Fifth Third Bank",
+      "last_4": "4700",
+      "type": "Checking",
+      "role": "Secondary business operating account. Likely source of $70K transfer and $67,522 ACH.",
+      "notes": "ACH company tag: ROWBOATCREA4700. Statements absent from evidence collection. Referenced in PPP USAGE spreadsheet for rent, healthcare, workers comp, loan payments, contractors."
+    },
+    "fifth_third_7986201452": {
+      "bank": "Fifth Third Bank",
+      "full_account": "7986201452",
+      "type": "Business Elite Checking",
+      "role": "Current primary operating account (predecessor #4700)",
+      "routing": "053100737"
+    },
+    "lg_chase_savings_5657": {
+      "bank": "JP Morgan Chase",
+      "last_4": "5657",
+      "type": "Personal Savings",
+      "owner": "Lucas Guariglia",
+      "role": "Personal account receiving $70K transfer on 5/26/2020. Also received EIDL-related transfers.",
+      "notes": "Referenced in JL Closing Emails for $40K transfer on 1/6, RBC CC rewards redemption, and $70K PPP-sourced deposit."
+    }
+  },
+  "forgiveness_documents": {
+    "evidence_316897": {
+      "id": 316897,
+      "canonical_id": "email:CAKu-Ps4wYmy99V0Skt2pJ5vxvrQYEdjwSc5B3-RuihWkp8MFbg@mail.gmail.com:lucas@rowboatcreative.com",
+      "title": "Re: SBA Forgiveness / PPP Loan Documentation",
+      "date": "2022-08-17",
+      "summary": "Lucas confirms: round 1 for $195,805 on 4/20/2020 - both PPP loans fully forgiven. round 2 for $108,145 on 3/12/2021. Documentation available.",
+      "excerpt": "round 1 for $195,805 on 4/20/2020 YES. DOCUMENTATION HERE. round 2 for $108,145 on 3/12/2021 YES. DOCUMENTATION HERE"
+    },
+    "evidence_299795": {
+      "id": 299795,
+      "canonical_id": "email:CAFqwoi6kKb8SpK56r_A2YBSSycv7y0FOCL5Zge9HfiK8Ua2ObQ@mail.gmail.com:joe@rowboatcreative.com",
+      "title": "Re: Tax Documents / PPP Forgiveness",
+      "date": "2024-02-01",
+      "summary": "Joe forwarded PPP forgiveness documentation. Attachments: 146073_sba_forgiveness_payment_notice.pdf, Paycheck_Protection_Program_documents_for_ROW-2.pdf",
+      "excerpt": "Attachments mentioned: 146073_sba_forgiveness_payment_notice.pdf, Paycheck_Protection_Program_documents_for_ROW-2.pdf"
+    }
+  },
+  "key_evidence_ids_by_category": {
+    "transfer_70k_dunkirk": [669687, 669686, 670175, 670054, 671253],
+    "cash_disb_67522": [436389, 436367, 436362],
+    "ppp_forgiveness": [316897, 299795],
+    "ppp_documentation": [299795],
+    "ppp_amounts_dates": [316897],
+    "dunkirk_mortgage": [670175, 669687],
+    "bank_account_5657": [220120, 377642, 670175]
+  }
+}
