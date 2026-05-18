@@ -25,6 +25,9 @@ import {
     Presentation,
     Brain,
     ClipboardList, // ← NEW icon for CoC
+    FileUp,
+    TrendingUp,
+    BarChart3,
 } from "lucide-react";
 
 
@@ -43,7 +46,11 @@ const NAV_GROUPS = [
             { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
             { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
             { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
+            { label: "QBO Unallocated", href: "/financials/qbo-unallocated", icon: FileUp, enabled: true },
+            { label: "Sales by Salesperson", href: "/financials/sales-by-salesperson", icon: TrendingUp, enabled: true },
+            { label: "Sales Analysis", href: "/financials/sales-analysis", icon: BarChart3, enabled: true },
             { label: "CoC History", href: "/coc", icon: ClipboardList, enabled: true },
+            { label: "Slack", href: "/slack", icon: MessageSquare, enabled: true },
         ]
     },
     {
