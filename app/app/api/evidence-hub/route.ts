@@ -90,24 +90,26 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
             }
 
-            // iMessage detail — fetch from chat_case_only.db (iMac Late 2013, Catalina)
+            // iMessage detail — fetch from chat_case_only.db
             if (sourceType === "imessage") {
                 const msg = chatDb.prepare(`
                     SELECT
                         m.ROWID as id,
                         m.guid as canonical_id,
                         'imessage' as source_type,
-                        'iMessage with ' || CASE WHEN m.is_from_me = 1 THEN 'Joseph Zangrilli'
-                            ELSE COALESCE(h.id, 'Unknown') END as title,
+                        CASE WHEN m.is_from_me = 1
+                            THEN 'JZ → Lucas Guariglia'
+                            ELSE 'Lucas Guariglia → JZ'
+                        END as title,
                         m.text as body_snippet,
                         m.text as summary,
-                        datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
+                        datetime(m.date_utc, 'unixepoch', 'localtime') as start_timestamp,
                         '["chat", "key_players"]' as tags,
                         m.is_from_me,
                         h.id as handle_id_str,
                         m.service as extra
-                    FROM message m
-                    LEFT JOIN handle h ON h.ROWID = m.handle_id
+                    FROM messages m
+                    LEFT JOIN handle h ON h.id = m.contact_name
                     WHERE m.ROWID = ?
                 `).get(idNum) as any;
 
@@ -246,8 +248,9 @@ export async function GET(request: NextRequest) {
                 seed_subject: seedEmail.subject,
             });
         }
-        // ── FTS5 search ──
-        if (q) {
+        // ── FTS5 search (evidence_hub.db — emails & evidence cards only) ──
+        // Skip for iMessage source — handled by chat_case_only.db below
+        if (q && sourceType !== "imessage") {
             // Minimum query length to avoid full-table-scan FTS queries
             if (q.trim().length < 3) {
                 return NextResponse.json({
@@ -317,9 +320,7 @@ export async function GET(request: NextRequest) {
             let chatWhere = "WHERE 1=1";
             const chatParams: (string | number)[] = [];
 
-            // Contact filter — filter by the message's own handle_id directly
-            // In iMessage, m.handle_id always points to the other person in the conversation
-            // This is far more reliable than filtering by chat_handle_join
+            // Contact filter — filter by the message's handle name
             if (participant) {
                 const groups = participant.split("|").map(g => g.split(",").map((s: string) => s.trim()).filter(Boolean)).filter(g => g.length > 0);
                 const allIds = groups.flat();
@@ -328,14 +329,14 @@ export async function GET(request: NextRequest) {
                 allIds.forEach(id => chatParams.push(`%${id}%`));
             }
 
-            // Date filters using Apple Cocoa timestamp conversion
+            // Date filters — date_utc is Unix seconds
             if (dateFrom) {
-                chatWhere += ` AND datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') >= ?`;
+                chatWhere += ` AND datetime(m.date_utc, 'unixepoch', 'localtime') >= ?`;
                 chatParams.push(dateFrom);
             }
             if (dateTo) {
                 // Add 1 day to make the "To" date inclusive (end of day)
-                chatWhere += ` AND datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') < date(?, '+1 day')`;
+                chatWhere += ` AND datetime(m.date_utc, 'unixepoch', 'localtime') < date(?, '+1 day')`;
                 chatParams.push(dateTo);
             }
 
@@ -356,28 +357,22 @@ export async function GET(request: NextRequest) {
                     END as title,
                     substr(m.text, 1, 100) as summary,
                     m.text as preview,
-                    datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime') as start_timestamp,
+                    datetime(m.date_utc, 'unixepoch', 'localtime') as start_timestamp,
                     '["chat", "key_players"]' as tags,
                     m.is_from_me,
                     COALESCE(h.id, 'Unknown') as handle_id
-                FROM message m
-                JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
-                LEFT JOIN handle h ON h.ROWID = m.handle_id
+                FROM messages m
+                LEFT JOIN handle h ON h.id = m.contact_name
                 ${chatWhere}
-                GROUP BY m.ROWID
-                ORDER BY m.date ${sortDir}
+                ORDER BY m.date_utc ${sortDir}
                 LIMIT ? OFFSET ?
             `).all(...chatParams, limit, offset);
 
             const countRow = chatDb.prepare(`
-                SELECT COUNT(*) as total FROM (
-                    SELECT m.ROWID
-                    FROM message m
-                    JOIN chat_message_join cmj ON cmj.message_id = m.ROWID
-                    LEFT JOIN handle h ON h.ROWID = m.handle_id
-                    ${chatWhere}
-                    GROUP BY m.ROWID
-                )
+                SELECT COUNT(*) as total
+                FROM messages m
+                LEFT JOIN handle h ON h.id = m.contact_name
+                ${chatWhere}
             `).get(...chatParams) as CountRow;
 
             return NextResponse.json({

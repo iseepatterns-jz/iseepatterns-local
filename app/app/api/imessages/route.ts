@@ -12,11 +12,12 @@ function getHandles(db: Database.Database) {
     if (cachedHandles.data && Date.now() - cachedHandles.ts < HANDLE_CACHE_TTL) {
         return cachedHandles.data;
     }
+    // handle.id = contact_name (friendly name from messages base table)
     const handles = db
         .prepare(
             `SELECT h.id as handle_id, COUNT(*) as cnt
-             FROM message m
-             JOIN handle h ON h.ROWID = m.handle_id
+             FROM messages m
+             JOIN handle h ON h.id = m.contact_name
              GROUP BY h.id
              ORDER BY cnt DESC`
         )
@@ -25,11 +26,9 @@ function getHandles(db: Database.Database) {
     return handles;
 }
 
-/**
- * Apple iMessage timestamps use Cocoa epoch (2001-01-01).
- * date column is in nanoseconds since that epoch.
- */
-const APPLE_DATE_EXPR = `datetime((m.date / 1000000000) + strftime('%s','2001-01-01'), 'unixepoch', 'localtime')`;
+// DB stores Unix timestamps in date_utc (seconds since 1970).
+// Query messages base table; handle VIEW joins on id = contact_name.
+const MSG_DATE_EXPR = `datetime(m.date_utc, 'unixepoch', 'localtime')`;
 
 export async function GET(request: NextRequest) {
     try {
@@ -50,16 +49,16 @@ export async function GET(request: NextRequest) {
                     `SELECT m.ROWID as id,
                             COALESCE(h.id, 'Unknown') as handle_id,
                             m.is_from_me,
-                            ${APPLE_DATE_EXPR} as date_utc,
+                            ${MSG_DATE_EXPR} as date_utc,
                             m.text as body,
                             m.service,
                             m.guid
-                     FROM message m
-                     LEFT JOIN handle h ON h.ROWID = m.handle_id
+                     FROM messages m
+                     JOIN handle h ON h.id = m.contact_name
                      WHERE m.text IS NOT NULL
                        AND m.text != ''
-                       AND ${APPLE_DATE_EXPR} BETWEEN datetime(?, '-7 days') AND datetime(?, '+7 days')
-                     ORDER BY ABS(julianday(${APPLE_DATE_EXPR}) - julianday(?))
+                       AND ${MSG_DATE_EXPR} BETWEEN datetime(?, '-7 days') AND datetime(?, '+7 days')
+                     ORDER BY ABS(julianday(${MSG_DATE_EXPR}) - julianday(?))
                      LIMIT ?`
                 )
                 .all(nearDate, nearDate, nearDate, limit);
@@ -88,8 +87,8 @@ export async function GET(request: NextRequest) {
         const countRow = db
             .prepare(
                 `SELECT COUNT(*) as total
-                 FROM message m
-                 LEFT JOIN handle h ON h.ROWID = m.handle_id
+                 FROM messages m
+                 JOIN handle h ON h.id = m.contact_name
                  ${whereClause}`
             )
             .get(...params) as { total: number };
@@ -99,14 +98,14 @@ export async function GET(request: NextRequest) {
                 `SELECT m.ROWID as id,
                         COALESCE(h.id, 'Unknown') as handle_id,
                         m.is_from_me,
-                        ${APPLE_DATE_EXPR} as date_utc,
+                        ${MSG_DATE_EXPR} as date_utc,
                         m.text as body,
                         m.service,
                         m.guid
-                 FROM message m
-                 LEFT JOIN handle h ON h.ROWID = m.handle_id
+                 FROM messages m
+                 JOIN handle h ON h.id = m.contact_name
                  ${whereClause}
-                 ORDER BY m.date DESC
+                 ORDER BY m.date_utc DESC
                  LIMIT ? OFFSET ?`
             )
             .all(...params, limit, offset);
