@@ -1,0 +1,11 @@
+{
+  "newFileLocation": "folder",
+  "newFileFolderPath": "entities",
+  "attachmentFolderPath": "assets",
+  "showUnsupportedFiles": true,
+  "showLineNumber": true,
+  "readableLineLength": false,
+  "defaultViewMode": "source",
+  "livePreview": true,
+  "strictLineBreaks": false
+}
