@@ -7,13 +7,13 @@ Gems are modular evidence pipeline definitions. Each gem declares its inputs, ou
 | Gem | Description | Dependencies |
 |:----|:-----------|:-------------|
 | `gem-email-mbox` | Gmail MBOX ingest → mbox_metadata.db | — |
-| `gem-imessage-chatdb` | iMessage chat.db → chat_master.db | — |
+| `gem-imessage-chatdb` | iMessage RSMF → chat_case_only.db (API primary) | — |
 | `gem-financial-txns` | Bank/Printavo/Amazon → workbench.db | — |
 | `gem-tax-returns` | 1120-S + K-1 → workbench.db | gem-financial-txns |
 | `gem-players` | LinkedIn/profiles → players.db | — |
 | `gem-legal-docs` | Court PDFs → ChromaDB + BM25 | — |
 | `gem-transcripts` | Call recordings → workbench.db | — |
-| `gem-evidence-cards` | All sources → evidence_hub.db | email, imessage, financial, players |
+| `gem-evidence-cards` | All sources → evidence_hub.db (email, tax only; iMessage purged) | email, financial, players |
 | `gem-rag-search` | ChromaDB + BM25 → LLM answers | evidence-cards, legal-docs |
 | `gem-chain-of-custody` | Provenance + audit tracking | email, imessage, financial |
 | `gem-paralegal-exports` | Attorney export packages → exhibits + letters | evidence-cards, players, chain-of-custody |
