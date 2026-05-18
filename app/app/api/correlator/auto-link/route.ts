@@ -86,10 +86,10 @@ export async function POST(req: NextRequest) {
             }
 
             const matches = commDb.prepare(`
-                SELECT msg_id, subject, sender, date,
+                SELECT id, subject, from_addr, date_sent,
                     (${keywords.map((_, i) => `(CASE WHEN subject LIKE ? THEN 2 ELSE 0 END + CASE WHEN body LIKE ? THEN 1 ELSE 0 END)`).join(" + ")}) as score
-                FROM messages
-                WHERE date >= ? AND date <= ?
+                FROM emails
+                WHERE date_sent >= ? AND date_sent <= ?
                 AND (${keywordConditions})
                 ORDER BY score DESC
                 LIMIT 10
@@ -146,7 +146,7 @@ export async function GET() {
             eventCount = (wb.prepare("SELECT COUNT(*) as c FROM timeline_events").get() as { c: number }).c;
         } catch { /* table may not exist */ }
 
-        const emailCount = (commDb.prepare("SELECT COUNT(*) as c FROM messages").get() as { c: number }).c;
+        const emailCount = (commDb.prepare("SELECT COUNT(*) as c FROM emails").get() as { c: number }).c;
 
         return NextResponse.json({
             timelineEvents: eventCount,

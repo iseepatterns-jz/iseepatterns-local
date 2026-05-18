@@ -228,9 +228,22 @@ export default function WorkbenchPage() {
     const handleSaveDescription = async () => {
         if (!selectedSection) return;
         setDescSaving(true);
-
-        setDescSaving(false);
-        setDescEditorOpen(false);
+        try {
+            await fetch("/api/workbench/descriptions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    targetType: "section",
+                    targetId: selectedSection,
+                    content: descContent,
+                }),
+            });
+            setDescEditorOpen(false);
+        } catch {
+            alert("Failed to save description");
+        } finally {
+            setDescSaving(false);
+        }
     };
 
     /* ── Create Section ── */

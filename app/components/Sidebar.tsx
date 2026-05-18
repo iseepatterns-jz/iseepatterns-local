@@ -28,6 +28,9 @@ import {
     FileUp,
     TrendingUp,
     BarChart3,
+    BookOpen,
+    Mic,
+    FileCheck,
 } from "lucide-react";
 
 
@@ -37,6 +40,8 @@ const NAV_GROUPS = [
         items: [
             { label: "Dashboard", href: "/", icon: LayoutDashboard, enabled: true },
             { label: "Discovery", href: "/evidence-hub", icon: Shield, enabled: true },
+            { label: "Communications", href: "/communications", icon: Mail, enabled: true },
+            { label: "Transcripts", href: "/transcripts", icon: Mic, enabled: true },
             { label: "Players", href: "/players", icon: Users, enabled: true },
         ]
     },
@@ -46,8 +51,9 @@ const NAV_GROUPS = [
             { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
             { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
             { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
-            { label: "QBO Unallocated", href: "/financials/qbo-unallocated", icon: FileUp, enabled: true },
-            { label: "Sales by Salesperson", href: "/financials/sales-by-salesperson", icon: TrendingUp, enabled: true },
+            { label: "Import", href: "/financials/import", icon: FileUp, enabled: true },
+            { label: "QBO Unallocated", href: "/financials/qbo-unallocated", icon: FileCheck, enabled: true },
+            { label: "Sales by SP", href: "/financials/sales-by-salesperson", icon: TrendingUp, enabled: true },
             { label: "Sales Analysis", href: "/financials/sales-analysis", icon: BarChart3, enabled: true },
             { label: "CoC History", href: "/coc", icon: ClipboardList, enabled: true },
             { label: "Slack", href: "/slack", icon: MessageSquare, enabled: true },
@@ -59,6 +65,13 @@ const NAV_GROUPS = [
             { label: "Workbench", href: "/workbench", icon: Briefcase, enabled: true },
             { label: "Strategy", href: "/case-corner", icon: Target, enabled: true },
             { label: "Research", href: "/legal/research", icon: Brain, enabled: true },
+            { label: "Legal", href: "/legal", icon: Scale, enabled: true },
+        ]
+    },
+    {
+        title: "Knowledge",
+        items: [
+            { label: "Obsidian Vault", href: "/obsidian", icon: BookOpen, enabled: true },
         ]
     },
     {

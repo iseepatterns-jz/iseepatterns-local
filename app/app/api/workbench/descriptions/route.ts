@@ -14,6 +14,10 @@ export async function GET(request: NextRequest) {
     const targetType = searchParams.get("targetType") || "section";
     const targetId = searchParams.get("targetId") || "";
 
+    if (!targetId) {
+        return NextResponse.json({ error: "Missing required param: targetId" }, { status: 400 });
+    }
+
     try {
         const db = getWorkbenchDb();
 

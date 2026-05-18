@@ -167,7 +167,7 @@ export default function EvidenceHubPage() {
 
     // ── Category Tabs ──
     type EvidenceTab = "all" | "imessage" | "email" | "transcripts" | "financial" | "court";
-    const [activeTab, setActiveTab] = useState<EvidenceTab>("imessage");
+    const [activeTab, setActiveTab] = useState<EvidenceTab>("all");
     const EVIDENCE_TABS: { id: EvidenceTab; label: string; icon: React.ReactNode; sourceFilter: string; color: string }[] = [
         { id: "all", label: "All", icon: <LayoutGrid size={15} />, sourceFilter: "", color: "#94a3b8" },
         { id: "imessage", label: "iMessage", icon: <MessageSquare size={15} />, sourceFilter: "imessage", color: "#34d399" },
@@ -1291,7 +1291,7 @@ export default function EvidenceHubPage() {
                     <span className="count">{total.toLocaleString()} results</span>
                     {searchMode && <span className="badge">{searchMode}</span>}
                     {hasFilters && (
-                        <button className="eh-btn" onClick={() => { clearFilters(); setActiveTab("imessage"); setIMessageView(true); }} style={{ padding: "4px 8px" }}>
+                        <button className="eh-btn" onClick={() => { clearFilters(); setActiveTab("all"); }} style={{ padding: "4px 8px" }}>
                             <X size={14} /> Clear
                         </button>
                     )}
