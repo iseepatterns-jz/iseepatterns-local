@@ -51,6 +51,7 @@ const NAV_GROUPS = [
             { label: "Correlator", href: "/correlator", icon: Columns2, enabled: true },
             { label: "Timeline", href: "/timeline", icon: GitFork, enabled: true },
             { label: "Financials", href: "/financials", icon: DollarSign, enabled: true },
+            { label: "Statements", href: "/financials/statements", icon: FileText, enabled: true },
             { label: "Import", href: "/financials/import", icon: FileUp, enabled: true },
             { label: "QBO Unallocated", href: "/financials/qbo-unallocated", icon: FileCheck, enabled: true },
             { label: "Sales by SP", href: "/financials/sales-by-salesperson", icon: TrendingUp, enabled: true },
