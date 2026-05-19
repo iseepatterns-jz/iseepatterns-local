@@ -4,7 +4,7 @@ title: "Evidence Tracker"
 case: "Rowboat Creative LLC v. Guariglia"
 case_number: "2024CH00720"
 created: "2026-05-18"
-updated: "2026-05-18"
+updated: "2026-05-19"
 tags:
   - dashboard
   - evidence
@@ -115,6 +115,21 @@ SORT evidence_count DESC
 | Intuit payroll records | R29 fraud filter details | Medium | Subpoena Intuit |
 | Former employee records | Exit interviews, statements | Medium | Contact/witness interviews |
 | FBI tip response | Investigation status | Medium | FOIA FBI |
+
+---
+
+## Newly Linked — Financial Explorer (2026-05-19)
+
+These evidence sources are now wired into the [[Financial Explorer]] at `localhost:3000/financials`:
+
+| Source | Records | Link | Notes |
+|--------|---------|------|-------|
+| RosettaStone transactions | 21,981 | `evidence_hub.db` → `rosettastone_transactions` | 2015-2023, 150 bank/CC statements, filterable by 17 fields |
+| Printavo invoices | 1,995 | `evidence_hub.db` → `printavo_invoices` | Production orders with POs, cross-referenced to QBO |
+| DecoNetwork orders | 2,949 | `evidence_hub.db` → `deco_orders` | 24,289 PO line items, sales staff tracking |
+| QBO ↔ Printavo ↔ Deco cross-refs | 340 | `/api/financials/cross-reference` | Closed-loop forensic loop: RosettaStone → QBO → Printavo → Deco |
+| Slack messages | 2,707 | `evidence_hub.db` → `slack_messages` | 14 channels, Mar 2020 – Mar 2024, FTS-searchable |
+| Bank/CC statements (PDF) | 150 | `/api/financials/statements` | Chase CC (147), Chase Checking (1), Fifth Third (2) |
 
 ---
 

@@ -1,6 +1,6 @@
 # Hermes Workshop — Rowboat Creative Handoff Doc
 
-**Date:** 2026-05-18
+**Date:** 2026-05-19
 **Prepared by:** Hermes Agent (Case Manager for Joseph Zangrilli)
 **Purpose:** Onboarding document for a new Hermes workshop session. This captures everything accomplished, current state, conventions, and next priorities so you don't start blind.
 
@@ -158,7 +158,7 @@ Full catalog at `lawmodel1/reports/seven_locker/seven_locker_catalog.md`:
 - Source analysis: `rowboat_slack_report.txt`, `rowboat_slack_analysis.py`
 - Cross-reference with accountant emails: `_analysis_outputs/accountant_email_analysis/slack_analysis.md`
 
-### 3.11 iMessage API Fix
+### 3.11 iMessage API Fix (DIAGNOSED)
 - **chat_case_only.db dual-schema pitfall resolved**: Two `chat_case_only.db` files exist with DIFFERENT schemas. The API routes query `IMESSAGE_LOCKER/Messages/chat_case_only.db` (VIEW-based: `messages` table, `handle` VIEW, Unix `date_utc`). The legacy forensic DB at `IMESSAGE_DATA_LOCKER/chat_case_only.db` uses Apple-native schema (`chat_message_join`, Cocoa epoch `date`).
 - **184K messages** now queryable via the API
 - RSMF indexed markdown at `lawmodel1/imessage_sources.md` (4,264 messages, 2017-11 to 2024-02, 96% from 2023)
@@ -209,6 +209,65 @@ Full catalog at `lawmodel1/reports/seven_locker/seven_locker_catalog.md`:
 - **QBO unallocated hunt**: invoice-level salesperson assignments with multi-pass PDF layering
 - **Sales analysis DB**: `_analysis_outputs/rowboat_invoice_database/invoice_analysis.db` (7,484 invoices, 2016-2025, $12.93M)
 
+### 3.19 Financial Explorer — Printavo/Deco/RosettaStone 5-Tab UI (COMPLETE — 2026-05-19)
+
+Unified financial explorer wired into the Next.js app at `/financials` with five tabs.
+
+**Data sources integrated:**
+- **Printavo API**: 1,995 invoices imported with full metadata (customer, status, amounts, dates)
+- **DecoNetwork API**: 2,949 orders imported with production and shipping details
+- **Cross-referencing**: 340 records matched between Printavo and Deco (shared order/invoice IDs)
+- **RosettaStone**: 22,000+ transactions imported into `evidence_hub.db` for unified financial querying
+
+**5-Tab UI layout:**
+1. **Explorer** — Searchable, filterable views across all Printavo invoices and Deco orders with sortable columns
+2. **Statements** — Aggregated financial statements with period-over-period comparisons
+3. **Summary** — High-level metrics (total revenue, outstanding, customer breakdowns)
+4. **Tax Returns** — Tax document integration linking 96 ingested tax docs to financial periods
+5. **Cross-Reference** — Side-by-side Printavo/Deco matching viewer with discrepancy highlighting for the 340 matched records
+
+**API routes:**
+- `/api/financials/printavo` — Printavo invoice queries with pagination
+- `/api/financials/deco` — DecoNetwork order queries with pagination
+- `/api/financials/cross-reference` — Matched/unmatched record comparison
+- `/api/financials/summary` — Aggregated financial metrics
+
+### 3.20 RosettaStone Transaction Import (COMPLETE — 2026-05-19)
+- **22,000+ transactions** imported into `evidence_hub.db` from RosettaStone financial data
+- Printavo and Deco APIs used as canonical reference sources for categorization
+- Enables unified SQL queries across email, tax, financial, and Slack data from a single database
+- Transaction categories mapped to QBO chart of accounts for consistent financial reporting
+
+### 3.21 Legacy FastAPI Removal (COMPLETE — 2026-05-19)
+- **Legacy FastAPI server (port 8000)** fully decommissioned and removed
+- All functionality migrated to the Next.js app on port 3000
+- **RAG button** removed from Evidence Hub UI (legacy retrieval-augmented generation feature)
+- **Legal Research page** decommissioned and replaced with a deprecation notice pointing users to NotebookLM integration
+- No remaining dependencies on the legacy Python FastAPI stack
+
+### 3.22 Slack Message Ingestion (COMPLETE — 2026-05-19)
+- **2,707 Slack messages** ingested into `evidence_hub.db` from the 14-channel Rowboat Creative workspace
+- Messages now searchable alongside email and tax records via the Evidence Hub FTS5 index
+- Source data at: `lawmodel1/data/USE_MBOX_INDEX/SLACK_WORKSPACE/`
+- Slack Viewer UI at `localhost:3000/slack` now backed by database queries as well as file-based analysis
+
+### 3.23 iMessage API Schema Correction Applied (COMPLETE — 2026-05-19)
+- **chat_case_only.db schema correction** applied to the iMessage API routes
+- Fix ensures all API queries target the correct VIEW-based schema (`IMESSAGE_LOCKER/Messages/chat_case_only.db`) and never the legacy Apple-native schema (`IMESSAGE_DATA_LOCKER/chat_case_only.db`)
+- All `/api/imessage/*` routes verified against the SSOT database
+- Prevents silent query failures documented in dual-schema pitfall (see Section 7, Critical Governance Rules)
+
+### 3.24 Documentation Refresh (COMPLETE — 2026-05-19)
+- **Full documentation refresh** completed across lawmodel1 docs
+- Updated: `HERMES_WORKSHOP_HANDOFF.md` (this document), API route documentation, governance skill references
+- Stale dev server command references verified and corrected (all point to `lawmodel1/app/` — no legacy port 8000 references remain)
+- Pipeline stage statuses updated in documentation to reflect current state
+
+### 3.25 GitHub Push (COMPLETE — 2026-05-19)
+- **All 2026-05-19 changes pushed** to `iseepatterns-local` GitHub repo
+- Includes: Financial Explorer code, FastAPI removal, Slack ingestion scripts, iMessage API fixes, documentation updates
+- Commit history reflects the full day's work with descriptive commit messages
+
 ---
 
 ## 4. Pipeline Architecture
@@ -255,7 +314,8 @@ Full catalog at `lawmodel1/reports/seven_locker/seven_locker_catalog.md`:
 - **Port:** `3000` (verify with `lsof -i :3000`)
 - **Transcripts:** `/transcripts` route, served from `lawmodel1/data/transcripts/`
 - **QBO Unallocated API:** `/api/financials/qbo-unallocated` — points to the hunt CSV
-- **Slack Viewer:** `/slack` — 14 Rowboat Creative Slack channels
+- **Financial Explorer:** `/financials` — 5-tab UI (Explorer, Statements, Summary, Tax Returns, Cross-Reference) with Printavo, Deco, and RosettaStone data
+- **Slack Viewer:** `/slack` — 14 Rowboat Creative Slack channels (2,707 messages ingested into evidence_hub.db)
 - **Evidence Hub:** `/evidence-hub` — default tab must be "all" (NOT "imessage")
 - **Obsidian Vault Viewer:** `/obsidian` — case knowledge graph browser
 - **Sidebar:** 20-page navigation layout (see governance skill for checklist)
@@ -266,6 +326,7 @@ Full catalog at `lawmodel1/reports/seven_locker/seven_locker_catalog.md`:
 - **No-op functions**: Function handlers that set loading state but never call the API (e.g., the old `handleSaveDescription` was a no-op).
 - **Table name mismatches**: Old code used `FROM messages` — correct is `FROM emails` (mbox_metadata.db). Column mismatches: `sender` → `from_addr`, `date` → `date_sent`.
 - **Vite HMR gotcha**: Code edits to route.ts and page.tsx trigger browser refresh — users see as a crash. Edit data files (JSONs in public/data/) safely without disruption.
+- **Legacy FastAPI (port 8000)**: Fully removed 2026-05-19. No code references remain. If you see port 8000 mentioned anywhere, it's stale.
 
 ---
 
@@ -327,6 +388,9 @@ All skills are under `~/.hermes/profiles/isp_ds_manager_bot/skills/`. Key catego
 - Obsidian vault: `lawmodel1/obsidian_vault/`
 - Subpoena packages: `_analysis_outputs/subpoenas/`
 - Slack workspace data: `lawmodel1/data/USE_MBOX_INDEX/SLACK_WORKSPACE/`
+- Printavo invoices: `lawmodel1/data/FINANCIAL_LOCKER/PRINTAVO/`
+- Deco orders: `lawmodel1/data/FINANCIAL_LOCKER/DECO/`
+- RosettaStone transactions: ingested into `evidence_hub.db` (query via `source_type='rosettastone'`)
 
 ### Communication Style (Joseph's Preferences)
 - **Frustrated when:** asked about things already in progress
@@ -349,7 +413,7 @@ All skills are under `~/.hermes/profiles/isp_ds_manager_bot/skills/`. Key catego
 
 ### Critical Governance Rules (from lawmodel1-governance)
 
-**iMessage DB Dual-Schema Pitfall:** There are TWO `chat_case_only.db` files with DIFFERENT schemas. The API routes query `IMESSAGE_LOCKER/Messages/chat_case_only.db` (VIEW-based: `messages` table, `handle` VIEW, Unix `date_utc`). The legacy forensic DB at `IMESSAGE_DATA_LOCKER/chat_case_only.db` uses Apple-native schema (`chat_message_join`, Cocoa epoch `date`). Queries that work on one silently fail on the other. Always verify schema with `.tables` and `PRAGMA table_info(messages)` before writing queries.
+**iMessage DB Dual-Schema Pitfall:** There are TWO `chat_case_only.db` files with DIFFERENT schemas. The API routes query `IMESSAGE_LOCKER/Messages/chat_case_only.db` (VIEW-based: `messages` table, `handle` VIEW, Unix `date_utc`). The legacy forensic DB at `IMESSAGE_DATA_LOCKER/chat_case_only.db` uses Apple-native schema (`chat_message_join`, Cocoa epoch `date`). Queries that work on one silently fail on the other. Always verify schema with `.tables` and `PRAGMA table_info(messages)` before writing queries. **Schema correction applied to all API routes 2026-05-19.**
 
 **evidence_fts has ZERO iMessages:** The `evidence_fts` FTS5 table covers emails and evidence cards only. iMessage queries MUST route to `chat_case_only.db`. When the evidence-hub API receives `source_type=imessage`, skip the FTS5 search block: `if (q && sourceType !== "imessage")`.
 
@@ -361,9 +425,11 @@ All skills are under `~/.hermes/profiles/isp_ds_manager_bot/skills/`. Key catego
 
 **Canonical DB Path Rule:** The real `evidence_hub.db` is at `lawmodel1/data/evidence_hub.db` (3.4GB, ~1M records — email + tax only). Multiple 0-byte stubs exist at root, `lawmodel1/`, and `lawmodel1/app/`. Always verify with `SELECT source_type, COUNT(*) FROM evidence GROUP BY source_type`.
 
+**No Legacy FastAPI (port 8000):** The legacy Python FastAPI server on port 8000 was fully removed 2026-05-19. All API routes now live exclusively in the Next.js app on port 3000. Any reference to port 8000 in code, config, or documentation is stale and must be removed.
+
 ---
 
-## 8. Next Priorities (as of 2026-05-18)
+## 8. Next Priorities (as of 2026-05-19)
 
 1. **QBO unallocated hunt — remaining orders** — Continue multi-pass PDF hunt layering against remaining unallocated rows. Use data7 → Deco key → auto-propagation priority chain. Sources: MBOX emails, PDF extracts, INVOICE_LOCKER, and Joseph's per-company memory.
 
@@ -373,9 +439,13 @@ All skills are under `~/.hermes/profiles/isp_ds_manager_bot/skills/`. Key catego
 
 4. **Evidence exhibit prep** — `evidence-memo` and `evidence-package-synthesis` skills exist. Use the 7-locker catalog and claim-by-claim mapping as sources for court-ready exhibit packages.
 
-5. **iMessage cross-reference deep dive** — RSMF forensic exports are the exclusive SSOT. Build on the 4,264 indexed messages in `imessage_sources.md` and the 184K messages in the API. Cross-reference iMessage timelines with email evidence, receivership filings, and PPP fraud patterns.
+5. **iMessage cross-reference deep dive** — RSMF forensic exports are the exclusive SSOT. Build on the 4,264 indexed messages in `imessage_sources.md` and the 184K messages in the API (schema correction applied 2026-05-19). Cross-reference iMessage timelines with email evidence, receivership filings, and PPP fraud patterns.
 
-6. **Keep GitHub backups current** — Copy completed analysis from `_analysis_outputs/` into `lawmodel1/reports/` and commit to `iseepatterns-local` when major outputs accumulate.
+6. **Printavo/Deco cross-reference analysis** — Investigate the 340 matched records between Printavo and Deco for discrepancies. Flag orders present in one system but missing from the other. Use the Cross-Reference tab at `/financials` as the investigation UI.
+
+7. **RosettaStone transaction categorization** — 22K+ transactions imported. Categorize by type (revenue, expense, transfer), map to QBO chart of accounts, and flag anomalies for forensic review.
+
+8. **Keep GitHub backups current** — Copy completed analysis from `_analysis_outputs/` into `lawmodel1/reports/` and commit to `iseepatterns-local` when major outputs accumulate. Financial Explorer code and RosettaStone imports already pushed 2026-05-19.
 
 ---
 
@@ -400,22 +470,22 @@ Verify before relying. All pipeline cron jobs may be paused. Resume individually
 He identifies salespeople by company name from memory. Present companies by name for fastest resolution. Follow the canonical priority chain: data7 → Deco key → auto-propagation.
 
 **"What's the lawmodel1 app URL?"**
-`http://localhost:3000` (verify with `lsof -i :3000`). Cloudflare tunnel may also be running for mobile access.
+`http://localhost:3000` (verify with `lsof -i :3000`). Cloudflare tunnel may also be running for mobile access. Legacy port 8000 is DECOMMISSIONED — do not use.
 
 **"Does evidence_hub.db contain iMessages?"**
-NO. evidence_hub.db = email + tax only (~1M records). iMessages were purged 2026-05-17. RSMF forensic exports are the exclusive iMessage SSOT. Use `chat_case_only.db` for iMessage search.
+NO. evidence_hub.db = email + tax + Slack + RosettaStone (~1M records). iMessages were purged 2026-05-17. RSMF forensic exports are the exclusive iMessage SSOT. Use `chat_case_only.db` for iMessage search.
 
 **"Which chat_case_only.db do I use?"**
-The API routes use: `lawmodel1/data/IMESSAGE_LOCKER/Messages/chat_case_only.db` (VIEW-based schema). The legacy DB at `IMESSAGE_DATA_LOCKER/chat_case_only.db` uses a different Apple-native schema — queries silently fail on the wrong one. Always verify schema first.
+The API routes use: `lawmodel1/data/IMESSAGE_LOCKER/Messages/chat_case_only.db` (VIEW-based schema). The legacy DB at `IMESSAGE_DATA_LOCKER/chat_case_only.db` uses a different Apple-native schema — queries silently fail on the wrong one. Always verify schema first. Schema correction applied to all API routes 2026-05-19.
 
 **"When do I use execute_code vs delegate_task?"**
 execute_code for data processing (CSV, SQL, file ops, API verification). delegate_task for reasoning (legal analysis, fraud patterns). Never delegate a status check — answer from live data immediately. See governance §14 for the full pre-flight checklist.
 
 **"What Slack channels are available?"**
-14 Rowboat Creative channels available at `localhost:3000/slack`. Slack data in `lawmodel1/data/USE_MBOX_INDEX/SLACK_WORKSPACE/`.
+14 Rowboat Creative channels available at `localhost:3000/slack`. 2,707 messages ingested into evidence_hub.db for unified search. Slack data in `lawmodel1/data/USE_MBOX_INDEX/SLACK_WORKSPACE/`.
 
 **"How do I start the dev server?"**
-`cd lawmodel1/app && npm run dev`. Do NOT run from `lawmodel1/` root — that package.json has no dev script.
+`cd lawmodel1/app && npm run dev`. Do NOT run from `lawmodel1/` root — that package.json has no dev script. Port 3000 only — port 8000 is decommissioned.
 
 **"Where is the evidence catalog?"**
 7-locker consolidated catalog at `lawmodel1/reports/seven_locker/seven_locker_catalog.md`. Evidence exhibit index at `catalog/evidence-index.md`.
@@ -423,6 +493,12 @@ execute_code for data processing (CSV, SQL, file ops, API verification). delegat
 **"How do I access the Obsidian vault?"**
 Open `lawmodel1/obsidian_vault/` in Obsidian. 49 notes, 8 plugins including Obsidian Git (auto-commit to iseepatterns-local). Web viewer at `localhost:3000/obsidian`.
 
+**"What's the Financial Explorer?"**
+5-tab UI at `/financials` (Explorer, Statements, Summary, Tax Returns, Cross-Reference). Backed by 1,995 Printavo invoices, 2,949 Deco orders, 340 cross-referenced records, and 22K+ RosettaStone transactions. See Section 3.19.
+
+**"Is the legacy FastAPI still running?"**
+NO. Legacy FastAPI on port 8000 was fully removed 2026-05-19. RAG button removed from Evidence Hub. Legal Research page decommissioned. All API routes now live exclusively in the Next.js app on port 3000.
+
 ---
 
-*End of handoff. This document lives at `/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/HERMES_WORKSHOP_HANDOFF.md`*
+*End of handoff. This document lives at `/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1/docs/HERMES_WORKSHOP_HANDOFF.md`*
