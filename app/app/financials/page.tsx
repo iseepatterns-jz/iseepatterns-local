@@ -1194,20 +1194,20 @@ function TaxReturnsTab() {
 function CrossRefTab() {
   const links = [
     {
-      title: "Printavo Orders",
-      description: "Production order management system. Cross-reference order IDs and invoice data from bank transactions.",
+      title: "Printavo Invoices",
+      description: "1,995 production orders. Cross-reference order IDs and invoice data from bank transactions.",
       icon: Printer,
       accent: "var(--accent-purple)",
-      href: "/app/financials/printavo",
-      status: "coming",
+      href: "/financials/printavo-invoices",
+      status: "live",
     },
     {
       title: "Deco Orders",
-      description: "DecoNetwork order system. Match order numbers and sales staff data against financial records.",
+      description: "2,949 DecoNetwork orders. Match order numbers and sales staff data against financial records.",
       icon: ShoppingCart,
       accent: "var(--accent-cyan)",
-      href: "/app/financials/deco",
-      status: "coming",
+      href: "/financials/deco-orders",
+      status: "live",
     },
     {
       title: "QuickBooks Data",
@@ -1299,8 +1299,8 @@ function CrossRefTab() {
           {[
             { label: "QBO Matched", value: "4,082", sub: "$4.89M", color: "var(--accent-emerald)" },
             { label: "QBO Unmatched", value: "15,741", sub: "$10.82M", color: "var(--accent-orange)" },
-            { label: "Printavo Orders", value: "—", sub: "Coming soon", color: "var(--accent-purple)" },
-            { label: "Deco Orders", value: "—", sub: "Coming soon", color: "var(--accent-cyan)" },
+            { label: "Printavo Invoices", value: "1,995", sub: "$5.10M total", color: "var(--accent-purple)" },
+            { label: "Deco Orders", value: "2,949", sub: "$1.12M total", color: "var(--accent-cyan)" },
           ].map(stat => (
             <div key={stat.label}>
               <div className="text-2xl font-bold font-mono" style={{ color: stat.color }}>{stat.value}</div>

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "claims/1-Breach-of-Fiduciary-Duty.md",
+                "file": "dashboards/Witness-Binder.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "1-Breach-of-Fiduciary-Duty"
+              "title": "Witness-Binder"
             }
           }
         ]
@@ -195,6 +195,13 @@
   },
   "active": "b56ae35d83ac9894",
   "lastOpenFiles": [
+    "dashboards/Evidence-Tracker.md",
+    "claims/1-Breach-of-Fiduciary-Duty.md",
+    "dashboards/Claim-Status.md",
+    "entities/JZ.md",
+    "entities/Joseph-Zangrilli.md",
+    "entities/All-World-Agency.md",
+    "timeline/00-Master-Timeline.md",
     "evidence/ppp_key_documents.json",
     "entities/PPP-Loans.md"
   ]
