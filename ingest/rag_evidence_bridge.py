@@ -14,7 +14,7 @@ from chromadb.config import Settings
 # ── Configuration ──────────────────────────────────────────────────────
 PROJECT_ROOT = Path("/Volumes/iseepatterns-evidence/ISEEPATTERNS_LOCKER/lawmodel1")
 DB_PATH = PROJECT_ROOT / "data" / "evidence_hub.db"
-CHROMA_PATH = "http://localhost:8000"
+CHROMA_PATH = "http://localhost:8001"
 COLLECTION_NAME = "legal_docs" # Matching app/lib/rag.ts
 EMBEDDING_MODEL = "nomic-embed-text"
 OLLAMA_URL = "http://localhost:11434/api/embeddings"

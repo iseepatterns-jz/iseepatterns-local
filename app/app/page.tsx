@@ -105,15 +105,14 @@ export default function DashboardPage() {
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [searching, setSearching] = useState(false);
 
-  // NEW: brain + RAG state
-  const [brain, setBrain] = useState<BrainStatus | null>(null);
-  const [brainLoading, setBrainLoading] = useState(false);
-
-  const searchParams = useSearchParams();
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [ragSources, setRagSources] = useState<Source[]>([]);
-  const [ragLoading, setRagLoading] = useState(false);
+  // DEPRECATED: brain + RAG state (FastAPI on port 8000 removed 2026-05-18)
+  // const [brain, setBrain] = useState<BrainStatus | null>(null);
+  // const [brainLoading, setBrainLoading] = useState(false);
+  // const searchParams = useSearchParams();
+  // const [question, setQuestion] = useState("");
+  // const [answer, setAnswer] = useState("");
+  // const [ragSources, setRagSources] = useState<Source[]>([]);
+  // const [ragLoading, setRagLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -158,65 +157,11 @@ export default function DashboardPage() {
     ? Object.values(searchResults).reduce((sum, arr) => sum + arr.length, 0)
     : 0;
 
-  // NEW: call local RAG endpoint
-  const handleAsk = useCallback(
-    async (e?: React.FormEvent) => {
-      if (e) e.preventDefault();
-      const q = question.trim();
-      if (!q) {
-        setAnswer("");
-        setRagSources([]);
-        return;
-      }
-      setRagLoading(true);
-      setAnswer("");
-      setRagSources([]);
-      try {
-        const res = await fetch("http://localhost:8000/rag/answer", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: q }),
-        });
-        if (!res.ok) {
-          setAnswer("Error calling local RAG API");
-        } else {
-          const data = await res.json();
-          setAnswer(data.answer);
-          setRagSources(data.sources || []);
-        }
-      } catch (err) {
-        console.error("RAG call failed:", err);
-        setAnswer("Error calling local RAG API");
-      }
-      setRagLoading(false);
-    },
-    [question]
-  );
-
-
-  // NEW: load brain status
-  const handleLoadBrain = useCallback(async (forcedSession?: string) => {
-    setBrainLoading(true);
-    try {
-      const sessionId = forcedSession;
-      const url = sessionId 
-        ? `http://localhost:8000/brain/rbc_v_lg?session=${sessionId}`
-        : "http://localhost:8000/brain/rbc_v_lg";
-        
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("Failed to fetch brain");
-      const data = await res.json();
-      setBrain(data);
-    } catch (err) {
-      console.error("Brain load failed:", err);
-    } finally {
-      setBrainLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    handleLoadBrain();
-  }, [handleLoadBrain]);
+  // DEPRECATED: RAG handler (FastAPI port 8000 removed 2026-05-18)
+  // const handleAsk = useCallback(...) — disabled pending Next.js migration
+  //
+  // const handleLoadBrain = useCallback(...) — disabled
+  // useEffect(() => { handleLoadBrain(); }, [handleLoadBrain]); — disabled
 
   const formatRunTime = (iso: string) => {
     if (!iso) return "";
@@ -235,22 +180,9 @@ export default function DashboardPage() {
     return `${year}-${month}-${day}, ${hourStr}:${minutes} ${ampm}`;
   };
 
-  const [readybagRunning, setReadybagRunning] = useState(false);
-
-  const handleReadybag = useCallback(async () => {
-    setReadybagRunning(true);
-    try {
-      const res = await fetch("http://localhost:8000/brain/readybag", {
-        method: "POST",
-      });
-      if (!res.ok) throw new Error("Failed to run readybag");
-      await handleLoadBrain(); // refresh after run
-    } catch (err) {
-      console.error("Readybag run failed:", err);
-    } finally {
-      setReadybagRunning(false);
-    }
-  }, [handleLoadBrain]);
+  // DEPRECATED: readybag disabled (FastAPI port 8000 removed 2026-05-18)
+  // const [readybagRunning, setReadybagRunning] = useState(false);
+  // const handleReadybag = useCallback(async () => { ... }, [handleLoadBrain]);
 
   if (loading) {
     return (
@@ -730,247 +662,8 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* ═══ Local RAG Assistant ═══ */}
-      <div
-        className="glass-panel"
-        style={{
-          padding: "1.5rem",
-          marginTop: "2rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginBottom: "1rem",
-          }}
-        >
-          <FileText size={18} color="var(--accent-cyan)" />
-          <h3 style={{ margin: 0, fontSize: "1rem" }}>Forensic RAG Assistant</h3>
-        </div>
-
-        <form
-          onSubmit={handleAsk}
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
-          <textarea
-            value={question}
-            onChange={e => setQuestion(e.target.value)}
-            rows={3}
-            placeholder="Ask about RBC v. LG, financial misconduct, or evidence..."
-            style={{ width: "100%", resize: "vertical" }}
-          />
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
-            <button
-              type="submit"
-              disabled={ragLoading || !question.trim()}
-              style={{
-                padding: "0.4rem 0.9rem",
-                borderRadius: 8,
-                border: "1px solid rgba(0,245,212,0.3)",
-                background: "rgba(0,245,212,0.1)",
-                color: "var(--accent-cyan)",
-                cursor: "pointer",
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                opacity: ragLoading || !question.trim() ? 0.4 : 1,
-              }}
-            >
-              {ragLoading ? "Thinking..." : "Ask RAG"}
-            </button>
-          </div>
-        </form>
-
-        {answer && (
-          <div style={{ marginTop: "1rem" }}>
-            <div
-              style={{
-                fontSize: "0.8rem",
-                fontWeight: 600,
-                marginBottom: "0.25rem",
-              }}
-            >
-              Answer
-            </div>
-            <pre style={{ whiteSpace: "pre-wrap", fontSize: "0.8rem" }}>{answer}</pre>
-          </div>
-        )}
-
-        {ragSources.length > 0 && (
-          <div style={{ marginTop: "0.75rem" }}>
-            <div
-              style={{
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                marginBottom: "0.25rem",
-              }}
-            >
-              Sources
-            </div>
-            <ul style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-              {ragSources.map((s, i) => (
-                <li key={i}>
-                  {s.source_file} (p.{s.page}) [{s.category}] score=
-                  {s.score.toFixed(3)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-
-
-      {/* ═══ Brain Status ═══ */}
-      <div
-        className="glass-panel"
-        style={{
-          padding: "1.5rem",
-          marginBottom: "2rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            marginBottom: "1rem",
-          }}
-        >
-          <Activity size={18} color="var(--accent-purple)" />
-          <h3 style={{ margin: 0, fontSize: "1rem" }}>Brain Status (lawmodel1)</h3>
-        </div>
-
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
-          <button
-            onClick={() => handleLoadBrain()}
-            disabled={brainLoading}
-            style={{
-              padding: "0.4rem 0.9rem",
-              borderRadius: 8,
-              border: "1px solid rgba(151, 71, 255, 0.4)",
-              background: "rgba(151, 71, 255, 0.08)",
-              color: "var(--accent-purple)",
-              cursor: "pointer",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              opacity: brainLoading ? 0.4 : 1,
-            }}
-          >
-            {brainLoading ? "Loading..." : "Load Brain"}
-          </button>
-
-          <button
-            onClick={handleReadybag}
-            disabled={readybagRunning}
-            style={{
-              padding: "0.4rem 0.9rem",
-              borderRadius: 8,
-              border: "1px solid rgba(0,245,212,0.4)",
-              background: "rgba(0,245,212,0.08)",
-              color: "var(--accent-cyan)",
-              cursor: "pointer",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              opacity: readybagRunning ? 0.4 : 1,
-            }}
-          >
-            {readybagRunning ? "Running..." : "Run Ready Bag"}
-          </button>
-        </div>
-
-        {brain && (
-          <div style={{ fontSize: "0.8rem" }}>
-            <p>
-              <strong>Case:</strong> {brain.case_id}
-            </p>
-            {brain.summary && <p>{brain.summary}</p>}
-            <p>Version {brain.version}</p>
-
-            {brain.updated_at && (
-              <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
-                Updated {formatRunTime(brain.updated_at)}
-              </p>
-            )}
-
-            {["infra", "investigative", "other"].map(group => {
-              const groupTasks = brain.tasks.filter(
-                (t: any) => (t as any).category === group
-              );
-              if (groupTasks.length === 0) return null;
-
-              const label =
-                group === "infra"
-                  ? "Infrastructure & Pipelines"
-                  : group === "investigative"
-                    ? "Investigative Work"
-                    : "Other Tasks";
-
-              return (
-                <div key={group} style={{ marginTop: "0.75rem" }}>
-                  <div
-                    style={{
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      marginBottom: "0.25rem",
-                    }}
-                  >
-                    {label} ({groupTasks.length})
-                  </div>
-                  <ul style={{ marginLeft: "1rem" }}>
-                    {groupTasks
-                      .sort((a: any, b: any) => a.order_idx - b.order_idx)
-                      .map((t: any, idx: number) => {
-                        const total = t.subtasks.length;
-                        const done = t.subtasks.filter((st: any) => st.done).length;
-                        return (
-                          <li
-                            key={idx}
-                            style={{
-                              marginBottom: 4,
-                              color:
-                                t.status === "IN_PROGRESS"
-                                  ? "var(--accent-yellow)"
-                                  : undefined,
-                              fontWeight:
-                                t.status === "IN_PROGRESS" ? 600 : 400,
-                            }}
-                          >
-                            [{t.status}] {t.title} ({done}/{total})
-                          </li>
-                        );
-                      })}
-                  </ul>
-                </div>
-              );
-            })}
-
-            {brain.readybag_runs && brain.readybag_runs.length > 0 && (
-              <div style={{ marginTop: "1rem" }}>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  Recent Ready Bag Runs
-                </div>
-                <ul style={{ marginLeft: "1rem", fontSize: "0.75rem" }}>
-                  {brain.readybag_runs.map((run: any, idx: number) => (
-                    <li key={idx} style={{ marginBottom: 2 }}>
-                      [{run.status}]  {formatRunTime(run.started_at)} → {formatRunTime(run.finished_at)}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-
-      </div>
+      {/* DISABLED: Forensic RAG Assistant (FastAPI port 8000 removed 2026-05-18) */}
+      {/* DISABLED: Brain Status (FastAPI port 8000 removed 2026-05-18) */}
     </div>
   );
 }

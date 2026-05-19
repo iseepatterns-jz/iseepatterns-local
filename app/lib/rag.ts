@@ -128,7 +128,7 @@ function getOllama(): Ollama {
 
 async function getChroma(): Promise<ChromaClient> {
     if (!_chroma) {
-        _chroma = new ChromaClient({ path: "http://localhost:8000" });
+        _chroma = new ChromaClient({ path: "http://localhost:8001" });
     }
     return _chroma;
 }
