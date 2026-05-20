@@ -1,6 +1,6 @@
 # Hermes Workshop — Rowboat Creative Handoff Doc
 
-**Date:** 2026-05-19
+**Date:** 2026-05-20
 **Prepared by:** Hermes Agent (Case Manager for Joseph Zangrilli)
 **Purpose:** Onboarding document for a new Hermes workshop session. This captures everything accomplished, current state, conventions, and next priorities so you don't start blind.
 
@@ -427,9 +427,30 @@ All skills are under `~/.hermes/profiles/isp_ds_manager_bot/skills/`. Key catego
 
 **No Legacy FastAPI (port 8000):** The legacy Python FastAPI server on port 8000 was fully removed 2026-05-19. All API routes now live exclusively in the Next.js app on port 3000. Any reference to port 8000 in code, config, or documentation is stale and must be removed.
 
+### 3.26 Lucas Calendar Cross-Reference (COMPLETE — 2026-05-20)
+- **786 calendar events** parsed from LG's Gmail (Google Calendar plain-text invitations, 2016–2022)
+- Source: `mbox_metadata.db` — Lucas@rowboatcreative.com Gmail export
+- **iMessage Timeline Cross-Reference**: 7 critical dates × 786 calendar events
+- **Key Finding**: Only 1 calendar event overlaps an iMessage critical date:
+  - **March 26, 2020** — "Economic Injury Disaster Loans: Overview for Small Businesses" (JZ + LG, 11am–12pm)
+  - Same date as peak PPP/EIDL iMessage discussion (4/8 topic crossover)
+- **2023 Calendar Void**: Zero calendar events on any 2023 critical conflict date (6 dates, Mar–Dec)
+  - Partnership implosion unfolded entirely in iMessage — no structured business meetings scheduled
+- **594 joint JZ-LG meetings** (2017–2022) — contradicting any claim of JZ as uninvolved partner
+- **52 events with Suzanne Ronayne** — pre-dispute RBC operational involvement
+- Deliverable: `_analysis_outputs/lucas_calendar_vs_imessage_timeline.md`
+- Parsed events: `_analysis_outputs/lucas_calendar_events.json` (786 events)
+- Obsidian vault updated: Evidence Tracker, Master Timeline, LG entity page, new EXH-0063 evidence note
+
+### 3.27 Obsidian Vault Sync (2026-05-20)
+- Evidence Tracker updated with Lucas Calendar section
+- Master Timeline updated with Mar 26, 2020 EIDL briefing entry and calendar stats
+- [[Lucas Guariglia]] entity page updated with Calendar Evidence section
+- New evidence note: `evidence/EXH-0063-Lucas-Calendar.md`
+
 ---
 
-## 8. Next Priorities (as of 2026-05-19)
+## 8. Next Priorities (as of 2026-05-20)
 
 1. **QBO unallocated hunt — remaining orders** — Continue multi-pass PDF hunt layering against remaining unallocated rows. Use data7 → Deco key → auto-propagation priority chain. Sources: MBOX emails, PDF extracts, INVOICE_LOCKER, and Joseph's per-company memory.
 

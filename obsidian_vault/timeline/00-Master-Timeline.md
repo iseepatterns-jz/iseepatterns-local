@@ -100,7 +100,16 @@ SORT date ASC
 - **Description**: Rowboat Creative receives approximately **$195,000** in PPP loans. Evidence suggests **$70,000** of PPP funds were diverted as a down payment on LG's personal residence (the "Dunkirk house") in North Carolina, rather than being used for eligible payroll and business expenses.
 - **Related Entities**: [[Lucas Guariglia]], [[Rowboat Creative LLC]], [[Joseph Zangrilli]]
 - **Related Claims**: [[C-006-PPP-Loan-Fraud]], [[C-002-Conversion-Misappropriation]]
-- **Related Exhibits**: None (SBA records, Dunkirk closing docs needed — FOIA/subpoena)
+- **Related Exhibits**: EXH-0063 (Lucas Calendar — EIDL briefing, Mar 26, 2020)
+
+### March 26, 2020 — Joint EIDL Briefing (Calendar Corroboration)
+- **Date**: March 26, 2020
+- **Phase**: PPP & Banking
+- **Description**: JZ and LG jointly attend **"Economic Injury Disaster Loans: Overview for Small Businesses"** — a Google Calendar event on LG's calendar with both JZ and LG as attendees (11:00 AM – 12:00 PM). This is the **only calendar event crossing an iMessage critical date** and directly corroborates that both partners were jointly focused on disaster loan programs. On this exact date, iMessages show peak PPP/EIDL discussion activity (4/8 topic crossover). The day prior (Mar 25) features a separate "S&S Meeting" with JZ + LG together.
+- **Related Entities**: [[Lucas Guariglia]], [[Joseph Zangrilli]], [[Rowboat Creative LLC]]
+- **Related Claims**: [[C-006-PPP-Loan-Fraud]]
+- **Related Exhibits**: EXH-0063 (786 Lucas calendar events parsed; 594 JZ-LG joint meetings)
+- **Source**: `_analysis_outputs/lucas_calendar_vs_imessage_timeline.md`
 
 ### 2020 — Chase-to-53 Transition
 - **Date**: 2020
@@ -255,6 +264,8 @@ SORT date ASC
 | Amount | Description | Phase |
 |--------|-------------|-------|
 | $195,000 | PPP loans received | PPP & Banking (2020) |
+| — | 786 calendar events parsed; 594 JZ-LG meetings | Calendar Evidence (2026-05-20) |
+| — | 2023 calendar void — zero meetings on 6 critical dates | Calendar Evidence (2026-05-20) |
 | $70,000 | Dunkirk house down payment from PPP funds | PPP & Banking (2020) |
 | $30,000 | China side business (undisclosed) | Early Manipulation (2017–) |
 | $40,000 | Layto/Goose Island parking scheme | Collapse (2023) |

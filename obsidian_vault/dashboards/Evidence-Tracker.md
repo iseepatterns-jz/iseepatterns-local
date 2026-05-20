@@ -118,6 +118,18 @@ SORT evidence_count DESC
 
 ---
 
+## New Evidence — Lucas Calendar Cross-Reference (2026-05-20)
+
+- **Source**: `_analysis_outputs/lucas_calendar_vs_imessage_timeline.md`
+- **Count**: 786 calendar events parsed from LG's Google Calendar emails (2016–2022)
+- **Key Finding**: Only 1 calendar event overlaps an iMessage critical date: **March 26, 2020 — "Economic Injury Disaster Loans: Overview for Small Businesses"** (JZ + LG, 11am)
+- **2023 Void**: Zero calendar events on any 2023 critical conflict date. Partnership implosion played out entirely in iMessage — no structured meetings scheduled.
+- **JZ-LG Joint Meetings**: 594 events across 2017–2022
+- **Suzanne Ronayne**: 52 calendar events with LG (pre-dispute RBC involvement)
+- **Exhibit**: EXH-0063
+
+---
+
 ## Newly Linked — Financial Explorer (2026-05-19)
 
 These evidence sources are now wired into the [[Financial Explorer]] at `localhost:3000/financials`:

@@ -38,6 +38,15 @@ updated: "2026-05-18"
   - Took QuickBooks offline before receivership
   - Admitted to threats: "I'm going to burn the business to the ground"
 
+## Calendar Evidence (2026-05-20)
+- **786 calendar events** extracted from LG's Gmail (2016–2022). Source: `lucas_calendar_vs_imessage_timeline.md`
+- **594 joint JZ-LG meetings** (2017–2022) — extensive joint business activity, contradicting any claim of JZ as uninvolved partner
+- **March 26, 2020**: JZ + LG jointly attend "Economic Injury Disaster Loans: Overview for Small Businesses" (11am–12pm) — the only calendar event crossing an iMessage critical date. Same date as peak PPP/EIDL iMessage discussions.
+- **2023 calendar void**: Zero calendar events on any critical conflict date (6 dates, Mar–Dec 2023). Partnership implosion unfolded entirely in iMessage.
+- **52 events with Suzanne Ronayne** — confirming her involvement in RBC operations pre-dating the alleged diversion period
+- **Calendar data effectively ends mid-2022** — implying LG may have migrated or purged calendar after partnership breakdown
+- **Exhibit**: EXH-0063
+
 ## Notes
 - Alleged fabrication of fake attorney persona "Tom Chandler" (Holland & Hart LLP)
 - Side businesses: Layto, Goose Island ($40K "parking" scheme), AllWorldAgency.com
